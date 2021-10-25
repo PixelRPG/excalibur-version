@@ -1,0 +1,3 @@
+[submodule "packages/tile-extruder"]
+	path = packages/tile-extruder
+	url = https://github.com/PixelRPG/tile-extruder

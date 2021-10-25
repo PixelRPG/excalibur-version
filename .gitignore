@@ -1,0 +1,5 @@
+dist
+!examples/tuxemon/dist
+examples/tuxemon/dist/*
+!examples/tuxemon/dist/index.html
+node_modules

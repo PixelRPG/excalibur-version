@@ -1,0 +1,18 @@
+{
+  "name": "pixelrpg",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npm run build -w tile-extruder -w @pixelrpg/esbuild -w @pixelrpg/tuxemon",
+    "start": "npm run start -w @pixelrpg/tuxemon"
+  },
+  "author": "Pascal Garber <pascal@artandcode.studio>",
+  "license": "GPL-3.0-or-later",
+  "workspaces": [
+    "examples/*",
+    "packages/*",
+    "packages/tile-extruder/workspaces/*"
+  ]
+}
