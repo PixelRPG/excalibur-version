@@ -7,6 +7,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npm run build -w tile-extruder -w @pixelrpg/esbuild -w @pixelrpg/tuxemon",
+    "clear": "npm run clear -w tile-extruder -w @pixelrpg/esbuild -w @pixelrpg/tuxemon",
     "start": "npm run start -w @pixelrpg/tuxemon",
     "check:minor": "npm exec --workspaces -- ncu --target minor",
     "check:latest": "npm exec --workspaces -- ncu",
