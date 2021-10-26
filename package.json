@@ -1,12 +1,19 @@
 {
   "name": "pixelrpg",
-  "version": "0.0.0",
+  "private": true,
+  "version": "0.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npm run build -w tile-extruder -w @pixelrpg/esbuild -w @pixelrpg/tuxemon",
-    "start": "npm run start -w @pixelrpg/tuxemon"
+    "start": "npm run start -w @pixelrpg/tuxemon",
+    "check:minor": "npm exec --workspaces -- ncu --target minor",
+    "check:latest": "npm exec --workspaces -- ncu",
+    "check:newest": "npm exec --workspaces -- ncu --target newest",
+    "upgrade:minor": "npm exec --workspaces -- ncu --target minor -u",
+    "upgrade:latest": "npm exec --workspaces -- ncu -u",
+    "upgrade:newest": "npm exec --workspaces -- ncu --target newest -u"
   },
   "author": "Pascal Garber <pascal@artandcode.studio>",
   "license": "GPL-3.0-or-later",

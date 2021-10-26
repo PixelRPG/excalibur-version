@@ -5,9 +5,9 @@
   "main": "src/main.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "esbuilder",
-    "serve:dev": "esbuilder --serve --dev",
-    "serve": "esbuilder --serve",
+    "build": "esbuilder --outfile ./dist/main.js",
+    "serve:dev": "npm run serve -- --dev",
+    "serve": "esbuilder --serve --outfile ./dist/main.js",
     "start:dev": "yarn run serve:dev",
     "start": "npm run serve",
     "clear": "rimraf dist"
@@ -15,10 +15,10 @@
   "author": "Pascal Garber <pascal@artandcode.studio>",
   "license": "GPL-3.0-or-later",
   "dependencies": {
-    "excalibur": "^0.25.0"
+    "excalibur": "^0.26.0-alpha.262"
   },
   "devDependencies": {
     "esbuild": "^0.13.9",
-    "@pixelrpg/esbuild": "^0.0.0"
+    "@pixelrpg/esbuild": "^0.0.1"
   }
 }
