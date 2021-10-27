@@ -4,3 +4,9 @@
 [submodule "packages/esbuild"]
 	path = packages/esbuild
 	url = https://github.com/PixelRPG/esbuild.git
+[submodule "packages/excalibur-tiled"]
+	path = packages/excalibur-tiled
+	url = https://github.com/PixelRPG/excalibur-tiled.git
+[submodule "packages/excalibur"]
+	path = packages/excalibur
+	url = https://github.com/PixelRPG/Excalibur.git

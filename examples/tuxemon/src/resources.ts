@@ -1,8 +1,12 @@
 import {  ImageSource } from "excalibur";
-import sword from "./images/sword.png";
+import { TiledMapResource } from '@excaliburjs/plugin-tiled';
+
+import misa from "./assets/misa-front.png";
+import map from './assets/example-city.tmx';
 
 let Resources = {
-  Sword: new ImageSource(sword)
+  misa: new ImageSource(misa),
+  map: new TiledMapResource(map),
 };
 
 export { Resources };
