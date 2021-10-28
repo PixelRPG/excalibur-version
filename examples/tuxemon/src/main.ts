@@ -1,25 +1,38 @@
-import { Experiments, Flags, Engine, Input, Loader, vec, Actor, Color }from 'excalibur';
+import { Experiments, Flags, Engine, Input, Loader, vec, Actor, Color, DisplayMode, BoundingBox } from 'excalibur';
 
 import { Player } from './player';
 import { Resources } from "./resources";
 
 Flags.enable(Experiments.WebGL);
-const game = new Engine({ 
-   width: 800, 
-   height: 600,
-   canvasElementId: 'game',
-   pointerScope: Input.PointerScope.Canvas,
-   antialiasing: false,
-   snapToPixel: false,
-   suppressPlayButton: true,
-});
-
-// game.toggleDebug();
 
 const start = async () => {
-   let player = new Player();
 
-   game.currentScene.camera.strategy.elasticToActor(player, .8, .9);
+   const game = new Engine({ 
+      // width:  window.innerWidth, 
+      // height:  window.innerHeight,
+      // viewport: {
+      //    width:  window.innerWidth, 
+      //    height:  window.innerHeight,
+      // },
+      // resolution: {
+      //    height: window.innerHeight,
+      //    width: window.innerWidth,
+      // },
+      displayMode: DisplayMode.FillScreen,
+      canvasElementId: 'game',
+      pointerScope: Input.PointerScope.Canvas,
+      antialiasing: false,
+      snapToPixel: true,
+      suppressPlayButton: true,
+      backgroundColor: Color.Black,
+   });
+
+   console.debug("pixelRatio", game.pixelRatio);
+   console.debug("isHiDpi", game.isHiDpi);
+   
+   // game.toggleDebug();
+   
+   const player = new Player();  
    
    player.onPostUpdate = () => {
       player.vel.setTo(0, 0);
@@ -37,21 +50,38 @@ const start = async () => {
          player.vel.y = speed;
       }
    }
+
    game.add(player);
 
    const loader = new Loader([Resources.map, Resources.misa]);
+   loader.backgroundColor = Color.Black.toString();
    await game.start(loader)
    player.pos = vec(100, 100);
-   const excalibur = Resources.map.data.getExcaliburObjects();
-   if (excalibur.length > 0) {
-      const start = excalibur[0].getObjectByName('player-start');
+   const mapProperties = Resources.map.data.getExcaliburObjects();
+
+   console.debug("map camera zoom", mapProperties[0].getCamera().zoom);
+
+
+   game.currentScene.camera.strategy.elasticToActor(player, .9, .9);
+   game.currentScene.camera.strategy.lockToActor(player);
+   const mapBox = new BoundingBox({
+      left: 0,
+      top: 0,
+      right: Resources.map.data.width * Resources.map.data.tileWidth,
+      bottom: Resources.map.data.height * Resources.map.data.tileHeight,
+      
+   });
+   game.currentScene.camera.strategy.limitCameraBounds(mapBox);
+
+   if (mapProperties.length > 0) {
+      const start = mapProperties[0].getObjectByName('player-start');
       if (start) {
          player.pos.x = start.x;
          player.pos.y = start.y;
       }
 
       // Use polyline for patrols
-      const lines = excalibur[0].getPolyLines();
+      const lines = mapProperties[0].getPolyLines();
       for (let line of lines) {
          if (line && line.polyline) {
             const start = vec(line.x, line.y);
@@ -67,7 +97,7 @@ const start = async () => {
       }
 
       // Use polygon for patrols
-      const polys = excalibur[0].getPolygons();
+      const polys = mapProperties[0].getPolygons();
       for (let poly of polys) {
          poly.polygon?.push(poly.polygon[0]); // needs to end where it started
          if (poly && poly.polygon) {
@@ -84,10 +114,10 @@ const start = async () => {
       }
    }
    // Camera init bug :( forcing a a hack
-   setTimeout(() => {
-      game.currentScene.camera.x = player.pos.x;
-      game.currentScene.camera.y = player.pos.y;
-   });
+   // setTimeout(() => {
+   //    game.currentScene.camera.x = player.pos.x;
+   //    game.currentScene.camera.y = player.pos.y;
+   // });
    Resources.map.addTiledMapToScene(game.currentScene);
 }
 
