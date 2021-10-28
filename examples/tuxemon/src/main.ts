@@ -1,7 +1,9 @@
-import { Experiments, Flags, Engine, Input, Loader, vec, Actor, Color, DisplayMode, BoundingBox } from 'excalibur';
+import { Experiments, Flags, Engine, Input, Loader, vec, Actor, Color, DisplayMode } from 'excalibur';
 
-import { Player } from './player';
+import { PrpgPlayerActor } from './actors/player.actor';
 import { Resources } from "./resources";
+
+import { PrpgPlayerSystem } from "./systems/player.system";
 
 Flags.enable(Experiments.WebGL);
 
@@ -27,51 +29,24 @@ const start = async () => {
       backgroundColor: Color.Black,
    });
 
+   game.currentScene.world.add(new PrpgPlayerSystem(game));
+
    console.debug("pixelRatio", game.pixelRatio);
    console.debug("isHiDpi", game.isHiDpi);
    
    // game.toggleDebug();
    
-   const player = new Player();  
-   
-   player.onPostUpdate = () => {
-      player.vel.setTo(0, 0);
-      const speed = 64;
-      if (game.input.keyboard.isHeld(Input.Keys.Right)) {
-         player.vel.x = speed;
-      }
-      if (game.input.keyboard.isHeld(Input.Keys.Left)) {
-         player.vel.x = -speed;
-      }
-      if (game.input.keyboard.isHeld(Input.Keys.Up)) {
-         player.vel.y = -speed;
-      }
-      if (game.input.keyboard.isHeld(Input.Keys.Down)) {
-         player.vel.y = speed;
-      }
-   }
+   const player = new PrpgPlayerActor();
 
    game.add(player);
 
    const loader = new Loader([Resources.map, Resources.misa]);
    loader.backgroundColor = Color.Black.toString();
    await game.start(loader)
-   player.pos = vec(100, 100);
+
    const mapProperties = Resources.map.data.getExcaliburObjects();
 
    console.debug("map camera zoom", mapProperties[0].getCamera().zoom);
-
-
-   game.currentScene.camera.strategy.elasticToActor(player, .9, .9);
-   game.currentScene.camera.strategy.lockToActor(player);
-   const mapBox = new BoundingBox({
-      left: 0,
-      top: 0,
-      right: Resources.map.data.width * Resources.map.data.tileWidth,
-      bottom: Resources.map.data.height * Resources.map.data.tileHeight,
-      
-   });
-   game.currentScene.camera.strategy.limitCameraBounds(mapBox);
 
    if (mapProperties.length > 0) {
       const start = mapProperties[0].getObjectByName('player-start');
@@ -113,11 +88,7 @@ const start = async () => {
          }
       }
    }
-   // Camera init bug :( forcing a a hack
-   // setTimeout(() => {
-   //    game.currentScene.camera.x = player.pos.x;
-   //    game.currentScene.camera.y = player.pos.y;
-   // });
+
    Resources.map.addTiledMapToScene(game.currentScene);
 }
 

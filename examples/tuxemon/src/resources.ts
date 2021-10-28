@@ -1,3 +1,4 @@
+import "./files";
 import {  ImageSource } from "excalibur";
 import { TiledMapResource } from '@excaliburjs/plugin-tiled';
 
