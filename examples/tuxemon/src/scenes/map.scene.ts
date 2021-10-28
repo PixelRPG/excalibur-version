@@ -28,13 +28,13 @@ export class MapScene extends Scene {
                     const firstpoint = line.polyline[0];
                     const patrol = new Actor({x: start.x + firstpoint.x, y: start.y + firstpoint.y, color: Color.Green, width: 5, height: 5});
                     patrol.actions.repeat(ctx => {
-                        for (const p of (line.polyline ?? [])) {
+                        for (const p of line.polyline) {
                             const x = p.x + line.x;
                             const y = p.y + line.y;
                             ctx.moveTo(x, y, 20);
-                            console.debug("Movie polyline to ", x, y);
                         }
-                    }, 5);
+                        ctx.moveTo(line.x + firstpoint.x, line.y + firstpoint.y, 20); // move to start position
+                    }, 1);
                     this.add(patrol);
                 }
                 
@@ -49,14 +49,14 @@ export class MapScene extends Scene {
                     const start = vec(poly.x, poly.y);
                     const patrol = new Actor({x: start.x + firstpoint.x, y: start.y + firstpoint.y, color: Color.Blue, width: 5, height: 5});
                     patrol.actions.repeat(ctx => {
-                        for (const p of (poly.polygon ?? [])) {
+                        for (let i = 1; i < poly.polygon.length; i++) {
+                            const p = poly.polygon[i];
                             const x = p.x + poly.x;
                             const y = p.y + poly.y;
                             ctx.moveTo(x, y, 20);
-                            console.debug("Movie polygon to ", x, y);
                         }
-                        ctx.moveTo(start.x + firstpoint.x, start.y + firstpoint.y, 20); // needs to end where it started
-                    }, 5);
+                        ctx.moveTo(poly.x + firstpoint.x, poly.y + firstpoint.y, 20); // move to start position
+                    });
                     this.add(patrol);
                 }
             }
