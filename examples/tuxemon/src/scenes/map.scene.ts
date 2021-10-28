@@ -19,36 +19,44 @@ export class MapScene extends Scene {
         console.debug("map camera zoom", mapProperties[0].getCamera().zoom);
      
         if (mapProperties.length > 0) {
-            
             // Use polyline for patrols
             const lines = mapProperties[0].getPolyLines();
+            console.debug("polylines", lines);
             for (let line of lines) {
-                    if (line && line.polyline) {
-                        const start = vec(line.x, line.y);
-                        const firstpoint = line.polyline[0];
-                        const patrol = new Actor({x: line.x + firstpoint.x, y: line.y + firstpoint.y, color: Color.Green, width: 25, height: 25});
-                        patrol.actions.repeatForever(ctx => {
-                            for (const p of (line.polyline ?? [])) {
-                                ctx.moveTo(p.x + start.x, p.y + start.y, 100);
-                            }
-                        });
-                        this.add(patrol);
-                    }
+                if (line && line.polyline) {
+                    const start = vec(line.x, line.y);
+                    const firstpoint = line.polyline[0];
+                    const patrol = new Actor({x: start.x + firstpoint.x, y: start.y + firstpoint.y, color: Color.Green, width: 5, height: 5});
+                    patrol.actions.repeat(ctx => {
+                        for (const p of (line.polyline ?? [])) {
+                            const x = p.x + line.x;
+                            const y = p.y + line.y;
+                            ctx.moveTo(x, y, 20);
+                            console.debug("Movie polyline to ", x, y);
+                        }
+                    }, 5);
+                    this.add(patrol);
+                }
+                
             }
      
             // Use polygon for patrols
             const polys = mapProperties[0].getPolygons();
+            console.debug("polygons", polys);
             for (let poly of polys) {
-                poly.polygon?.push(poly.polygon[0]); // needs to end where it started
                 if (poly && poly.polygon) {
-                    const start = vec(poly.x, poly.y);
                     const firstpoint = poly.polygon[0];
-                    const patrol = new Actor({x: poly.x + firstpoint.x, y: poly.y + firstpoint.y, color: Color.Green, width: 25, height: 25});
-                    patrol.actions.repeatForever(ctx => {
+                    const start = vec(poly.x, poly.y);
+                    const patrol = new Actor({x: start.x + firstpoint.x, y: start.y + firstpoint.y, color: Color.Blue, width: 5, height: 5});
+                    patrol.actions.repeat(ctx => {
                         for (const p of (poly.polygon ?? [])) {
-                            ctx.moveTo(p.x + start.x, p.y + start.y, 100);
+                            const x = p.x + poly.x;
+                            const y = p.y + poly.y;
+                            ctx.moveTo(x, y, 20);
+                            console.debug("Movie polygon to ", x, y);
                         }
-                    })
+                        ctx.moveTo(start.x + firstpoint.x, start.y + firstpoint.y, 20); // needs to end where it started
+                    }, 5);
                     this.add(patrol);
                 }
             }
