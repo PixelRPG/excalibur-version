@@ -26,15 +26,16 @@ export class MapScene extends Scene {
                 if (line && line.polyline) {
                     const start = vec(line.x, line.y);
                     const firstpoint = line.polyline[0];
-                    const patrol = new Actor({x: start.x + firstpoint.x, y: start.y + firstpoint.y, color: Color.Green, width: 5, height: 5});
+                    const patrol = new Actor({x: Math.round(start.x + firstpoint.x), y: Math.round(start.y + firstpoint.y), color: Color.Green, width: 5, height: 5});
                     patrol.actions.repeat(ctx => {
-                        for (const p of line.polyline) {
-                            const x = p.x + line.x;
-                            const y = p.y + line.y;
+                        for (let i = 1; i < line.polyline.length; i++) {
+                            const p = line.polyline[i];
+                            const x = Math.round(p.x + line.x);
+                            const y = Math.round(p.y + line.y);
                             ctx.moveTo(x, y, 20);
                         }
                         ctx.moveTo(line.x + firstpoint.x, line.y + firstpoint.y, 20); // move to start position
-                    }, 1);
+                    });
                     this.add(patrol);
                 }
                 
@@ -47,12 +48,12 @@ export class MapScene extends Scene {
                 if (poly && poly.polygon) {
                     const firstpoint = poly.polygon[0];
                     const start = vec(poly.x, poly.y);
-                    const patrol = new Actor({x: start.x + firstpoint.x, y: start.y + firstpoint.y, color: Color.Blue, width: 5, height: 5});
+                    const patrol = new Actor({x: Math.round(start.x + firstpoint.x), y: Math.round(start.y + firstpoint.y), color: Color.Blue, width: 5, height: 5});
                     patrol.actions.repeat(ctx => {
                         for (let i = 1; i < poly.polygon.length; i++) {
                             const p = poly.polygon[i];
-                            const x = p.x + poly.x;
-                            const y = p.y + poly.y;
+                            const x = Math.round(p.x + poly.x);
+                            const y = Math.round(p.y + poly.y);
                             ctx.moveTo(x, y, 20);
                         }
                         ctx.moveTo(poly.x + firstpoint.x, poly.y + firstpoint.y, 20); // move to start position
