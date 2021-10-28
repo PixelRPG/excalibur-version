@@ -1,4 +1,4 @@
-import { Actor, Color, vec, CollisionType, ActorArgs } from "excalibur";
+import { Actor, vec, CollisionType, ActorArgs } from "excalibur";
 import { Resources } from "../resources";
 import { PrpgPlayerComponent } from "../components/player.component";
 
@@ -7,9 +7,8 @@ const DEFAULT_ARGS: ActorArgs = {
     width: 12,
     height: 12,
     scale: vec(1,1),
-    color: Color.Blue,
     collisionType: CollisionType.Active,
-  }
+}
 
 export class PrpgPlayerActor extends Actor {
     constructor(config?: ActorArgs) {
