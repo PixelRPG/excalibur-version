@@ -17,8 +17,8 @@ export class PrpgPlayerActor extends Actor {
     }
     onInitialize() {
       console.debug("onInitialize");
-      const spritesheet = Resources.misa.getSpriteSheet();
-      this.graphics.use(spritesheet.sprites[0]);
+      const frontWalk = Resources.scientist.getAnimation('front-walk');
+      this.graphics.use(frontWalk);
       this.graphics.offset = vec(0, -12),
       this.on('pointerup', () => {
         console.debug('pointerup');

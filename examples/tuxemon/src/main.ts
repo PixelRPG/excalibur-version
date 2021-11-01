@@ -25,7 +25,7 @@ const start = async () => {
    
    // game.toggleDebug();
 
-   const loader = new Loader([Resources.map, Resources.misa]);
+   const loader = new Loader([Resources.map, Resources.scientist]);
    loader.backgroundColor = Color.Black.toString();
    await game.start(loader)
 }
