@@ -1,12 +1,13 @@
 import "./files";
-import {  ImageSource } from "excalibur";
-import { TiledMapResource } from '@excaliburjs/plugin-tiled';
+import { TiledMapResource } from '@excaliburjs/plugin-tiled/src/index';
+import { AsepriteResource } from "@excaliburjs/plugin-aseprite/src/index";
 
-import misa from "./assets/misa-front.png";
+import misa from "./assets/sprites/tuxemon-misa/tuxemon-misa.json";
+import misaCharSet from "./assets/sprites/tuxemon-misa/tuxemon-misa.png";
 import map from './assets/example-city.tmx';
 
 let Resources = {
-  misa: new ImageSource(misa),
+  misa: new AsepriteResource(misa, false, misaCharSet),
   map: new TiledMapResource(map),
 };
 

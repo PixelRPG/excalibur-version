@@ -1,8 +1,9 @@
-import { Experiments, Flags, Engine, Input, Loader, Color, DisplayMode } from 'excalibur';
+import { Flags, Engine, Input, Loader, Color, DisplayMode } from 'excalibur';
 import { Resources } from "./resources";
 import { MapScene } from "./scenes/map.scene";
 
-Flags.enable(Experiments.WebGL);
+Flags.useWebGL();
+// Flags.useCanvasGraphicsContext();
 
 const start = async () => {
 
@@ -12,7 +13,7 @@ const start = async () => {
       pointerScope: Input.PointerScope.Canvas,
       antialiasing: false,
       snapToPixel: true,
-      suppressPlayButton: true,
+      suppressPlayButton: false,
       backgroundColor: Color.Black,
    });
 

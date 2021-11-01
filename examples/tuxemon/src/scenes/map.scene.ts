@@ -1,5 +1,5 @@
 import { Scene, Engine, vec, Actor, Color } from 'excalibur';
-import { TiledMapResource } from '@excaliburjs/plugin-tiled';
+import { TiledMapResource } from '@excaliburjs/plugin-tiled/src/index';
 import { PrpgPlayerSystem } from "../systems/player.system";
 import { PrpgPlayerActor } from '../actors/player.actor';
 

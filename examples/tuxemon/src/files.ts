@@ -1,3 +1,16 @@
-declare module "*.png";
-declare module "*.html";
-declare module "*.tmx";
+declare module "*.png" {
+    const pngPath: string;
+    export default pngPath;
+}
+declare module "*.html" {
+    export const htmlPath: string;
+    export default htmlPath;
+}
+declare module "*.tmx" {
+    const tmxPath: string;
+    export default tmxPath;
+}
+declare module "*.json" {
+    const jsonPath: string;
+    export default jsonPath;
+}
