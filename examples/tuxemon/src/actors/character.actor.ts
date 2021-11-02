@@ -1,6 +1,5 @@
 import { Actor, vec, CollisionType, ActorArgs } from "excalibur";
 import { PrpgCharacterComponent } from "../components/character.component";
-import { PrpgPlayerComponent } from "../components/player.component";
 import type { AsepriteResource } from "@excaliburjs/plugin-aseprite/src/index";
 
 const DEFAULT_ARGS: ActorArgs = {
@@ -11,13 +10,13 @@ const DEFAULT_ARGS: ActorArgs = {
     collisionType: CollisionType.Active,
 }
 
-export class PrpgPlayerActor extends Actor {
+export class PrpgCharacterActor extends Actor {
     constructor(spriteSheet: AsepriteResource, config?: ActorArgs) {
       super({...DEFAULT_ARGS, ...config});
       this.addComponent(new PrpgCharacterComponent(spriteSheet));
-      this.addComponent(new PrpgPlayerComponent());
     }
     onInitialize() {
-      console.debug("[PrpgPlayerActor] onInitialize");
+      console.debug("[PrpgCharacterActor] onInitialize");
+
     }
   }

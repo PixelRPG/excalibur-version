@@ -1,4 +1,4 @@
-import "./files";
+import "./types/files";
 import { TiledMapResource } from '@excaliburjs/plugin-tiled/src/index';
 import { AsepriteResource } from "@excaliburjs/plugin-aseprite/src/index";
 

@@ -1,11 +1,12 @@
 import { System, SystemType, Input, BoundingBox } from "excalibur";
+import { PrpgCharacterComponent } from "../components/character.component";
 import { PrpgPlayerComponent, PRPG_PLAYER_TYPE } from "../components/player.component";
 import { PrpgPlayerActor } from "../actors/player.actor";
 import { BodyComponent, TransformComponent, MotionComponent, GraphicsComponent, ColliderComponent, ActionsComponent } from "excalibur";
 import { Resources } from "../resources";
 import { MapScene } from "../scenes/map.scene";
 
-export class PrpgPlayerSystem extends System<PrpgPlayerComponent | BodyComponent | TransformComponent | MotionComponent | GraphicsComponent | ColliderComponent | ActionsComponent> {
+export class PrpgPlayerSystem extends System<PrpgPlayerComponent | PrpgCharacterComponent | BodyComponent | TransformComponent | MotionComponent | GraphicsComponent | ColliderComponent | ActionsComponent> {
     public readonly types = [PRPG_PLAYER_TYPE] as const;
     public priority = 99;
     public systemType = SystemType.Update;

@@ -1,7 +1,9 @@
 import { Scene, Engine, vec, Actor, Color } from 'excalibur';
 import { TiledMapResource } from '@excaliburjs/plugin-tiled/src/index';
+import { PrpgCharacterSystem } from "../systems/character.system";
 import { PrpgPlayerSystem } from "../systems/player.system";
 import { PrpgPlayerActor } from '../actors/player.actor';
+import { Resources } from '../resources';
 
 export class MapScene extends Scene {
 
@@ -67,9 +69,10 @@ export class MapScene extends Scene {
 
     public onInitialize(engine: Engine) {
         this.activeTiledMap.addTiledMapToScene(this);
+        this.world.add(new PrpgCharacterSystem());
         this.world.add(new PrpgPlayerSystem(engine.input));
 
-        const player = new PrpgPlayerActor();
+        const player = new PrpgPlayerActor(Resources.scientist);
         this.add(player);
         
         this.initTiledMapProperties();
