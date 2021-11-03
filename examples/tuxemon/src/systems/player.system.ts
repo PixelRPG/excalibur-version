@@ -1,4 +1,4 @@
-import { System, SystemType, Input, BoundingBox } from "excalibur";
+import { System, SystemType, Input, BoundingBox, Logger } from "excalibur";
 import { PrpgCharacterComponent } from "../components/character.component";
 import { PrpgPlayerComponent, PRPG_PLAYER_TYPE } from "../components/player.component";
 import { PrpgPlayerActor } from "../actors/player.actor";
@@ -32,17 +32,30 @@ export class PrpgPlayerSystem extends System<PrpgPlayerComponent | PrpgCharacter
         const body = entity.get(BodyComponent);
         body.vel.setTo(0, 0);
         const speed = 64;
-        if (this.input.keyboard.isHeld(Input.Keys.Right)) {
+        const pad1 = this.input.gamepads.at(0);
+        const keyboard = this.input.keyboard;
+        const axesLeftX = pad1.getAxes(Input.Axes.LeftStickX);
+        const axesLeftY = pad1.getAxes(Input.Axes.LeftStickY);
+
+        if (keyboard.isHeld(Input.Keys.Right) || pad1.isButtonPressed(Input.Buttons.DpadRight)) {
            body.vel.x = speed;
         }
-        if (this.input.keyboard.isHeld(Input.Keys.Left)) {
+        if (keyboard.isHeld(Input.Keys.Left) || pad1.isButtonPressed(Input.Buttons.DpadLeft)) {
            body.vel.x = -speed;
         }
-        if (this.input.keyboard.isHeld(Input.Keys.Up)) {
+        if (keyboard.isHeld(Input.Keys.Up) || pad1.isButtonPressed(Input.Buttons.DpadUp)) {
            body.vel.y = -speed;
         }
-        if (this.input.keyboard.isHeld(Input.Keys.Down)) {
+        if (keyboard.isHeld(Input.Keys.Down) || pad1.isButtonPressed(Input.Buttons.DpadDown)) {
            body.vel.y = speed;
+        }
+
+        // Axes movement
+        if (Math.abs(axesLeftX) > 0) {
+            body.vel.x = axesLeftX * speed;
+        }
+        if (Math.abs(axesLeftY) > 0) {
+            body.vel.y = axesLeftY * speed;
         }
     }
 
