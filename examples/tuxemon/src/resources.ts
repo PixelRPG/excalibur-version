@@ -4,11 +4,11 @@ import { AsepriteResource } from "@excaliburjs/plugin-aseprite/src/index";
 
 import scientist from "./assets/sprites/scientist/scientist.json";
 import scientistCharSet from "./assets/sprites/scientist/scientist.png";
-import map from './assets/maps/example-city.tmx';
+import playerHouseBedroom from './assets/maps/player_house_bedroom.tmx';
 
 let Resources = {
   scientist: new AsepriteResource(scientist, false, scientistCharSet),
-  map: new TiledMapResource(map),
+  map: new TiledMapResource(playerHouseBedroom),
 };
 
 export { Resources };

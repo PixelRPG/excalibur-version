@@ -24,5 +24,6 @@
     "examples/*",
     "packages/*",
     "packages/tile-extruder/workspaces/*"
-  ]
+  ],
+  "packageManager": "yarn@3.1.0"
 }
