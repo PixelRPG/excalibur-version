@@ -1,4 +1,4 @@
-import { Component } from "excalibur";
+import { Component } from 'excalibur';
 
 export const PRPG_PLAYER_TYPE = 'prpg.player';
 

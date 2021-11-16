@@ -1,13 +1,13 @@
-import "./types/files";
+import './types/files';
 import { Loadable } from 'excalibur';
 import { TiledMapResource, TiledMap } from '@excaliburjs/plugin-tiled/src/index';
-import { AsepriteResource } from "@excaliburjs/plugin-aseprite/src/index";
+import { AsepriteResource } from '@excaliburjs/plugin-aseprite/src/index';
 
 // Sprites
-import scientist from "./assets/sprites/scientist/scientist.json";
+import scientist from './assets/sprites/scientist/scientist.json';
 
 // Charsets
-import scientistCharSet from "./assets/sprites/scientist/scientist.png";
+import scientistCharSet from './assets/sprites/scientist/scientist.png';
 
 // Maps
 import playerHouseBedroom from './assets/maps/player_house_bedroom.tmx';
@@ -19,17 +19,16 @@ class Resources {
   private static instance?: Resources;
 
   public sprites = {
-    scientist: new AsepriteResource(scientist, false, scientistCharSet),
+    scientist: new AsepriteResource(scientist, false, scientistCharSet)
   };
   public maps = {
     'player_house_bedroom.tmx': new TiledMapResource(playerHouseBedroom),
     'player_house_downstairs.tmx': new TiledMapResource(playerHouseDownstairs),
-    'taba_town.tmx': new TiledMapResource(tabaTown),
+    'taba_town.tmx': new TiledMapResource(tabaTown)
   }
 
-  private constructor() {
-
-  }
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  private constructor() {}
 
   public static getSingleton() {
     if (Resources.instance) {
@@ -39,17 +38,17 @@ class Resources {
     return Resources.instance;
   }
 
-  private toArray<T = any>(obj: {[key:string]: Loadable<T>}) {
+  private _toArray<T = any>(obj: {[key:string]: Loadable<T>}) {
     const arr = Object.keys(obj).map((key) => obj[key]);
     return arr;
   }
 
   public getMapArr() {
-    return this.toArray<TiledMap>(this.maps);
+    return this._toArray<TiledMap>(this.maps);
   }
 
   public getSpriteArr() {
-    return this.toArray(this.sprites);
+    return this._toArray(this.sprites);
   }
 }
 

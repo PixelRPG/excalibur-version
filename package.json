@@ -25,5 +25,7 @@
     "packages/*",
     "packages/tile-extruder/workspaces/*"
   ],
-  "packageManager": "yarn@3.1.0"
+  "devDependencies": {
+    "@pixelrpg/eslint-config": "file:packages/eslint-config"
+  }
 }

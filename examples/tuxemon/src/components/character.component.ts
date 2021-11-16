@@ -1,6 +1,6 @@
-import { Component } from "excalibur";
-import { Direction } from "../types/direction";
-import type { AsepriteResource } from "@excaliburjs/plugin-aseprite/src/index";
+import { Component } from 'excalibur';
+import { Direction } from '../types/direction';
+import type { AsepriteResource } from '@excaliburjs/plugin-aseprite/src/index';
 
 export const PRPG_CHARACTER_TYPE = 'prpg.player';
 

@@ -1,0 +1,25 @@
+{
+    "name": "@pixelrpg/eslint-config",
+    "description": "Default ESLint configuration for PixelRPG",
+    "version": "2.0.0-alpha.0",
+    "author": "Pascal Garber <pascal@artandcode.studio>",
+    "contributors": [],
+    "main": "index.js",
+    "module": "index.js",
+    "source": "index.js",
+    "files": [
+      "index.js"
+    ],
+    "license": "MIT",
+    "keywords": [
+      "PixelRPG",
+      "eslint",
+      "eslint-plugin"
+    ],
+    "dependencies": {
+      "@typescript-eslint/eslint-plugin": "^5.3.1",
+      "@typescript-eslint/parser": "^5.3.1",
+      "eslint": "^8.2.0",
+      "typescript": "^4.4.4"
+    }
+  }
