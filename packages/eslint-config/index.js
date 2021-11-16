@@ -1,3 +1,4 @@
+// Based on https://github.com/excaliburjs/Excalibur/blob/main/.eslintrc.json
 module.exports = {
   'env': {
     'browser': true,
@@ -77,7 +78,7 @@ module.exports = {
     'jsdoc/newline-after-description': 0,
     'jsdoc/no-multi-asterisks': 0,
     'jsdoc/check-tag-names': [
-      'error', { 'definedTags': ['hidden', 'internal', 'source', 'obsolete', 'warning', 'notimplemented', 'credit', 'typedoc']}
+      'error', { 'definedTags': ['hidden', 'internal', 'source', 'obsolete', 'warning', 'notimplemented', 'credit', 'typedoc'] }
     ]
   }
 };

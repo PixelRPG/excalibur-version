@@ -1,5 +1,5 @@
 import './types/files';
-import { Loadable } from 'excalibur';
+import { Loadable, Engine } from 'excalibur';
 import { TiledMapResource, TiledMap } from '@excaliburjs/plugin-tiled/src/index';
 import { AsepriteResource } from '@excaliburjs/plugin-aseprite/src/index';
 
@@ -27,8 +27,9 @@ class Resources {
     'taba_town.tmx': new TiledMapResource(tabaTown)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  private constructor() {}
+  private constructor() {
+    //
+  }
 
   public static getSingleton() {
     if (Resources.instance) {
@@ -47,9 +48,19 @@ class Resources {
     return this._toArray<TiledMap>(this.maps);
   }
 
+  public getMapByName(name: string) {
+    return this.maps[name];
+  }
+
   public getSpriteArr() {
     return this._toArray(this.sprites);
   }
+
+  public getSpriteByName(name: string) {
+    return this.sprites[name];
+  }
 }
 
-export { Resources };
+const resources = Resources.getSingleton();
+
+export { resources };

@@ -3,7 +3,8 @@ import { PrpgCharacterComponent } from '../components/character.component';
 import type { AsepriteResource } from '@excaliburjs/plugin-aseprite/src/index';
 
 const DEFAULT_ARGS: ActorArgs = {
-  pos: vec(100, 100),
+  name: 'character',
+  pos: vec(0, 0),
   width: 12,
   height: 12,
   scale: vec(1,1),
