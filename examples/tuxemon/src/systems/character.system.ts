@@ -12,6 +12,7 @@ export class PrpgCharacterSystem extends System<PrpgCharacterComponent | BodyCom
     public priority = 98;
     public systemType = SystemType.Update;
     private scene: MapScene;
+    private resources = Resources.getSingleton();
 
     constructor() {
         super();
@@ -26,40 +27,40 @@ export class PrpgCharacterSystem extends System<PrpgCharacterComponent | BodyCom
         // Right
         if(motion.vel.x > 0) {
             character.direction = Direction.RIGHT;
-            const animation = Resources.scientist.getAnimation(CharacterAnimation.RIGHT_WALK);
+            const animation = this.resources.sprites.scientist.getAnimation(CharacterAnimation.RIGHT_WALK);
             graphics.use(animation);
         }
         // Left
         if(motion.vel.x < 0) {
             character.direction = Direction.LEFT;
-            const animation = Resources.scientist.getAnimation(CharacterAnimation.LEFT_WALK);
+            const animation = this.resources.sprites.scientist.getAnimation(CharacterAnimation.LEFT_WALK);
             graphics.use(animation);
         }
         // Up
         if(motion.vel.y < 0) {
             character.direction = Direction.UP;
-            const animation = Resources.scientist.getAnimation(CharacterAnimation.BACK_WALK);
+            const animation = this.resources.sprites.scientist.getAnimation(CharacterAnimation.BACK_WALK);
             graphics.use(animation);
         }
         // Down
         if(motion.vel.y > 0) {
             character.direction = Direction.DOWMN;
-            const animation = Resources.scientist.getAnimation(CharacterAnimation.FRONT_WALK);
+            const animation = this.resources.sprites.scientist.getAnimation(CharacterAnimation.FRONT_WALK);
             graphics.use(animation);
         }
 
         // Stands sill
         if (motion.vel.y === 0 && motion.vel.x === 0) {
-            let animation = Resources.scientist.getAnimation(CharacterAnimation.FRONT);
+            let animation = this.resources.sprites.scientist.getAnimation(CharacterAnimation.FRONT);
             switch (character.direction) {
                 case Direction.RIGHT:
-                    animation = Resources.scientist.getAnimation(CharacterAnimation.RIGHT);
+                    animation = this.resources.sprites.scientist.getAnimation(CharacterAnimation.RIGHT);
                     break;
                 case Direction.LEFT:
-                    animation = Resources.scientist.getAnimation(CharacterAnimation.LEFT);
+                    animation = this.resources.sprites.scientist.getAnimation(CharacterAnimation.LEFT);
                     break;
                 case Direction.UP:
-                    animation = Resources.scientist.getAnimation(CharacterAnimation.BACK);
+                    animation = this.resources.sprites.scientist.getAnimation(CharacterAnimation.BACK);
                     break;
             }
             graphics.use(animation);
@@ -74,7 +75,7 @@ export class PrpgCharacterSystem extends System<PrpgCharacterComponent | BodyCom
         const characterQuery = this.scene.world.queryManager.createQuery<PrpgCharacterComponent>([PRPG_CHARACTER_TYPE]);
 
         const entities = characterQuery.getEntities() as PrpgCharacterActor[];
-        const front = Resources.scientist.getAnimation('front');
+        const front = this.resources.sprites.scientist.getAnimation('front');
         for (const entity of entities) {
             entity.graphics.use(front);
             entity.graphics.offset = vec(0, -12),

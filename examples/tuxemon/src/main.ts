@@ -5,8 +5,9 @@ import { MapScene } from "./scenes/map.scene";
 Flags.useWebGL();
 // Flags.useCanvasGraphicsContext();
 
-const start = async () => {
+const resources = Resources.getSingleton();
 
+const start = async () => {
 
    const logger = Logger.getInstance();
    const game = new Engine({ 
@@ -43,8 +44,11 @@ const start = async () => {
       logger.debug('axis', ev.axis, ev.value);
    });
 
-   game.add('map', new MapScene(Resources.map));
-   game.goToScene('map');
+   const mapNames = Object.keys(resources.maps);
+   for (const mapName of mapNames) {
+      game.add(mapName, new MapScene(resources.maps[mapName]));
+   }
+   game.goToScene(mapNames[0]);
 
    logger.debug("pixelRatio", game.pixelRatio);
    logger.debug("isHiDpi", game.isHiDpi);
@@ -52,7 +56,7 @@ const start = async () => {
    // game.toggleDebug();
    logger.defaultLevel = LogLevel.Debug;
 
-   const loader = new Loader([Resources.map, Resources.scientist]);
+   const loader = new Loader([...resources.getMapArr(), ...resources.getSpriteArr()]);
    loader.backgroundColor = Color.Black.toString();
    await game.start(loader)
 }

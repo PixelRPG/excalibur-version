@@ -7,7 +7,8 @@ import { Resources } from '../resources';
 
 export class MapScene extends Scene {
 
-    logger = Logger.getInstance();
+    public logger = Logger.getInstance();
+    public resources = Resources.getSingleton();
 
     constructor(readonly activeTiledMap: TiledMapResource) {
         super();
@@ -79,7 +80,7 @@ export class MapScene extends Scene {
         this.world.add(new PrpgCharacterSystem());
         this.world.add(new PrpgPlayerSystem(engine.input));
 
-        const player = new PrpgPlayerActor(Resources.scientist);
+        const player = new PrpgPlayerActor(this.resources.sprites.scientist);
         this.add(player);
         
         this.initTiledMapProperties();

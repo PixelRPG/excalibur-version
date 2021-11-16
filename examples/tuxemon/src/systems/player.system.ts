@@ -11,6 +11,7 @@ export class PrpgPlayerSystem extends System<PrpgPlayerComponent | PrpgCharacter
     public priority = 99;
     public systemType = SystemType.Update;
     private scene: MapScene;
+    private resources = Resources.getSingleton();
 
     constructor(private readonly input: Input.EngineInput) {
         super();
@@ -22,8 +23,8 @@ export class PrpgPlayerSystem extends System<PrpgPlayerComponent | PrpgCharacter
         const mapBox = new BoundingBox({
            left: 0,
            top: 0,
-           right: Resources.map.data.width * Resources.map.data.tileWidth,
-           bottom: Resources.map.data.height * Resources.map.data.tileHeight,
+           right: this.resources.maps["player_house_bedroom.tmx"].data.width * this.resources.maps["player_house_bedroom.tmx"].data.tileWidth,
+           bottom: this.resources.maps["player_house_bedroom.tmx"].data.height * this.resources.maps["player_house_bedroom.tmx"].data.tileHeight,
         });
         this.scene.camera.strategy.limitCameraBounds(mapBox);
     }
