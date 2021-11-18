@@ -1,11 +1,10 @@
 import { Component } from 'excalibur';
 import { Direction } from '../types/direction';
 import type { AsepriteResource } from '@excaliburjs/plugin-aseprite/src/index';
+import { PrpgComponentType } from '../types/component-type';
 
-export const PRPG_CHARACTER_TYPE = 'prpg.player';
-
-export class PrpgCharacterComponent extends Component<typeof PRPG_CHARACTER_TYPE> {
-  public readonly type = PRPG_CHARACTER_TYPE;
+export class PrpgCharacterComponent extends Component<PrpgComponentType.CHARACTER> {
+  public readonly type = PrpgComponentType.CHARACTER;
   public direction: Direction = Direction.DOWMN;
   constructor(public spriteSheet: AsepriteResource) {
     super();

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="64" height="60" tilewidth="16" tileheight="16" infinite="0" nextlayerid="8" nextobjectid="159">
+<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="64" height="60" tilewidth="16" tileheight="16" infinite="0" nextlayerid="8" nextobjectid="161">
  <properties>
   <property name="edges" value="clamped"/>
  </properties>
@@ -50,162 +50,176 @@
   </tile>
  </tileset>
  <layer id="1" name="Tile Layer 1" width="64" height="60">
+  <properties>
+   <property name="zindex" type="int" value="-3"/>
+  </properties>
   <data encoding="base64" compression="zlib">
-   eAHtmk1LAzEQhnsRf5l6UxCsB78OWv3HPal4EH+HGdrQNOwm82ymO6W7hWFN887Hk0kaC12fLRY3wK6D9piNsIh2DdhFf8zsUtvMz9Zg6v3v2y+yLl1rQ/b/MsToMxKHaPt46PsW/KRuKy3l7NNPnV/WRdYgXx9tn1bB971g2jhUl9fbMm7hp3Vb6Vt4c9+Zf3MG4meBPK36dKg4eQ+tx4eq2yquNW8er6XOuxH2T16vxXje/7t7sKX/Y/ha9LsUYwyGlhyl2i3mWmobw9eCsRRjDIaWHKXaLeY0tV0Yfs5fwVgWjKUYGn5PTal2izlPNk1uC8ZSDE0NnppS7RZzGrZ4/uPZlfElPMcxT4wRx7UnZVzAVy2/9zzEwXJvvlp+DAQdavm95yEOlmv44vnXaEVT0tPzj4Ggg5bJSwdxsNyLS5sXA0EHbR1eOoiD5V5c2rwYCDpo69Do5H8VjY5oIA6Wk1o8tBgIOngwkZwQB8tJLR5aDAQdPJhIToiD5aQWDy0Ggg4eTCQnxMFyUouHFgNBBw8mkhPiYDmpxUOLgaCDBxPJCXGwnNTiocVA0MGDieSEOFhOahmild8ILLd2P+D7EQaCDkOYtD7C/hbseWsvE+N/SthlDV6Dxb0gT81+gO3Ecm0vh+hWgfExWOx//tTsBwwEHYZwEZ90DzyEtUh/Q/kRxrVYEAfLa/lb51N+Tb/zfBgIOuT5rMcz/+78z/2vn/d8/8HtjOV5Putxuv/l/tPceWkNGAg6pLkO8Xd+B8oZ+Az2ldl3GHflhzhY3pXT8j0pSNYg3nty5/0Guz3ft78T5O/qs/T9ZyL8XX3O+x7Hp9j/mX//jMdedz2t+v8Pdijcbg==
+   eAHtWstOw0AMzAXxZcANJCTKgdehFP64J0AcEN+BLWo1tZJthnWjsp5KVrSt1/I8nG2krE+67gqIS8k95kCwaO4awK75x4xdeyN+jIPs+o/5RXkZ4gbx/0JqjAVSB8kdw4N+H4Ef6TsqF8U5lp8dv/KiHHh+puq0kr0vhZhaB83z/dasa/CjfUfl1+D1e4n/dwbsXqDXKJ0OVcdrGL0+VN9RdaPx+no1fd7M4B/fb8T6P/kf1QflB60/d/4F6LHW8KN8Z8eP8sX8/f8BzsAZLHGKznOpFn/brx05Ike1HrD5t9nV9fkf7wlWo7Yn7qev6YF5PGDzP5XvUj7nfx7NpmrFPOpBD8R4QJ+9ySU5oAfoAXqAHqAH6AF6gB6gB+iBrB7QdwQWm7hN9nyk2J8lHjfxlAz/Qw+7crCUMC/otXU/rATjvYTp768Z/ND3wJ1w0X+H8lXWrd8X+/gz6O31JP7t/FP/9ue95H89/1o/8zx+fwbqDLxJvLv4kLXf28K6k49yYOeennlfEtenu/HdIP4hnVX3zyT4h3T2utu6Rf2Jf3fGTeuha5T+PwS++54=
   </data>
  </layer>
  <layer id="2" name="Tile Layer 2" width="64" height="60">
+  <properties>
+   <property name="zindex" type="int" value="-2"/>
+  </properties>
   <data encoding="base64" compression="zlib">
-   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
+   eAHtWcluVTEMvWXqRzBTxCQoC1RgD3QCJDZtQUwSs4SgLQXEsOQ/+AGmn2HawEcw7RiOF5aCFd/Ejl9bCSId+dmxnRwnvu++tutsY35D2f/c+q57sabrXgKvgNfAG4DsjNL8l6Gu+wp8A74DPwCO1eRt5B/0qOF/EPt4C77vgPfAB+AjkI7S/Eb4bwI2A1uArUBpLDn4j67rugNAjdwPvxJ/4k7jJ/b7C/hN+17bdUNAOkrzxxF3AhgHJoBJoDQ8/OfAaRaokTMG/rvAdzewB9gL7APSUZq/A753gXlgAVgExrB+3/Dwl/mODUvL33ru/Edw5oeBUeAIQP05A/SNWcx7MYfYXP+sFH++8ynfQ6jjJexzELiMvLn+WU38Lw6IO9WT+Of6ZzXxT+9C7vMNcGBcSGp1PrHzPMnU5yr0XO9QX1jHNGIINMYgqY+ph7WR6//c/X/Uk0PmTu8KnW1upD5aT2mxuXxsS/nT853B81LW8l9UeGzDc3w7sAMYAXYCKTfikHu2pT6D4P8c69LZM0jXwD4sc/dF4z8FvtPASeAUcBpIuRH/3LPtOuxpP+Q+34TPahk5/vT9fQ98l4D7wAPgISD5555tNbwinn8169T45PhT3CzOSOIabHynPT3M+/Hwr333tfrl+KfnzHylbOVv3Wftu6/V73GmF2t7+ApinzjwFDHWfVrrVet/Bns5C5Bk8D21yNr1vH7WetX6M0fmTtIzatfz+tXWbQN+vw0Dtf4errmY2vW8frV1+4Tvqc9ArX+Oi7SN404wJsT9YHvtel4/b91KcZKrpve9bx5FTUrrtM5761aK0/hKex9/8i2t0zrfWj8tXvLU9BJ/LX+UvbV+WrzGV9qZP/e7lFr+KHtUHWUeyTOnT6G/mf8t8fxjf5k3Wo+qo8zD+y9J5q/5ybzRenQ9OZ/GR9r7+E/+Q89/2fesR5+3zMfnFS3lOXv16H3JfLIeUbqXr4yL2o+WR9YjSpc8vHrUfrQ8Wl1a7V6+Mq51H6V4rS7S/v/3X/zvP3nWOb10fq3z8pxXWpfvgYPeT2v9ouPlHYjOL/PV1tfa/7V5pZ/kL+ejdVkPTbf+/UfLU7Kn/KkXSv6t89H1bM2X8qfPrflK8a31i46X/KPzy3yl+vB8bf+X/CS/Pn1B+ZsAxfC+WqWsh6bX9n/Jj/ZOf9fUhvz+0/5voO3Tam+tnzVe4221W9fV/K31avW38tT8W/fB8VpdvHbuf5Yyj8bHapd5vTrXIUpy/7OUea08c/70/JB5vbq3bt64HB+Pzbu+jPPWzRvn4ZqL8a4v42Q9WnWt7zlvjovHxvlapaxHq671Pef1cOWY9L2B87XK1vpZ45kLS36/SbnxXJ+0rqv5t9bPGt/HyTJnXVfz1+oyKLuFY59v1P60ugzK3sfJMhe1v6g61uaxcNR86VlRu17JL6qOtXmszzmtBrXrlfxK9VnO+Wc4V/4+0HizPWpfpfos9zzzK8mofUXVMSpPiTfPR60XVceoPMyvJJd7vdJ+Vsu89V78AXj+GW8=
   </data>
  </layer>
  <layer id="3" name="Tile Layer 3" width="64" height="60">
+  <properties>
+   <property name="zindex" type="int" value="-1"/>
+  </properties>
   <data encoding="base64" compression="zlib">
-   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
+   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
   </data>
  </layer>
  <layer id="4" name="Above Player" width="64" height="60">
+  <properties>
+   <property name="zindex" type="int" value="1"/>
+  </properties>
   <data encoding="base64" compression="zlib">
    eAHtWkluwzAMVIvk1qe0fUfPfUGP6fKt7tvzul06ORARJhTgyrZqSSNgQJGhJM5IiB3HIeS3s/Vu7EXU30XVkwLTKXC0mm6usTNt/vm8Px+G8AK8Am/AO6BWRoFz7H2MMqsuZ5WY+7bfWxP//PP/cRDCJ/AFfAM/ALelf7f1vv+8X0P9JV2/h9bcet4K91RrYGrbum7iJwWkgBSQAlLAU4DvET3fG9dKzOPLsVa4ejyYq+d74xRrTwFv7y3WHtt9RsbVs/vZ7UU83hZrj60YbRWw/WXL6vDn7HN+LT7zMJ/rt3jKcn4t/lA+qTyL18KX67T62Q7Ns3GcX4tv9bPl+vlz9jm/Fj/3eWIt/FSnFJACUkAKSIG5FbBr6dzrlJx/g8UugSvgGrgBUu0E/0+eLujdr1SdpeLHHWnxl3NSSn+tIwWkgBSQAlJgbgVu8V73HXAPPACPwBNQc7NnXDVzGFO78Y/tmPlqGxvztn5tHFRvngL2WzZl82bVqN4U0PnpbcfFdw4FfgG9e0pc
   </data>
  </layer>
  <layer id="5" name="Above Player" width="64" height="60">
+  <properties>
+   <property name="zindex" type="int" value="2"/>
+  </properties>
   <data encoding="base64" compression="zlib">
    eAHt0bENACAMA7BKHAd8A/w/0BdYWOpIOSBOhBAgQIAAAQIECBD4J9BbxMjObMWs3L2zp+j+ip/bTIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIEXgUuqM0CPg==
   </data>
  </layer>
  <objectgroup color="#ff0000" id="6" name="Collision">
   <properties>
-   <property name="Collision" value=""/>
+   <property name="excalibur" type="bool" value="true"/>
   </properties>
-  <object id="1" type="collision" x="192" y="208" width="160" height="400"/>
-  <object id="2" type="collision" x="352" y="528" width="224" height="96"/>
-  <object id="3" type="collision" x="464" y="624" width="128" height="16"/>
-  <object id="4" type="collision" x="352" y="624" width="112" height="336"/>
-  <object id="5" type="collision" x="464" y="848" width="112" height="112"/>
-  <object id="6" type="collision" x="640" y="688" width="48" height="48"/>
-  <object id="7" type="collision" x="688" y="688" width="32" height="32"/>
-  <object id="8" type="collision" x="704" y="720" width="16" height="16"/>
-  <object id="9" type="collision" x="640" y="800" width="96" height="32"/>
-  <object id="10" type="collision" x="640" y="832" width="64" height="16"/>
-  <object id="11" type="collision" x="720" y="832" width="16" height="16"/>
-  <object id="12" type="collision" x="736" y="640" width="96" height="320"/>
-  <object id="13" type="collision" x="720" y="672" width="16" height="16"/>
-  <object id="14" type="collision" x="640" y="240" width="192" height="400"/>
-  <object id="15" type="collision" x="592" y="224" width="240" height="16"/>
-  <object id="16" type="collision" x="352" y="224" width="96" height="16"/>
-  <object id="17" type="collision" x="352" y="128" width="16" height="96"/>
-  <object id="18" type="collision" x="432" y="0" width="32" height="48"/>
-  <object id="19" type="collision" x="336" y="0" width="496" height="16"/>
-  <object id="22" type="collision" x="512" y="288" width="32" height="144"/>
-  <object id="23" type="collision" x="592" y="144" width="80" height="48"/>
-  <object id="24" type="collision" x="608" y="0" width="32" height="64"/>
-  <object id="25" type="collision" x="656" y="0" width="32" height="64"/>
-  <object id="26" type="collision" x="640" y="16" width="16" height="32"/>
-  <object id="27" type="collision" x="480" y="0" width="80" height="64"/>
-  <object id="28" type="collision" x="480" y="144" width="16" height="32"/>
-  <object id="29" type="collision" x="448" y="144" width="32" height="48"/>
-  <object id="30" type="collision" x="496" y="144" width="32" height="48"/>
-  <object id="31" type="collision" x="432" y="176" width="16" height="16"/>
-  <object id="32" type="collision" x="784" y="0" width="32" height="48"/>
-  <object id="33" type="collision" x="192" y="160" width="96" height="16"/>
-  <object id="34" type="collision" x="192" y="64" width="16" height="112"/>
-  <object id="35" type="collision" x="192" y="0" width="64" height="80"/>
-  <object id="36" type="collision" x="256" y="0" width="64" height="32"/>
-  <object id="37" type="collision" x="480" y="656" width="80" height="32"/>
-  <object id="38" type="collision" x="479" y="672" width="47" height="32"/>
-  <object id="39" type="collision" x="543" y="673" width="18" height="32"/>
-  <object id="40" type="collision" x="556" y="687" width="20" height="18"/>
-  <object id="41" type="collision" x="464" y="768" width="16" height="16"/>
-  <object id="42" type="collision" x="544" y="832" width="32" height="16"/>
-  <object id="43" type="collision" x="496" y="768" width="80" height="48"/>
-  <object id="44" type="collision" x="336" y="16" width="96" height="48"/>
-  <object id="45" type="collision" x="320" y="64" width="32" height="16"/>
-  <object id="46" type="collision" x="736" y="64" width="80" height="48"/>
-  <object id="47" type="collision" x="656" y="656" width="32" height="16"/>
-  <object id="48" type="collision" x="624" y="720" width="16" height="16"/>
-  <object id="49" type="collision" x="624" y="832" width="16" height="16"/>
-  <object id="50" type="collision" x="688" y="48" width="16" height="16"/>
-  <object id="51" type="collision" x="576" y="912" width="160" height="48"/>
-  <object id="52" type="collision" x="672" y="880" width="64" height="32"/>
-  <object id="53" type="collision" x="624" y="624" width="16" height="32"/>
-  <object id="54" type="collision" x="352" y="416" width="128" height="16">
+  <object id="1" type="BoxCollider" x="0" y="208" width="352" height="752"/>
+  <object id="2" type="BoxCollider" x="352" y="528" width="224" height="96"/>
+  <object id="3" type="BoxCollider" x="464" y="624" width="128" height="16"/>
+  <object id="4" type="BoxCollider" x="352" y="624" width="112" height="336"/>
+  <object id="5" type="BoxCollider" x="464" y="848" width="112" height="112"/>
+  <object id="6" type="BoxCollider" x="640" y="688" width="48" height="48"/>
+  <object id="7" type="BoxCollider" x="688" y="688" width="32" height="32"/>
+  <object id="8" type="BoxCollider" x="704" y="720" width="16" height="16"/>
+  <object id="9" type="BoxCollider" x="640" y="800" width="96" height="32"/>
+  <object id="10" type="BoxCollider" x="640" y="832" width="64" height="16"/>
+  <object id="11" type="BoxCollider" x="720" y="832" width="16" height="16"/>
+  <object id="12" type="BoxCollider" x="736" y="640" width="96" height="320"/>
+  <object id="13" type="BoxCollider" x="720" y="672" width="16" height="16"/>
+  <object id="14" type="BoxCollider" x="640" y="240" width="192" height="400"/>
+  <object id="15" type="BoxCollider" x="592" y="224" width="240" height="16"/>
+  <object id="16" type="BoxCollider" x="352" y="224" width="96" height="16"/>
+  <object id="17" type="BoxCollider" x="352" y="128" width="16" height="96"/>
+  <object id="18" type="BoxCollider" x="432" y="0" width="32" height="48"/>
+  <object id="19" type="BoxCollider" x="336" y="0" width="496" height="16"/>
+  <object id="22" type="BoxCollider" x="512" y="288" width="32" height="144"/>
+  <object id="23" type="BoxCollider" x="592" y="144" width="80" height="48"/>
+  <object id="24" type="BoxCollider" x="608" y="0" width="32" height="64"/>
+  <object id="25" type="BoxCollider" x="656" y="0" width="32" height="64"/>
+  <object id="26" type="BoxCollider" x="640" y="16" width="16" height="32"/>
+  <object id="27" type="BoxCollider" x="480" y="0" width="80" height="64"/>
+  <object id="28" type="BoxCollider" x="480" y="144" width="16" height="32"/>
+  <object id="29" type="BoxCollider" x="448" y="144" width="32" height="48"/>
+  <object id="30" type="BoxCollider" x="496" y="144" width="32" height="48"/>
+  <object id="31" type="BoxCollider" x="432" y="176" width="16" height="16"/>
+  <object id="32" type="BoxCollider" x="784" y="0" width="32" height="48"/>
+  <object id="33" type="BoxCollider" x="192" y="160" width="96" height="16"/>
+  <object id="34" type="BoxCollider" x="192" y="64" width="16" height="112"/>
+  <object id="35" type="BoxCollider" x="192" y="0" width="64" height="80"/>
+  <object id="36" type="BoxCollider" x="256" y="0" width="64" height="32"/>
+  <object id="37" type="BoxCollider" x="480" y="656" width="80" height="32"/>
+  <object id="38" type="BoxCollider" x="479" y="672" width="47" height="32"/>
+  <object id="39" type="BoxCollider" x="543" y="673" width="18" height="32"/>
+  <object id="40" type="BoxCollider" x="556" y="687" width="20" height="18"/>
+  <object id="41" type="BoxCollider" x="464" y="768" width="16" height="16"/>
+  <object id="42" type="BoxCollider" x="544" y="832" width="32" height="16"/>
+  <object id="43" type="BoxCollider" x="496" y="768" width="80" height="48"/>
+  <object id="44" type="BoxCollider" x="336" y="16" width="96" height="48"/>
+  <object id="45" type="BoxCollider" x="320" y="64" width="32" height="16"/>
+  <object id="46" type="BoxCollider" x="736" y="64" width="80" height="48"/>
+  <object id="47" type="BoxCollider" x="656" y="656" width="32" height="16"/>
+  <object id="48" type="BoxCollider" x="624" y="720" width="16" height="16"/>
+  <object id="49" type="BoxCollider" x="624" y="832" width="16" height="16"/>
+  <object id="50" type="BoxCollider" x="688" y="48" width="16" height="16"/>
+  <object id="51" type="BoxCollider" x="576" y="912" width="160" height="48"/>
+  <object id="52" type="BoxCollider" x="672" y="880" width="64" height="32"/>
+  <object id="53" type="BoxCollider" x="624" y="624" width="16" height="32"/>
+  <object id="54" type="BoxCollider" x="352" y="416" width="128" height="16">
    <properties>
     <property name="continue" value="down"/>
     <property name="enter_from" value="up"/>
     <property name="exit_to" value="down"/>
    </properties>
   </object>
-  <object id="55" type="collision" x="544" y="416" width="96" height="16">
+  <object id="55" type="BoxCollider" x="544" y="416" width="96" height="16">
    <properties>
     <property name="continue" value="down"/>
     <property name="enter_from" value="up"/>
     <property name="exit_to" value="down"/>
    </properties>
   </object>
-  <object id="56" type="collision" x="544" y="352" width="96" height="16">
+  <object id="56" type="BoxCollider" x="544" y="352" width="96" height="16">
    <properties>
     <property name="continue" value="down"/>
     <property name="enter_from" value="up"/>
     <property name="exit_to" value="down"/>
    </properties>
   </object>
-  <object id="57" type="collision" x="400" y="352" width="112" height="16">
+  <object id="57" type="BoxCollider" x="400" y="352" width="112" height="16">
    <properties>
     <property name="continue" value="down"/>
     <property name="enter_from" value="up"/>
     <property name="exit_to" value="down"/>
    </properties>
   </object>
-  <object id="58" type="collision" x="352" y="352" width="32" height="16">
+  <object id="58" type="BoxCollider" x="352" y="352" width="32" height="16">
    <properties>
     <property name="continue" value="down"/>
     <property name="enter_from" value="up"/>
     <property name="exit_to" value="down"/>
    </properties>
   </object>
-  <object id="59" type="collision" x="352" y="288" width="112" height="16">
+  <object id="59" type="BoxCollider" x="352" y="288" width="112" height="16">
    <properties>
     <property name="continue" value="down"/>
     <property name="enter" value="up"/>
     <property name="exit" value="down"/>
    </properties>
   </object>
-  <object id="60" type="collision" x="480" y="288" width="32" height="16">
+  <object id="60" type="BoxCollider" x="480" y="288" width="32" height="16">
    <properties>
     <property name="continue" value="down"/>
     <property name="enter" value="up"/>
     <property name="exit" value="down"/>
    </properties>
   </object>
-  <object id="61" type="collision" x="544" y="288" width="16" height="16">
+  <object id="61" type="BoxCollider" x="544" y="288" width="16" height="16">
    <properties>
     <property name="continue" value="down"/>
     <property name="enter" value="up"/>
     <property name="exit" value="down"/>
    </properties>
   </object>
-  <object id="62" type="collision" x="592" y="288" width="48" height="16">
+  <object id="62" type="BoxCollider" x="592" y="288" width="48" height="16">
    <properties>
     <property name="continue" value="down"/>
     <property name="enter" value="up"/>
     <property name="exit" value="down"/>
    </properties>
   </object>
-  <object id="63" type="collision" x="576" y="0" width="32" height="48"/>
-  <object id="64" type="collision" x="528" y="192" width="16" height="16"/>
-  <object id="65" type="collision" x="288" y="64" width="16" height="16"/>
-  <object id="66" type="collision-line" x="288" y="64">
+  <object id="63" type="BoxCollider" x="576" y="0" width="32" height="48"/>
+  <object id="64" type="BoxCollider" x="528" y="192" width="16" height="16"/>
+  <object id="65" type="BoxCollider" x="288" y="64" width="16" height="16"/>
+  <object id="66" type="BoxCollider" x="288" y="64">
    <polyline points="0,0 0,96"/>
   </object>
-  <object id="104" type="collision" x="304" y="-16" width="48" height="16"/>
-  <object id="105" type="collision" x="112" y="160" width="16" height="64"/>
-  <object id="106" type="collision" x="816" y="16" width="16" height="208"/>
-  <object id="113" type="collision" x="576" y="544" width="16" height="16"/>
-  <object id="141" type="collision" x="352" y="80" width="16" height="16"/>
-  <object id="153" type="collision" x="0" y="208" width="192" height="160"/>
-  <object id="154" type="collision" x="0" y="160" width="176" height="16"/>
-  <object id="158" type="collision" x="176" y="160" width="16" height="16">
+  <object id="104" type="BoxCollider" x="304" y="-16" width="48" height="16"/>
+  <object id="105" type="BoxCollider" x="112" y="160" width="16" height="64"/>
+  <object id="106" type="BoxCollider" x="816" y="16" width="16" height="208"/>
+  <object id="113" type="BoxCollider" x="576" y="544" width="16" height="16"/>
+  <object id="141" type="BoxCollider" x="352" y="80" width="16" height="16"/>
+  <object id="154" type="BoxCollider" x="0" y="160" width="176" height="16"/>
+  <object id="158" type="BoxCollider" x="176" y="160" width="16" height="16">
    <properties>
     <property name="continue" value="down"/>
     <property name="enter_from" value="up"/>
@@ -213,11 +227,16 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup color="#ffff00" id="7" name="Events">
-  <object id="67" name="Go to Player's house" type="event" x="688" y="720" width="16" height="16">
+ <objectgroup color="#ffff00" id="7" name="Objects">
+  <properties>
+   <property name="excalibur" type="bool" value="true"/>
+  </properties>
+  <object id="67" name="Go to Player's house" type="teleporter" x="688" y="720" width="16" height="16">
    <properties>
     <property name="act10" value="transition_teleport player_house_downstairs.tmx,5,7,0.5"/>
     <property name="cond10" value="is player_at"/>
+    <property name="map-name" value="player_house_downstairs.tmx"/>
+    <property name="teleport-spawn-name" value="From Outside"/>
    </properties>
   </object>
   <object id="68" name="Play Music" type="init" x="0" y="0" width="16" height="16">
@@ -888,6 +907,15 @@
     <property name="cond10" value="is player_moved"/>
     <property name="cond20" value="is player_at"/>
    </properties>
+  </object>
+  <object id="159" name="From players home" type="teleport-spawn" x="696" y="752">
+   <point/>
+  </object>
+  <object id="160" name="Camera" type="Camera" x="576" y="752">
+   <properties>
+    <property name="Zoom" type="float" value="2"/>
+   </properties>
+   <point/>
   </object>
  </objectgroup>
 </map>

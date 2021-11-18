@@ -1,15 +1,17 @@
 import { System, SystemType, Input, BoundingBox, Logger, Entity } from 'excalibur';
 import { PrpgCharacterComponent } from '../components/character.component';
-import { PrpgPlayerComponent, PRPG_PLAYER_TYPE } from '../components/player.component';
+import { PrpgPlayerComponent } from '../components/player.component';
+import { PrpgSpawnPointComponent } from '../components/spawn-point.component';
 import { PrpgPlayerActor } from '../actors/player.actor';
 import { BodyComponent, TransformComponent, MotionComponent, GraphicsComponent, ColliderComponent, ActionsComponent } from 'excalibur';
 import { resources } from '../resources';
 import { MapScene } from '../scenes/map.scene';
+import { PrpgComponentType } from '../types/component-type';
 
 export class PrpgPlayerSystem extends System<
 PrpgPlayerComponent | PrpgCharacterComponent | BodyComponent |
 TransformComponent | MotionComponent | GraphicsComponent | ColliderComponent | ActionsComponent> {
-    public readonly types = [PRPG_PLAYER_TYPE] as const;
+    public readonly types = [PrpgComponentType.PLAYER] as const;
     public priority = 99;
     public systemType = SystemType.Update;
     private scene: MapScene;
@@ -22,12 +24,16 @@ TransformComponent | MotionComponent | GraphicsComponent | ColliderComponent | A
     private _initCamera(entity: PrpgPlayerActor) {
       this.scene.camera.strategy.elasticToActor(entity, .9, .9);
       this.scene.camera.strategy.lockToActor(entity);
-      const map = resources.maps['player_house_bedroom.tmx'];
+      const tiledMap = this.scene.getMap();
+      if (!tiledMap) {
+        this.logger.warn('Current scene has no map!');
+        return;
+      }
       const mapBox = new BoundingBox({
         left: 0,
         top: 0,
-        right: map.data.width * map.data.tileWidth,
-        bottom: map.data.height * map.data.tileHeight
+        right: tiledMap.map.data.width * tiledMap.map.data.tileWidth,
+        bottom: tiledMap.map.data.height * tiledMap.map.data.tileHeight
       });
       this.scene.camera.strategy.limitCameraBounds(mapBox);
     }
@@ -74,37 +80,44 @@ TransformComponent | MotionComponent | GraphicsComponent | ColliderComponent | A
     /**
      * Init properties defined in tiled map
      */
-    private _initTiledMapProperties(entity: Entity) {
-      const mapProperties = this.scene.activeTiledMap.data.getExcaliburObjects();
+    private _handleSpawnPoints(playerEntity: Entity) {
+      const spawnPointQuery = this.scene.world.queryManager.createQuery<PrpgSpawnPointComponent>([PrpgComponentType.SPAWN_POINT]);
+      const spawnPointEntities = spawnPointQuery.getEntities();
 
-      if (mapProperties.length > 0) {
-        const body = entity.get(BodyComponent);
+      if (spawnPointEntities.length > 0) {
+        const spawnPointEntity = spawnPointEntities[0];
+        const body = playerEntity.get(BodyComponent);
+        const spawnPoint = spawnPointEntity.get(PrpgSpawnPointComponent);
         if (!body) {
           this.logger.warn('BodyComponent for player start position not found!');
           return;
         }
-        const start = mapProperties[0].getObjectByName('player-start');
-        if (start) {
-          body.pos.x = start.x;
-          body.pos.y = start.y;
+        if (spawnPoint) {
+          body.pos.x = spawnPoint.x;
+          body.pos.y = spawnPoint.y;
+          if (typeof (playerEntity as PrpgPlayerActor).z === 'number') {
+            (playerEntity as PrpgPlayerActor).z = spawnPoint.z; // TODO use component here?
+          }
+
+          this.scene.remove(spawnPointEntity);
         }
       }
     }
 
     public initialize?(scene: MapScene) {
       this.scene = scene;
-      const playerQuery = this.scene.world.queryManager.createQuery<PrpgPlayerComponent>([PRPG_PLAYER_TYPE]);
+      const playerQuery = this.scene.world.queryManager.createQuery<PrpgPlayerComponent>([PrpgComponentType.PLAYER]);
 
       const players = playerQuery.getEntities() as PrpgPlayerActor[];
       for (const player of players) {
         this._initCamera(player);
-        this._initTiledMapProperties(player);
       }
     }
 
-    public update(entities: Entity[], delta: number) {
+    public update(entities: (Entity | PrpgPlayerActor)[], delta: number) {
       for (const entity of entities) {
         this._handleInput(entity);
+        this._handleSpawnPoints(entity);
       }
     }
 }

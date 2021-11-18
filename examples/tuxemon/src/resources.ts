@@ -14,14 +14,21 @@ import playerHouseBedroom from './assets/maps/player_house_bedroom.tmx';
 import playerHouseDownstairs from './assets/maps/player_house_downstairs.tmx';
 import tabaTown from './assets/maps/taba_town.tmx';
 
+interface Sprites {
+  [key: string]: AsepriteResource;
+}
+interface Maps {
+  [key: string]: TiledMapResource;
+}
 class Resources {
 
   private static instance?: Resources;
 
-  public sprites = {
+  public sprites: Sprites = {
     scientist: new AsepriteResource(scientist, false, scientistCharSet)
   };
-  public maps = {
+
+  public maps: Maps = {
     'player_house_bedroom.tmx': new TiledMapResource(playerHouseBedroom),
     'player_house_downstairs.tmx': new TiledMapResource(playerHouseDownstairs),
     'taba_town.tmx': new TiledMapResource(tabaTown)

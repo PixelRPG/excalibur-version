@@ -1,11 +1,10 @@
-import { Component, BodyComponent } from 'excalibur';
+import { Component } from 'excalibur';
+import { PrpgComponentType } from '../types/component-type';
 
-export const PRPG_CHARACTER_TYPE = 'prpg.teleporter';
+export class PrpgTeleporterComponent extends Component<PrpgComponentType.TELEPORTER> {
+  public readonly type = PrpgComponentType.TELEPORTER;
 
-export class PrpgTeleporterComponent extends Component<typeof PRPG_CHARACTER_TYPE> {
-  public readonly type = PRPG_CHARACTER_TYPE;
-
-  constructor(public map: string, public addressee: string) {
+  constructor(public mapName: string, public spawnName: string) {
     super();
   }
 }

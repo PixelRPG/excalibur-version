@@ -6,11 +6,11 @@ export interface TeleportProps extends ActorArgs {
   /**
    * Map to teleport to
    */
-  map: string;
+  mapName: string;
   /**
    * Destination coordinates of a teleporter
    */
-  addressee: string;
+  spawnName: string;
 }
 
 const DEFAULT_ARGS: Partial<TeleportProps> = {
@@ -27,6 +27,6 @@ const DEFAULT_ARGS: Partial<TeleportProps> = {
 export class PrpgTeleportActor extends Actor {
   constructor(props: TeleportProps) {
     super({...DEFAULT_ARGS, ...props});
-    this.addComponent(new PrpgTeleporterComponent(props.map, props.addressee));
+    this.addComponent(new PrpgTeleporterComponent(props.mapName, props.spawnName));
   }
 }

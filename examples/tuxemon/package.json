@@ -17,8 +17,8 @@
   "license": "GPL-3.0-or-later",
   "dependencies": {
     "@excaliburjs/plugin-aseprite": "^0.25.0",
-    "@excaliburjs/plugin-tiled": "^0.25.0",
-    "excalibur": "^0.25.0"
+    "@excaliburjs/plugin-tiled": "^0.25.1",
+    "excalibur": "^0.25.1"
   },
   "devDependencies": {
     "@pixelrpg/esbuild": "^0.0.1",

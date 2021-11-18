@@ -1,9 +1,8 @@
 import { Component } from 'excalibur';
+import { PrpgComponentType } from '../types/component-type';
 
-export const PRPG_PLAYER_TYPE = 'prpg.player';
-
-export class PrpgPlayerComponent extends Component<typeof PRPG_PLAYER_TYPE> {
-  public readonly type = PRPG_PLAYER_TYPE;
+export class PrpgPlayerComponent extends Component<PrpgComponentType.PLAYER> {
+  public readonly type = PrpgComponentType.PLAYER;
 }
 
 

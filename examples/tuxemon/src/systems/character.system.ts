@@ -1,15 +1,16 @@
 import { System, SystemType, vec, Logger } from 'excalibur';
-import { PrpgCharacterComponent, PRPG_CHARACTER_TYPE } from '../components/character.component';
+import { PrpgCharacterComponent } from '../components/character.component';
 import { PrpgCharacterActor } from '../actors/character.actor';
 import { BodyComponent, TransformComponent, MotionComponent, GraphicsComponent, ColliderComponent, ActionsComponent } from 'excalibur';
 import { resources } from '../resources';
 import { MapScene } from '../scenes/map.scene';
 import { Direction } from '../types/direction';
 import { CharacterAnimation } from '../types/character-animation';
+import { PrpgComponentType } from '../types/component-type';
 
 export class PrpgCharacterSystem extends System<
 PrpgCharacterComponent | BodyComponent | TransformComponent | MotionComponent | GraphicsComponent | ColliderComponent | ActionsComponent> {
-  public readonly types = [PRPG_CHARACTER_TYPE] as const;
+  public readonly types = [PrpgComponentType.CHARACTER] as const;
   public priority = 98;
   public systemType = SystemType.Update;
   private scene: MapScene;
@@ -18,7 +19,6 @@ PrpgCharacterComponent | BodyComponent | TransformComponent | MotionComponent | 
   constructor() {
     super();
   }
-
 
   private _handleMotion(entity: PrpgCharacterActor) {
     const motion = entity.get(MotionComponent);
@@ -106,7 +106,7 @@ PrpgCharacterComponent | BodyComponent | TransformComponent | MotionComponent | 
   public initialize?(scene: MapScene) {
     console.debug('[PrpgCharacterSystem] initialize');
     this.scene = scene;
-    const characterQuery = this.scene.world.queryManager.createQuery<PrpgCharacterComponent>([PRPG_CHARACTER_TYPE]);
+    const characterQuery = this.scene.world.queryManager.createQuery<PrpgCharacterComponent>([PrpgComponentType.CHARACTER]);
 
     const entities = characterQuery.getEntities() as PrpgCharacterActor[];
     const front = resources.sprites.scientist.getAnimation('front');

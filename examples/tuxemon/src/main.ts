@@ -40,7 +40,9 @@ export class PixelRPG {
   public addMaps() {
     const mapNames = Object.keys(resources.maps);
     for (const mapName of mapNames) {
-      this.engine.add(mapName, new MapScene(resources.maps[mapName]));
+      if (resources.maps[mapName]) {
+        this.engine.add(mapName, new MapScene(resources.maps[mapName], mapName));
+      }
     }
   }
 
