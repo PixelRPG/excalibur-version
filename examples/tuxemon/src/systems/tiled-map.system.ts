@@ -2,9 +2,11 @@ import { System, SystemType, Logger, Entity, Actor, vec, Color } from 'excalibur
 import { MapScene } from '../scenes/map.scene';
 import { TiledObjectGroup } from '@excaliburjs/plugin-tiled/src/index';
 import { PrpgTiledMapComponent } from '../components';
-import { PrpgTeleportActor } from '../actors';
+import { PrpgTeleportActor, PrpgPlayerActor } from '../actors';
 import { newSpawnPointEntity } from '../entities';
 import { PrpgComponentType, SpawnPointType } from '../types';
+import { stringToDirection } from '../utilities/direction';
+import { resources } from '../resources';
 
 export class PrpgTiledMapSystem extends System<
 PrpgTiledMapComponent> {
@@ -34,7 +36,6 @@ PrpgTiledMapComponent> {
     private _initProperties(tiledMap: PrpgTiledMapComponent) {
       const tiledObjectGroups = tiledMap.map.data.getExcaliburObjects();
       if (tiledObjectGroups.length > 0) {
-        // this.logger.debug('tiledObjectGroups', tiledObjectGroups);
         for (const tiledObjectGroup of tiledObjectGroups) {
           this._initPolyLines(tiledObjectGroup);
           this._initPolygons(tiledObjectGroup);
@@ -48,18 +49,24 @@ PrpgTiledMapComponent> {
      * Players first spawn point e.g. on a new game
      */
     private _initSpawnPoints(tiledObjectGroup: TiledObjectGroup) {
+      let hasStartPoint = false;
       const start = tiledObjectGroup.getObjectByName('player-start');
       if (start) {
+        hasStartPoint = true;
         const z = start.getProperty<number>('zindex')?.value || 0;
-        this.scene.add(newSpawnPointEntity(SpawnPointType.START, start.x, start.y, z));
+        const direction = start.getProperty<string>('direction')?.value;
+        const player = PrpgPlayerActor.getInstance({spriteSheet: resources.sprites.scientist, playerNumber: 1});
+
+        this.scene.add(player);
+        this.scene.add(newSpawnPointEntity(SpawnPointType.START, start.x, start.y, z, stringToDirection(direction)));
       }
+      return hasStartPoint;
     }
 
     /** Currently just an example */
     private _initPolyLines(tiledObjectGroup: TiledObjectGroup) {
     // Use polyline for patrols
       const lines = tiledObjectGroup.getPolyLines();
-      // this.logger.debug('polylines', lines);
       for (const line of lines) {
         if (line && line.polyline) {
           const start = vec(line.x, line.y);
@@ -90,7 +97,6 @@ PrpgTiledMapComponent> {
     private _initPolygons(tiledObjectGroup: TiledObjectGroup) {
     // Use polygon for patrols
       const polys = tiledObjectGroup.getPolygons();
-      // this.logger.debug('polygons', polys);
       for (const poly of polys) {
         if (poly && poly.polygon) {
           const firstpoint = poly.polygon[0];
@@ -119,9 +125,7 @@ PrpgTiledMapComponent> {
 
     private _initTeleporter(tiledObjectGroup: TiledObjectGroup) {
       const teleporters = tiledObjectGroup.getObjectsByType('teleporter');
-      // this.logger.debug('teleporters', teleporters);
       for (const teleObj of teleporters) {
-        this.logger.debug('teleObj', teleObj);
         const mapName = teleObj.getProperty<string>('map-name')?.value;
         const spawnName = teleObj.getProperty<string>('teleport-spawn-name')?.value;
         const z = teleObj.getProperty<number>('zindex')?.value || 0;
@@ -147,7 +151,6 @@ PrpgTiledMapComponent> {
           z
         });
         this.scene.add(teleporter);
-      // this.logger.debug('Add teleporter', teleporter, x, y);
       }
     }
 

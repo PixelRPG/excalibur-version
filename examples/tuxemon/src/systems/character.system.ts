@@ -3,6 +3,7 @@ import {
   SystemType,
   vec,
   Logger,
+  Query,
   BodyComponent,
   TransformComponent,
   MotionComponent,
@@ -19,10 +20,11 @@ import { CharacterAnimation, PrpgComponentType, Direction } from '../types';
 export class PrpgCharacterSystem extends System<
 PrpgCharacterComponent | BodyComponent | TransformComponent | MotionComponent | GraphicsComponent | ColliderComponent | ActionsComponent> {
   public readonly types = [PrpgComponentType.CHARACTER] as const;
-  public priority = 98;
+  public priority = 300;
   public systemType = SystemType.Update;
   private scene: MapScene;
   private logger = Logger.getInstance();
+  private characterQuery?: Query<PrpgCharacterComponent>;
 
   constructor() {
     super();
@@ -112,20 +114,21 @@ PrpgCharacterComponent | BodyComponent | TransformComponent | MotionComponent | 
   }
 
   public initialize?(scene: MapScene) {
-    console.debug('[PrpgCharacterSystem] initialize');
     this.scene = scene;
-    const characterQuery = this.scene.world.queryManager.createQuery<PrpgCharacterComponent>([PrpgComponentType.CHARACTER]);
 
-    const entities = characterQuery.getEntities() as PrpgCharacterActor[];
+    if (!this.characterQuery) {
+      this.characterQuery = this.scene.world.queryManager.createQuery<PrpgCharacterComponent>([PrpgComponentType.CHARACTER]);
+    }
+
+    const entities = this.characterQuery.getEntities() as PrpgCharacterActor[];
     const front = resources.sprites.scientist.getAnimation('front');
     if (!front) {
       throw new Error('front animation not found!');
     }
     for (const entity of entities) {
       entity.graphics.use(front);
-      entity.graphics.offset = vec(0, -12);
       entity.on('pointerup', () => {
-        console.debug('[PrpgCharacterSystem] pointerup');
+        this.logger.debug('[PrpgCharacterSystem] pointerup');
       });
     }
   }

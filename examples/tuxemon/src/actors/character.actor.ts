@@ -16,7 +16,4 @@ export class PrpgCharacterActor extends Actor {
     super({...DEFAULT_ARGS, ...config});
     this.addComponent(new PrpgCharacterComponent(spriteSheet));
   }
-  onInitialize() {
-    console.debug('[PrpgCharacterActor] onInitialize');
-  }
 }

@@ -36,7 +36,7 @@
    <property name="zindex" type="int" value="-1"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eAFjYKAtWAo1fiGQXkSkVXVEqkNXdhQocAxdcAjxAdAxA/I=
+   eAFjYKAtWAo1fiGQXgRlbyVgZR2S/F4kNiHmUaCCY4QUDWJ5AESDBWQ=
   </data>
  </layer>
  <layer id="4" name="Above player" width="11" height="9">
@@ -44,37 +44,42 @@
    <property name="zindex" type="int" value="1"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eAFjYKA/2Aq0chsOa2vQxPcC+fvQxAaKu5EEizchqZUEsglhkHIA3AUFpw==
+   eAFjYBgYsA2HtTVYxPdhERsIoY0kWLoJSa0kkE0Ig5QDAGfCBDU=
   </data>
  </layer>
- <objectgroup id="7" name="Objects">
+ <objectgroup id="7" name="Objects" visible="0">
   <properties>
    <property name="excalibur" type="bool" value="true"/>
   </properties>
   <object id="28" name="player-start" type="player-start" x="78" y="88">
+   <properties>
+    <property name="direction" value="front"/>
+    <property name="zindex" type="int" value="0"/>
+   </properties>
    <point/>
   </object>
-  <object id="29" name="Camera" type="Camera" x="78" y="88">
+  <object id="29" name="Camera" type="Camera" x="78" y="100">
    <properties>
     <property name="Zoom" type="float" value="3"/>
    </properties>
    <point/>
   </object>
-  <object id="34" name="Go Downstairs" type="teleporter" x="112" y="48" width="16" height="16">
+  <object id="34" name="Go Downstairs" type="teleporter" x="116" y="48" width="6" height="16">
    <properties>
     <property name="map-name" value="player_house_downstairs.tmx"/>
     <property name="teleport-spawn-name" value="From Upstairs"/>
     <property name="zindex" type="int" value="0"/>
    </properties>
   </object>
-  <object id="36" name="From Downstairs" type="teleport-spawn" x="136" y="64">
+  <object id="36" name="From Downstairs" type="teleport-spawn" x="136" y="58">
    <properties>
+    <property name="direction" value="right"/>
     <property name="zindex" type="int" value="0"/>
    </properties>
    <point/>
   </object>
  </objectgroup>
- <objectgroup color="#ff0000" id="5" name="Collision">
+ <objectgroup color="#ff0000" id="5" name="Collision" visible="0">
   <properties>
    <property name="excalibur" type="bool" value="true"/>
   </properties>

@@ -1,23 +1,29 @@
-import { Actor, vec, CollisionType, ActorArgs } from 'excalibur';
-import type { AsepriteResource } from '@excaliburjs/plugin-aseprite/src/index';
+import { Actor, vec, CollisionType } from 'excalibur';
 import { PrpgCharacterComponent, PrpgPlayerComponent } from '../components';
+import { Player } from '../types';
 
-const DEFAULT_ARGS: ActorArgs = {
+const DEFAULT_ARGS: Partial<Player> = {
   name: 'player',
-  pos: vec(0, 0),
   width: 12,
   height: 12,
-  scale: vec(1,1),
+  anchor: vec(0.5, 1),
   collisionType: CollisionType.Active
 };
 
 export class PrpgPlayerActor extends Actor {
-  constructor(spriteSheet: AsepriteResource, config?: ActorArgs) {
+  private constructor(config: Player) {
     super({...DEFAULT_ARGS, ...config});
-    this.addComponent(new PrpgCharacterComponent(spriteSheet));
-    this.addComponent(new PrpgPlayerComponent());
+    this.addComponent(new PrpgCharacterComponent(config.spriteSheet));
+    this.addComponent(new PrpgPlayerComponent(config.playerNumber));
   }
-  onInitialize() {
-    console.debug('[PrpgPlayerActor] onInitialize');
+  private static instances: {
+    [num: number]: PrpgPlayerActor;
+  } = {};
+  static getInstance(config: Player) {
+    if (this.instances[config.playerNumber]) {
+      return this.instances[config.playerNumber];
+    }
+    this.instances[config.playerNumber] = new this(config);
+    return this.instances[config.playerNumber];
   }
 }

@@ -1,10 +1,12 @@
-import { System, SystemType, Logger, Entity } from 'excalibur';
+import { System, SystemType, Logger, Entity, Query } from 'excalibur';
 import { TiledObject } from '@excaliburjs/plugin-tiled/src';
 import { PrpgTeleporterComponent } from '../components';
 import { newSpawnPointEntity } from '../entities';
 import { PrpgPlayerActor } from '../actors';
 import { MapScene } from '../scenes/map.scene';
-import { PrpgComponentType, SpawnPointType } from '../types';
+import { PrpgComponentType, SpawnPointType, Direction } from '../types';
+import { resources } from '../resources';
+import { stringToDirection } from '../utilities/direction';
 
 export class PrpgTeleporterSystem extends System<
 PrpgTeleporterComponent> {
@@ -13,6 +15,7 @@ PrpgTeleporterComponent> {
     public systemType = SystemType.Update;
     private scene: MapScene;
     private logger = Logger.getInstance();
+    private teleporterQuery?: Query<PrpgTeleporterComponent>;
 
     constructor() {
       super();
@@ -21,10 +24,13 @@ PrpgTeleporterComponent> {
     public initialize?(scene: MapScene) {
       this.logger.debug('[PrpgTeleporterSystem] initialize');
       this.scene = scene;
-      const teleporterQuery = this.scene.world.queryManager.createQuery<PrpgTeleporterComponent>([PrpgComponentType.TELEPORTER]);
 
-      const entities = teleporterQuery.getEntities();
-      this.logger.debug('Teleporter entities', entities);
+      if (!this.teleporterQuery) {
+        this.teleporterQuery = this.scene.world.queryManager.createQuery<PrpgTeleporterComponent>([PrpgComponentType.TELEPORTER]);
+      }
+
+      const entities = this.teleporterQuery.getEntities();
+      this.logger.debug('[PrpgTeleporterSystem] Teleporter entities', entities);
       for (const entity of entities) {
         entity.on('precollision', (event) => {
           if (event.other instanceof PrpgPlayerActor) {
@@ -37,7 +43,7 @@ PrpgTeleporterComponent> {
     protected _onTeleport(teleportEntity: Entity, playerEntity: Entity) {
       const teleporter = teleportEntity.get(PrpgTeleporterComponent);
       if (!teleporter) {
-        this.logger.warn('Teleporter component for targetEntity not found!');
+        this.logger.warn('[PrpgTeleporterSystem] Teleporter component for targetEntity not found!');
         return;
       }
 
@@ -49,13 +55,13 @@ PrpgTeleporterComponent> {
 
       const tiledMap = targetMap.getMap();
       if (!tiledMap) {
-        this.logger.warn(`Teleport target map "${teleporter.mapName}" not found!`);
+        this.logger.warn(`[PrpgTeleporterSystem] Teleport target map "${teleporter.mapName}" not found!`);
         return;
       }
 
       const tiledObjectGroups = tiledMap.map.data.getExcaliburObjects();
       if (!tiledObjectGroups?.length) {
-        this.logger.warn('Map has no objects!');
+        this.logger.warn('[PrpgTeleporterSystem] Map has no objects!');
         return;
       }
       let spawn: TiledObject | undefined;
@@ -66,11 +72,19 @@ PrpgTeleporterComponent> {
         }
       }
       if (!spawn) {
-        this.logger.warn(`Teleport target spawn point "${teleporter.spawnName}" not found!`);
+        this.logger.warn(`[PrpgTeleporterSystem] Teleport target spawn point "${teleporter.spawnName}" not found!`);
         return;
       }
       const z = spawn.getProperty<number>('zindex')?.value || 0;
-      targetMap.add(newSpawnPointEntity(SpawnPointType.TELEPORT, spawn.x, spawn.y, z));
+      const direction = stringToDirection(spawn.getProperty<string>('direction')?.value);
+
+      // Add spawn point, after this spawn point has been executed, it will be removed again
+      targetMap.add(newSpawnPointEntity(SpawnPointType.TELEPORT, spawn.x, spawn.y, z, direction));
+
+      const player = PrpgPlayerActor.getInstance({spriteSheet: resources.sprites.scientist, playerNumber: 1});
+      this.scene.remove(player);
+      targetMap.add(player);
+
       this.scene.engine.goToScene(teleporter.mapName);
     }
 

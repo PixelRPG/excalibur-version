@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="64" height="60" tilewidth="16" tileheight="16" infinite="0" nextlayerid="8" nextobjectid="161">
+<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="64" height="60" tilewidth="16" tileheight="16" infinite="0" nextlayerid="9" nextobjectid="161">
  <properties>
   <property name="edges" value="clamped"/>
  </properties>
@@ -79,6 +79,11 @@
   </properties>
   <data encoding="base64" compression="zlib">
    eAHtWkluwzAMVIvk1qe0fUfPfUGP6fKt7tvzul06ORARJhTgyrZqSSNgQJGhJM5IiB3HIeS3s/Vu7EXU30XVkwLTKXC0mm6usTNt/vm8Px+G8AK8Am/AO6BWRoFz7H2MMqsuZ5WY+7bfWxP//PP/cRDCJ/AFfAM/ALelf7f1vv+8X0P9JV2/h9bcet4K91RrYGrbum7iJwWkgBSQAlLAU4DvET3fG9dKzOPLsVa4ejyYq+d74xRrTwFv7y3WHtt9RsbVs/vZ7UU83hZrj60YbRWw/WXL6vDn7HN+LT7zMJ/rt3jKcn4t/lA+qTyL18KX67T62Q7Ns3GcX4tv9bPl+vlz9jm/Fj/3eWIt/FSnFJACUkAKSIG5FbBr6dzrlJx/g8UugSvgGrgBUu0E/0+eLujdr1SdpeLHHWnxl3NSSn+tIwWkgBSQAlJgbgVu8V73HXAPPACPwBNQc7NnXDVzGFO78Y/tmPlqGxvztn5tHFRvngL2WzZl82bVqN4U0PnpbcfFdw4FfgG9e0pc
+  </data>
+ </layer>
+ <layer id="8" name="Tile Layer 6" width="64" height="60">
+  <data encoding="base64" compression="zlib">
+   eAHt0DEBAAAAwqD1T20ND4hAYcCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMDAy8AAPAAAAQ==
   </data>
  </layer>
  <layer id="5" name="Above Player" width="64" height="60">
@@ -227,11 +232,11 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup color="#ffff00" id="7" name="Objects">
+ <objectgroup color="#ffff00" id="7" name="Objects" visible="0">
   <properties>
    <property name="excalibur" type="bool" value="true"/>
   </properties>
-  <object id="67" name="Go to Player's house" type="teleporter" x="688" y="720" width="16" height="16">
+  <object id="67" name="Go to Player's house" type="teleporter" x="688" y="720" width="16" height="8">
    <properties>
     <property name="act10" value="transition_teleport player_house_downstairs.tmx,5,7,0.5"/>
     <property name="cond10" value="is player_at"/>
@@ -908,7 +913,11 @@
     <property name="cond20" value="is player_at"/>
    </properties>
   </object>
-  <object id="159" name="From players home" type="teleport-spawn" x="696" y="752">
+  <object id="159" name="From players home" type="teleport-spawn" x="696" y="746">
+   <properties>
+    <property name="direction" value="front"/>
+    <property name="zindex" type="int" value="0"/>
+   </properties>
    <point/>
   </object>
   <object id="160" name="Camera" type="Camera" x="598" y="768">

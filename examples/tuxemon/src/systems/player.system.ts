@@ -96,16 +96,24 @@ TransformComponent | MotionComponent | GraphicsComponent | ColliderComponent | A
       if (spawnPointEntities.length > 0) {
         const spawnPointEntity = spawnPointEntities[0];
         const body = playerEntity.get(BodyComponent);
+        const character = playerEntity.get(PrpgCharacterComponent);
         const spawnPoint = spawnPointEntity.get(PrpgSpawnPointComponent);
         if (!body) {
           this.logger.warn('BodyComponent for player start position not found!');
           return;
         }
+        if (!character) {
+          this.logger.warn('PrpgCharacterComponent for player start position not found!');
+          return;
+        }
         if (spawnPoint) {
           body.pos.x = spawnPoint.x;
           body.pos.y = spawnPoint.y;
+          character.direction = spawnPoint.direction;
           if (typeof (playerEntity as PrpgPlayerActor).z === 'number') {
-            (playerEntity as PrpgPlayerActor).z = spawnPoint.z; // TODO use component here?
+            (playerEntity as PrpgPlayerActor).z = spawnPoint.z;
+          } else {
+            this.logger.warn('Can\'t set character z index');
           }
 
           this.scene.remove(spawnPointEntity);
@@ -115,6 +123,7 @@ TransformComponent | MotionComponent | GraphicsComponent | ColliderComponent | A
 
     public initialize?(scene: MapScene) {
       this.scene = scene;
+
       const playerQuery = this.scene.world.queryManager.createQuery<PrpgPlayerComponent>([PrpgComponentType.PLAYER]);
 
       const players = playerQuery.getEntities() as PrpgPlayerActor[];

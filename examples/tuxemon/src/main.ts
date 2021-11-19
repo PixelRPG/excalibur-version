@@ -45,6 +45,7 @@ export class PixelRPG {
         this.engine.add(mapName, new MapScene(resources.maps[mapName], mapName));
       }
     }
+    return resources.maps;
   }
 
   public async start() {
@@ -59,32 +60,32 @@ export class PixelRPG {
 
     // Log when pads disconnect and connect
     this.engine.input.gamepads.on('connect', (evet: GamepadConnectEvent) => {
-      this.logger.debug('Gamepad connect');
+      this.logger.debug('[Main] Gamepad connect');
     });
 
     this.engine.input.gamepads.on('disconnect', (evet: GamepadDisconnectEvent) => {
-      this.logger.debug('Gamepad disconnect');
+      this.logger.debug('[Main] Gamepad disconnect');
     });
 
     this.engine.input.gamepads.at(0).on('button', (ev: GamepadButtonEvent) => {
-      this.logger.debug('button', ev.button, ev.value);
+      this.logger.debug('[Main] button', ev.button, ev.value);
     });
 
     this.engine.input.gamepads.at(0).on('axis', (ev: GamepadAxisEvent) => {
-      this.logger.debug('axis', ev.axis, ev.value);
+      this.logger.debug('[Main] axis', ev.axis, ev.value);
     });
 
     this.addMaps();
-
     this.engine.goToScene('player_house_bedroom.tmx');
 
-    this.logger.debug('pixelRatio', this.engine.pixelRatio);
-    this.logger.debug('isHiDpi', this.engine.isHiDpi);
+    this.logger.debug('[Main] pixelRatio', this.engine.pixelRatio);
+    this.logger.debug('[Main] isHiDpi', this.engine.isHiDpi);
 
     this.logger.defaultLevel = LogLevel.Debug;
 
     const loader = new Loader([...resources.getMapArr(), ...resources.getSpriteArr()]);
     loader.backgroundColor = Color.Black.toString();
+
     await this.engine.start(loader);
   };
 }
