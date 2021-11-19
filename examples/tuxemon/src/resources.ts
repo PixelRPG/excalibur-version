@@ -1,5 +1,5 @@
-import './types/files';
-import { Loadable, Engine } from 'excalibur';
+import './typings';
+import { Loadable } from 'excalibur';
 import { TiledMapResource, TiledMap } from '@excaliburjs/plugin-tiled/src/index';
 import { AsepriteResource } from '@excaliburjs/plugin-aseprite/src/index';
 

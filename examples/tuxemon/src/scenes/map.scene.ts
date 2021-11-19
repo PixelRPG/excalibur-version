@@ -1,14 +1,11 @@
-import { Scene, Logger, Entity, Query } from 'excalibur';
+import { Scene, Logger, Query } from 'excalibur';
 import { TiledMapResource } from '@excaliburjs/plugin-tiled/src/index';
-import { PrpgCharacterSystem } from '../systems/character.system';
-import { PrpgPlayerSystem } from '../systems/player.system';
-import { PrpgTeleporterSystem } from '../systems/teleporter.system';
-import { PrpgTiledMapSystem } from '../systems/tiled-map.system';
-import { PrpgPlayerActor } from '../actors/player.actor';
+import { PrpgCharacterSystem, PrpgPlayerSystem, PrpgTeleporterSystem, PrpgTiledMapSystem } from '../systems';
+import { PrpgPlayerActor } from '../actors';
 import { resources } from '../resources';
-import { PrpgComponentType } from '../types/component-type';
-import { newTiledMapEntity } from '../entities/tiled-map.entity';
-import { PrpgTiledMapComponent } from '../components/tiled-map.component';
+import { PrpgComponentType } from '../types';
+import { newTiledMapEntity } from '../entities';
+import { PrpgTiledMapComponent } from '../components';
 
 // enum ActivationTrigger {
 //   NEW_GAME,

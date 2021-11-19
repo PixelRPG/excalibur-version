@@ -56,7 +56,7 @@
   </object>
   <object id="29" name="Camera" type="Camera" x="78" y="88">
    <properties>
-    <property name="Zoom" type="float" value="2"/>
+    <property name="Zoom" type="float" value="3"/>
    </properties>
    <point/>
   </object>

@@ -1,12 +1,21 @@
-import { System, SystemType, Input, BoundingBox, Logger, Entity } from 'excalibur';
-import { PrpgCharacterComponent } from '../components/character.component';
-import { PrpgPlayerComponent } from '../components/player.component';
-import { PrpgSpawnPointComponent } from '../components/spawn-point.component';
-import { PrpgPlayerActor } from '../actors/player.actor';
-import { BodyComponent, TransformComponent, MotionComponent, GraphicsComponent, ColliderComponent, ActionsComponent } from 'excalibur';
-import { resources } from '../resources';
+import {
+  System,
+  SystemType,
+  Input,
+  BoundingBox,
+  Logger,
+  Entity,
+  BodyComponent,
+  TransformComponent,
+  MotionComponent,
+  GraphicsComponent,
+  ColliderComponent,
+  ActionsComponent
+} from 'excalibur';
+import { PrpgCharacterComponent, PrpgPlayerComponent, PrpgSpawnPointComponent } from '../components';
+import { PrpgPlayerActor } from '../actors';
 import { MapScene } from '../scenes/map.scene';
-import { PrpgComponentType } from '../types/component-type';
+import { PrpgComponentType } from '../types';
 
 export class PrpgPlayerSystem extends System<
 PrpgPlayerComponent | PrpgCharacterComponent | BodyComponent |
@@ -22,7 +31,7 @@ TransformComponent | MotionComponent | GraphicsComponent | ColliderComponent | A
     }
 
     private _initCamera(entity: PrpgPlayerActor) {
-      this.scene.camera.strategy.elasticToActor(entity, .9, .9);
+      // this.scene.camera.strategy.elasticToActor(entity, 1, 1);
       this.scene.camera.strategy.lockToActor(entity);
       const tiledMap = this.scene.getMap();
       if (!tiledMap) {

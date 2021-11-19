@@ -3,7 +3,7 @@ declare module '*.png' {
   export default pngPath;
 }
 declare module '*.html' {
-  export const htmlPath: string;
+  const htmlPath: string;
   export default htmlPath;
 }
 declare module '*.tmx' {

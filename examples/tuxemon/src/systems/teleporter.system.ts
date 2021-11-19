@@ -1,11 +1,10 @@
-import { System, SystemType, Logger, Entity, BodyComponent } from 'excalibur';
-import { PrpgTeleporterComponent } from '../components/teleporter.component';
-import { PrpgTiledMapComponent } from '../components/tiled-map.component';
-import { newSpawnPointEntity } from '../entities/spawn-point.entity';
-import { PrpgPlayerActor } from '../actors/player.actor';
-import { MapScene } from '../scenes/map.scene';
-import { PrpgComponentType } from '../types/component-type';
+import { System, SystemType, Logger, Entity } from 'excalibur';
 import { TiledObject } from '@excaliburjs/plugin-tiled/src';
+import { PrpgTeleporterComponent } from '../components';
+import { newSpawnPointEntity } from '../entities';
+import { PrpgPlayerActor } from '../actors';
+import { MapScene } from '../scenes/map.scene';
+import { PrpgComponentType, SpawnPointType } from '../types';
 
 export class PrpgTeleporterSystem extends System<
 PrpgTeleporterComponent> {
@@ -71,7 +70,7 @@ PrpgTeleporterComponent> {
         return;
       }
       const z = spawn.getProperty<number>('zindex')?.value || 0;
-      targetMap.add(newSpawnPointEntity(spawn.x, spawn.y, z));
+      targetMap.add(newSpawnPointEntity(SpawnPointType.TELEPORT, spawn.x, spawn.y, z));
       this.scene.engine.goToScene(teleporter.mapName);
     }
 

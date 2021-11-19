@@ -1,6 +1,5 @@
 import { Actor, ActorArgs, CollisionType, vec, Color } from 'excalibur';
-import { PrpgTeleporterComponent } from '../components/teleporter.component';
-import { PrpgPlayerActor } from './player.actor';
+import { PrpgTeleporterComponent } from '../components';
 
 export interface TeleportProps extends ActorArgs {
   /**

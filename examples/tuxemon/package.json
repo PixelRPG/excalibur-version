@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npm run assets && esbuilder --outfile ./dist/main.js",
+    "barrel": "barreler ./src/actors ./src/components ./src/entities ./src/entities ./src/scenes ./src/systems ./src/types",
     "assets": "mkdir -p ./dist && cp -r ./src/assets/* ./dist/",
     "serve:dev": "npm run serve -- --dev",
     "serve": "npm run assets && esbuilder --serve --outfile ./dist/main.js",
@@ -22,6 +23,7 @@
   },
   "devDependencies": {
     "@pixelrpg/esbuild": "^0.0.1",
+    "barreler": "^0.0.5",
     "esbuild": "^0.13.9"
   }
 }

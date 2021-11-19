@@ -1,7 +1,6 @@
 import { Component } from 'excalibur';
-import { Direction } from '../types/direction';
 import type { AsepriteResource } from '@excaliburjs/plugin-aseprite/src/index';
-import { PrpgComponentType } from '../types/component-type';
+import { Direction, PrpgComponentType } from '../types';
 
 export class PrpgCharacterComponent extends Component<PrpgComponentType.CHARACTER> {
   public readonly type = PrpgComponentType.CHARACTER;

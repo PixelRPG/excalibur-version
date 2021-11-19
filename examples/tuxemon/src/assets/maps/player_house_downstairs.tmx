@@ -252,7 +252,7 @@
   </object>
   <object id="46" name="Camera" type="Camera" x="80" y="80">
    <properties>
-    <property name="Zoom" type="float" value="2"/>
+    <property name="Zoom" type="float" value="3"/>
    </properties>
    <point/>
   </object>

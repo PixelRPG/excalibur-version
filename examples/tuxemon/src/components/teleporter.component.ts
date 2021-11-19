@@ -1,5 +1,5 @@
 import { Component } from 'excalibur';
-import { PrpgComponentType } from '../types/component-type';
+import { PrpgComponentType } from '../types';
 
 export class PrpgTeleporterComponent extends Component<PrpgComponentType.TELEPORTER> {
   public readonly type = PrpgComponentType.TELEPORTER;

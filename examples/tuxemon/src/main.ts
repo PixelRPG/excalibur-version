@@ -17,8 +17,9 @@ import { resources } from './resources';
 // Scenes
 import { MapScene } from './scenes/map.scene';
 
-Flags.useWebGL();
+// Flags.useWebGL();
 // Flags.useCanvasGraphicsContext();
+// Flags.useLegacyDrawing();
 
 export class PixelRPG {
 
@@ -31,7 +32,7 @@ export class PixelRPG {
       canvasElementId: 'game',
       pointerScope: Input.PointerScope.Canvas,
       antialiasing: false,
-      snapToPixel: true,
+      snapToPixel: false,
       suppressPlayButton: true,
       backgroundColor: Color.Black
     });

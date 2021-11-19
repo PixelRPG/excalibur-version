@@ -911,9 +911,9 @@
   <object id="159" name="From players home" type="teleport-spawn" x="696" y="752">
    <point/>
   </object>
-  <object id="160" name="Camera" type="Camera" x="576" y="752">
+  <object id="160" name="Camera" type="Camera" x="598" y="768">
    <properties>
-    <property name="Zoom" type="float" value="2"/>
+    <property name="Zoom" type="float" value="3"/>
    </properties>
    <point/>
   </object>

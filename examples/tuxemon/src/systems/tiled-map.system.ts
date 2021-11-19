@@ -1,10 +1,10 @@
 import { System, SystemType, Logger, Entity, Actor, vec, Color } from 'excalibur';
 import { MapScene } from '../scenes/map.scene';
 import { TiledObjectGroup } from '@excaliburjs/plugin-tiled/src/index';
-import { PrpgTiledMapComponent } from '../components/tiled-map.component';
-import { PrpgTeleportActor } from '../actors/teleport.actor';
-import { newSpawnPointEntity } from '../entities/spawn-point.entity';
-import { PrpgComponentType } from '../types/component-type';
+import { PrpgTiledMapComponent } from '../components';
+import { PrpgTeleportActor } from '../actors';
+import { newSpawnPointEntity } from '../entities';
+import { PrpgComponentType, SpawnPointType } from '../types';
 
 export class PrpgTiledMapSystem extends System<
 PrpgTiledMapComponent> {
@@ -51,7 +51,7 @@ PrpgTiledMapComponent> {
       const start = tiledObjectGroup.getObjectByName('player-start');
       if (start) {
         const z = start.getProperty<number>('zindex')?.value || 0;
-        this.scene.add(newSpawnPointEntity(start.x, start.y, z));
+        this.scene.add(newSpawnPointEntity(SpawnPointType.START, start.x, start.y, z));
       }
     }
 

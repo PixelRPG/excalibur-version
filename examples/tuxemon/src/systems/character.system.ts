@@ -1,12 +1,20 @@
-import { System, SystemType, vec, Logger } from 'excalibur';
-import { PrpgCharacterComponent } from '../components/character.component';
-import { PrpgCharacterActor } from '../actors/character.actor';
-import { BodyComponent, TransformComponent, MotionComponent, GraphicsComponent, ColliderComponent, ActionsComponent } from 'excalibur';
+import {
+  System,
+  SystemType,
+  vec,
+  Logger,
+  BodyComponent,
+  TransformComponent,
+  MotionComponent,
+  GraphicsComponent,
+  ColliderComponent,
+  ActionsComponent
+} from 'excalibur';
+import { PrpgCharacterComponent } from '../components';
+import { PrpgCharacterActor } from '../actors';
 import { resources } from '../resources';
 import { MapScene } from '../scenes/map.scene';
-import { Direction } from '../types/direction';
-import { CharacterAnimation } from '../types/character-animation';
-import { PrpgComponentType } from '../types/component-type';
+import { CharacterAnimation, PrpgComponentType, Direction } from '../types';
 
 export class PrpgCharacterSystem extends System<
 PrpgCharacterComponent | BodyComponent | TransformComponent | MotionComponent | GraphicsComponent | ColliderComponent | ActionsComponent> {

@@ -1,7 +1,6 @@
-import { Actor, vec, CollisionType, ActorArgs, Color } from 'excalibur';
-import { PrpgCharacterComponent } from '../components/character.component';
-import { PrpgPlayerComponent } from '../components/player.component';
+import { Actor, vec, CollisionType, ActorArgs } from 'excalibur';
 import type { AsepriteResource } from '@excaliburjs/plugin-aseprite/src/index';
+import { PrpgCharacterComponent, PrpgPlayerComponent } from '../components';
 
 const DEFAULT_ARGS: ActorArgs = {
   name: 'player',
