@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "test": "npm run test -w @excaliburjs/plugin-aseprite",
-    "build": "npm run build -w @excaliburjs/plugin-tiled -w tile-extruder -w @pixelrpg/esbuild -w @pixelrpg/tuxemon",
+    "build": "npm run build -w @pixelrpg/esbuild -w @pixelrpg/tuxemon",
     "clear": "npm run clear -w excalibur -w @excaliburjs/plugin-tiled -w tile-extruder -w @pixelrpg/esbuild -w @pixelrpg/tuxemon",
     "start": "npm run start -w @pixelrpg/tuxemon",
     "build:excalibur": "npm run build -w excalibur",
