@@ -32,8 +32,8 @@ export class PixelRPG {
       canvasElementId: 'game',
       pointerScope: Input.PointerScope.Canvas,
       antialiasing: false,
-      snapToPixel: false,
-      suppressPlayButton: true,
+      snapToPixel: true,
+      suppressPlayButton: true, // Disable play button, enable to fix audio issue 
       backgroundColor: Color.Black
     });
   }

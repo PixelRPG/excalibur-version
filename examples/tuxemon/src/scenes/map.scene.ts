@@ -1,5 +1,5 @@
 import { Scene, Logger, Query } from 'excalibur';
-import { TiledMapResource } from '@excaliburjs/plugin-tiled/src/index';
+import { TiledMapResource } from '@excaliburjs/plugin-tiled';
 import { PrpgCharacterSystem, PrpgPlayerSystem, PrpgTeleporterSystem, PrpgTiledMapSystem } from '../systems';
 import { PrpgComponentType } from '../types';
 import { newTiledMapEntity } from '../entities';
@@ -42,10 +42,5 @@ export class MapScene extends Scene {
       const tiledMap = entity.get(PrpgTiledMapComponent);
       return tiledMap;
     }
-  }
-
-  public onActivate(_oldScene: Scene, _newScene: Scene): void {
-    //
-
   }
 }

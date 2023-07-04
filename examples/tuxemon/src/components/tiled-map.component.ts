@@ -1,5 +1,5 @@
 import { Component } from 'excalibur';
-import { TiledMapResource } from '@excaliburjs/plugin-tiled/src/index';
+import { TiledMapResource } from '@excaliburjs/plugin-tiled';
 import { PrpgComponentType } from '../types';
 
 export class PrpgTiledMapComponent extends Component<PrpgComponentType.TILED_MAP> {

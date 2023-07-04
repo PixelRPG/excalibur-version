@@ -1,6 +1,6 @@
 import { System, SystemType, Logger, Entity, Actor, vec, Color } from 'excalibur';
 import { MapScene } from '../scenes/map.scene';
-import { TiledObjectGroup } from '@excaliburjs/plugin-tiled/src/index';
+import { TiledObjectGroup } from '@excaliburjs/plugin-tiled';
 import { PrpgTiledMapComponent } from '../components';
 import { PrpgTeleportActor, PrpgPlayerActor } from '../actors';
 import { newSpawnPointEntity } from '../entities';
@@ -9,7 +9,7 @@ import { stringToDirection } from '../utilities/direction';
 import { resources } from '../resources';
 
 export class PrpgTiledMapSystem extends System<
-PrpgTiledMapComponent> {
+PrpgTiledMapComponent, MapScene> {
     public readonly types = [PrpgComponentType.TILED_MAP] as const;
     public priority = 100;
     public systemType = SystemType.Update;
@@ -154,7 +154,7 @@ PrpgTiledMapComponent> {
       }
     }
 
-    public initialize?(scene: MapScene) {
+    public initialize(scene: MapScene) {
       this.logger.debug('[PrpgTiledMapSystem] initialize');
       this.scene = scene;
       this._initTiledMapComponents();

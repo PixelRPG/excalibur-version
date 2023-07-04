@@ -1,6 +1,6 @@
 import './typings';
 import { Loadable } from 'excalibur';
-import { TiledMapResource, TiledMap } from '@excaliburjs/plugin-tiled/src/index';
+import { TiledMapResource, TiledMap } from '@excaliburjs/plugin-tiled';
 import { AsepriteResource } from '@excaliburjs/plugin-aseprite/src/index';
 
 // Sprites

@@ -41,18 +41,28 @@ export class PrpgPlayerSystem extends System<
     super();
   }
 
-  // TODO WARN: Camera bounds should not be smaller than the engine viewport
   private _limitCameraBoundsToMap() {
     const tiledMap = this.scene.getMap();
     if (!tiledMap) {
       this.logger.warn('Current scene has no map!');
       return;
     }
+
+    const vw = this.scene.camera.viewport.width
+    const vh = this.scene.camera.viewport.height;
+
+    const mapWidth = tiledMap.map.data.width * tiledMap.map.data.tileWidth;
+    const mapHeight = tiledMap.map.data.height * tiledMap.map.data.tileHeight;
+
+    if (vw > (mapWidth * this.scene.camera.zoom) || vh > mapHeight * this.scene.camera.zoom) {
+      return; // Do nothing
+    }
+
     const mapBox = new BoundingBox({
       left: 0,
       top: 0,
-      right: tiledMap.map.data.width * tiledMap.map.data.tileWidth,
-      bottom: tiledMap.map.data.height * tiledMap.map.data.tileHeight
+      right: mapWidth,
+      bottom: mapHeight
     });
     this.scene.camera.strategy.limitCameraBounds(mapBox);
   }
@@ -60,8 +70,8 @@ export class PrpgPlayerSystem extends System<
   private _initCamera(entity: PrpgPlayerActor) {
     // this.scene.camera.strategy.elasticToActor(entity, 1, 1);
     this.scene.camera.strategy.lockToActor(entity);
-
-    // this._limitCameraBoundsToMap();
+    this.scene.camera.zoom = 4;
+    this._limitCameraBoundsToMap();
   }
 
   private _handleInput(entity: Entity) {

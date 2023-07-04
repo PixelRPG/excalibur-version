@@ -5,25 +5,25 @@
   "main": "src/main.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npm run barrel && npm run assets && esbuilder --outfile ./dist/main.js",
+    "build": "yarn run barrel && yarn run assets && esbuilder --outfile ./dist/main.js",
     "barrel": "barreler ./src/actors ./src/components ./src/entities ./src/entities ./src/scenes ./src/systems ./src/types ./src/utilities",
     "assets": "mkdir -p ./dist && cp -r ./src/assets/* ./dist/",
-    "serve:dev": "npm run serve -- --dev",
-    "serve": "npm run assets && esbuilder --serve --outfile ./dist/main.js",
+    "serve:dev": "yarn run serve -- --dev",
+    "serve": "yarn run assets && esbuilder --serve --outfile ./dist/main.js",
     "start:dev": "yarn run serve:dev",
-    "start": "npm run serve",
+    "start": "yarn run serve",
     "clear": "rimraf dist"
   },
   "author": "Pascal Garber <pascal@artandcode.studio>",
   "license": "GPL-3.0-or-later",
   "dependencies": {
-    "@excaliburjs/plugin-aseprite": "^0.25.0",
-    "@excaliburjs/plugin-tiled": "^0.25.1",
-    "excalibur": "^0.25.1"
+    "@excaliburjs/plugin-aseprite": "workspace:^",
+    "@excaliburjs/plugin-tiled": "workspace:^",
+    "excalibur": "workspace:^"
   },
   "devDependencies": {
-    "@pixelrpg/esbuild": "^0.0.1",
+    "@pixelrpg/esbuild": "workspace:^",
     "barreler": "^0.0.5",
-    "esbuild": "^0.13.9"
+    "esbuild": "^0.18.11"
   }
 }

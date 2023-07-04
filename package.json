@@ -5,18 +5,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npm run test -w @excaliburjs/plugin-aseprite",
-    "build": "npm run build -w tile-extruder -w @pixelrpg/esbuild -w @pixelrpg/tuxemon",
-    "clear": "npm run clear -w excalibur -w @excaliburjs/plugin-tiled -w tile-extruder -w @pixelrpg/esbuild -w @pixelrpg/tuxemon",
-    "start": "npm run start -w @pixelrpg/tuxemon",
-    "build:excalibur": "npm run build -w excalibur",
-    "clear:excalibur": "npm run clear -w excalibur",
-    "check:minor": "npm exec --workspaces -- ncu --target minor",
-    "check:latest": "npm exec --workspaces -- ncu",
-    "check:newest": "npm exec --workspaces -- ncu --target newest",
-    "upgrade:minor": "npm exec --workspaces -- ncu --target minor -u",
-    "upgrade:latest": "npm exec --workspaces -- ncu -u",
-    "upgrade:newest": "npm exec --workspaces -- ncu --target newest -u"
+    "test": "yarn workspaces foreach -v run test",
+    "build": "yarn build:excalibur && yarn workspaces foreach -ptv --no-private --from '{tile-extruder,@pixelrpg/esbuild,@excaliburjs/plugin-tiled,@excaliburjs/plugin-aseprite}' run build && yarn build build:example",
+    "clear": "yarn workspaces foreach -v run clear",
+    "start": "yarn workspace @pixelrpg/tuxemon run start",
+    "build:excalibur": "yarn workspace excalibur run build && yarn workspace excalibur run build:esm",
+    "build:example": "yarn workspace @pixelrpg/tuxemon run build"
   },
   "author": "Pascal Garber <pascal@artandcode.studio>",
   "license": "GPL-3.0-or-later",
@@ -26,6 +20,8 @@
     "packages/tile-extruder/workspaces/*"
   ],
   "devDependencies": {
-    "@pixelrpg/eslint-config": "file:packages/eslint-config"
-  }
+    "@pixelrpg/eslint-config": "file:packages/eslint-config",
+    "typescript": "^5.1.6"
+  },
+  "packageManager": "yarn@3.6.1"
 }
