@@ -3149,19 +3149,19 @@ __metadata:
     typescript: ^5.1.6
     yargs: ^17.7.2
   bin:
-    esbuilder: ./bin/run
+    esbuilder: ./bin/run.js
   languageName: unknown
   linkType: soft
 
 "@pixelrpg/eslint-config@file:packages/eslint-config::locator=pixelrpg%40workspace%3A.":
   version: 2.0.0-alpha.0
-  resolution: "@pixelrpg/eslint-config@file:packages/eslint-config#packages/eslint-config::hash=2f663a&locator=pixelrpg%40workspace%3A."
+  resolution: "@pixelrpg/eslint-config@file:packages/eslint-config#packages/eslint-config::hash=b6c761&locator=pixelrpg%40workspace%3A."
   dependencies:
     "@typescript-eslint/eslint-plugin": ^5.61.0
     "@typescript-eslint/parser": ^5.61.0
     eslint: ^8.44.0
     typescript: ^5.1.6
-  checksum: 88872d26956c334e0c47d67a8dd8dce9a74e2cb1ecbea0fab29040d19cd61f07067a3bded2787ca632b10af71ca878ebd59bd45afe67a291b0c5213a82e12a5a
+  checksum: a52bfb2fc144f1c9e711f0221ad945837af2be4d134cc4813ea1d7757e94929936b1e4f14d84640b4876a06770c69d2ef64a73f0713f77d3c54dcb5a0d10162e
   languageName: node
   linkType: hard
 
