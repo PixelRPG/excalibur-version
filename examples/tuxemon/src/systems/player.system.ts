@@ -70,7 +70,6 @@ export class PrpgPlayerSystem extends System<
   private _initCamera(entity: PrpgPlayerActor) {
     // this.scene.camera.strategy.elasticToActor(entity, 1, 1);
     this.scene.camera.strategy.lockToActor(entity);
-    this.scene.camera.zoom = 4;
     this._limitCameraBoundsToMap();
   }
 

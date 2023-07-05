@@ -36,7 +36,9 @@ PrpgTiledMapComponent, MapScene> {
     private _initProperties(tiledMap: PrpgTiledMapComponent) {
       const tiledObjectGroups = tiledMap.map.data.getExcaliburObjects();
       if (tiledObjectGroups.length > 0) {
+        
         for (const tiledObjectGroup of tiledObjectGroups) {
+          console.debug(tiledMap.name, tiledObjectGroup);
           this._initPolyLines(tiledObjectGroup);
           this._initPolygons(tiledObjectGroup);
           this._initTeleporter(tiledObjectGroup);
