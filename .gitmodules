@@ -1,6 +1,3 @@
-[submodule "packages/tile-extruder"]
-	path = packages/tile-extruder
-	url = https://github.com/PixelRPG/tile-extruder
 [submodule "packages/esbuild"]
 	path = packages/esbuild
 	url = https://github.com/PixelRPG/esbuild.git
