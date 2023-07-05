@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "test": "yarn workspaces foreach -v run test",
-    "build": "yarn workspaces foreach -ptRv --from '@pixelrpg/tuxemon' run build",
+    "build": "yarn workspaces foreach -pRv --topological-dev --from '@pixelrpg/tuxemon' run build",
     "clear": "yarn workspaces foreach -v run clear",
     "start": "yarn workspace @pixelrpg/tuxemon run start",
     "build:excalibur": "yarn workspace excalibur run build",
