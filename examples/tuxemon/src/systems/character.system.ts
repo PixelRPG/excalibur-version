@@ -82,7 +82,7 @@ PrpgCharacterComponent | BodyComponent | TransformComponent | MotionComponent | 
     }
     // Down
     if (motion.vel.y > 0) {
-      character.direction = Direction.DOWMN;
+      character.direction = Direction.DOWN;
       const animation = resources.sprites.scientist.getAnimation(CharacterAnimation.FRONT_WALK);
       if (!animation) {
         this.logger.warn(`${CharacterAnimation.FRONT_WALK} animation not found!`);

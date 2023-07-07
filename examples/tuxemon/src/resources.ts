@@ -4,15 +4,12 @@ import { TiledMapResource, TiledMap } from '@excaliburjs/plugin-tiled';
 import { AsepriteResource } from '@excaliburjs/plugin-aseprite/src/index';
 
 // Sprites
-import scientist from './assets/sprites/scientist/scientist.json';
-
-// Charsets
-import scientistCharSet from './assets/sprites/scientist/scientist.png';
+const scientistPath = './assets/sprites/scientist/scientist.json';
 
 // Maps
-import playerHouseBedroom from './assets/maps/player_house_bedroom.tmx';
-import playerHouseDownstairs from './assets/maps/player_house_downstairs.tmx';
-import tabaTown from './assets/maps/taba_town.tmx';
+const playerHouseBedroomPath = './assets/maps/player_house_bedroom.tmx';
+const playerHouseDownstairsPath = './assets/maps/player_house_downstairs.tmx';
+const tabaTownPath = './assets/maps/taba_town.tmx';
 
 interface Sprites {
   [key: string]: AsepriteResource;
@@ -25,13 +22,13 @@ class Resources {
   private static instance?: Resources;
 
   public sprites: Sprites = {
-    scientist: new AsepriteResource(scientist, false, scientistCharSet)
+    scientist: new AsepriteResource(scientistPath, false)
   };
 
   public maps: Maps = {
-    'player_house_bedroom.tmx': new TiledMapResource(playerHouseBedroom),
-    'player_house_downstairs.tmx': new TiledMapResource(playerHouseDownstairs),
-    'taba_town.tmx': new TiledMapResource(tabaTown)
+    'player_house_bedroom.tmx': new TiledMapResource(playerHouseBedroomPath),
+    'player_house_downstairs.tmx': new TiledMapResource(playerHouseDownstairsPath),
+    'taba_town.tmx': new TiledMapResource(tabaTownPath)
   }
 
   private constructor() {

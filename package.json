@@ -18,8 +18,16 @@
     "examples/*",
     "packages/*"
   ],
+  "resolutions": {
+    "@pixelrpg/eslint-config": "workspace:^",
+    "@pixelrpg/tuxemon": "workspace:^",
+    "excalibur": "workspace:^",
+    "@excaliburjs/plugin-aseprite": "workspace:^",
+    "@excaliburjs/plugin-tiled": "workspace:^"
+  },
   "devDependencies": {
     "@pixelrpg/eslint-config": "workspace:^",
+    "karma": "^6.4.2",
     "typescript": "^5.1.6"
   },
   "packageManager": "yarn@3.6.1"

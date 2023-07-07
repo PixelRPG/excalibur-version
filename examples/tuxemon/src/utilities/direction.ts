@@ -17,8 +17,8 @@ export const stringToDirection = (direction?: string | Direction) => {
     case 'down':
     case 'front':
     case 'bottom':
-    case Direction.DOWMN:
-      return Direction.DOWMN;
+    case Direction.DOWN:
+      return Direction.DOWN;
     default:
       Logger.getInstance().warn(`Ignore unknown direction "${direction}"!`);
       return Direction.UP;

@@ -12,6 +12,7 @@ import {
   LogLevel,
   GamepadAxisEvent
 } from 'excalibur';
+import { DevTool } from '@excaliburjs/dev-tools';
 import { resources } from './resources';
 
 // Scenes
@@ -32,10 +33,11 @@ export class PixelRPG {
       canvasElementId: 'game',
       pointerScope: Input.PointerScope.Canvas,
       antialiasing: false,
-      snapToPixel: true,
+      snapToPixel: false,
       suppressPlayButton: true, // Disable play button, enable to fix audio issue 
       backgroundColor: Color.Black
     });
+    new DevTool(this.engine);
   }
 
   public addMaps() {

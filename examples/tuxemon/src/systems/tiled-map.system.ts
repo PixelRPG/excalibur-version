@@ -52,15 +52,18 @@ PrpgTiledMapComponent, MapScene> {
      */
     private _initSpawnPoints(tiledObjectGroup: TiledObjectGroup) {
       let hasStartPoint = false;
-      const start = tiledObjectGroup.getObjectByName('player-start');
-      if (start) {
-        hasStartPoint = true;
-        const z = start.getProperty<number>('zindex')?.value || 0;
-        const direction = start.getProperty<string>('direction')?.value;
-        const player = PrpgPlayerActor.getInstance({spriteSheet: resources.sprites.scientist, playerNumber: 1});
-
-        this.scene.add(player);
-        this.scene.add(newSpawnPointEntity(SpawnPointType.START, start.x, start.y, z, stringToDirection(direction)));
+      const starts = tiledObjectGroup.getObjectsByClass('player-start');
+      if (starts.length > 0) {
+        for (let i = 0; i < starts.length; i++) {
+          const start = starts[i];
+          const z = start.getProperty<number>('zindex')?.value || 0;
+          const playerNumber = start.getProperty<number>('player')?.value || (i + 1);
+          const direction = start.getProperty<string>('direction')?.value;
+          const player = PrpgPlayerActor.createInstance({ spriteSheet: resources.sprites.scientist, playerNumber });
+          
+          this.scene.add(player);
+          this.scene.add(newSpawnPointEntity(SpawnPointType.START, start.x, start.y, z, stringToDirection(direction), player));
+        }
       }
       return hasStartPoint;
     }

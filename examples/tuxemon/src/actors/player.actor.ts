@@ -1,4 +1,4 @@
-import { Actor, vec, CollisionType } from 'excalibur';
+import { Actor, vec, CollisionType, Logger } from 'excalibur';
 import { PrpgCharacterComponent, PrpgPlayerComponent } from '../components';
 import { Player } from '../types';
 
@@ -19,11 +19,17 @@ export class PrpgPlayerActor extends Actor {
   private static instances: {
     [num: number]: PrpgPlayerActor;
   } = {};
-  static getInstance(config: Player) {
+
+  static createInstance(config: Player) {
     if (this.instances[config.playerNumber]) {
+      Logger.getInstance().warn(`[PrpgPlayerActor] Player ${config.playerNumber} already exists!`);
       return this.instances[config.playerNumber];
     }
     this.instances[config.playerNumber] = new this(config);
     return this.instances[config.playerNumber];
+  }
+
+  static getByPlayerNumber(playerNumber: number) {
+    return this.instances[playerNumber];
   }
 }
