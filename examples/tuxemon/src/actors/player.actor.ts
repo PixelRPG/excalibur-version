@@ -1,6 +1,6 @@
 import { Actor, vec, CollisionType, Logger } from 'excalibur';
 import { PrpgCharacterComponent, PrpgPlayerComponent } from '../components';
-import { Player, GameOptions } from '../types';
+import { Player, GameOptions, MultiplayerData } from '../types';
 
 const DEFAULT_ARGS: Partial<Player> = {
   name: 'player',
@@ -10,7 +10,7 @@ const DEFAULT_ARGS: Partial<Player> = {
   collisionType: CollisionType.Active
 };
 
-export class PrpgPlayerActor extends Actor {
+export class PrpgPlayerActor extends Actor implements MultiplayerData {
   private constructor(protected readonly gameOptions: GameOptions, config: Player) {
     super({...DEFAULT_ARGS, ...config});
     this.addComponent(new PrpgCharacterComponent(config.spriteSheet));
@@ -23,26 +23,67 @@ export class PrpgPlayerActor extends Actor {
     }  | undefined;
   } = {};
 
-  static getInstances(gameOptions: GameOptions) {
+  /**
+   * Get singleton instances by player number, each player in a splitscreen has is's own singleton instances
+   * @param gameOptions 
+   * @param config 
+   */
+  static getPlayers(gameOptions: GameOptions) {
     return this.instances[gameOptions.playerNumber] ||= {};
   }
 
-  static getInstanceByPlayer(gameOptions: GameOptions, playerNumber: number) {
-    const instances = this.getInstances(gameOptions);
+  /**
+   * Get singleton instance by player number, each player in a splitscreen has is's own singleton instance of each player
+   * @param gameOptions 
+   * @param playerNumber 
+   * @returns 
+   */
+  static getPlayer(gameOptions: GameOptions, playerNumber: number) {
+    const instances = this.getPlayers(gameOptions);
     return instances[playerNumber];
   }
 
-  static createInstance(gameOptions: GameOptions, config: Player) {
+  /**
+   * Create a new player instance
+   * @param gameOptions 
+   * @param config 
+   * @returns 
+   */
+  static newPlayer(gameOptions: GameOptions, config: Player) {
 
-    const instance = this.getInstanceByPlayer(gameOptions, config.playerNumber);
+    const instance = this.getPlayer (gameOptions, config.playerNumber);
 
     if (instance) {
       Logger.getInstance().warn(`[PrpgPlayerActor] Player ${config.playerNumber} already exists!`);
       return instance;
     }
     
-    const instances = this.getInstances(gameOptions);
+    const instances = this.getPlayers(gameOptions);
     instances[config.playerNumber] = new this(gameOptions, config);
     return instances[config.playerNumber] as PrpgPlayerActor;
+  }
+
+  get player() {
+    return this.get(PrpgPlayerComponent);
+  }
+
+  get character() {
+    return this.get(PrpgCharacterComponent);
+  }
+
+  serialize() {
+    return {
+      player: this.player?.serialize(),
+      character: this.character?.serialize(),
+      body: {
+        vel: this.body.vel
+      }
+    }
+  }
+
+  deserialize(data: any) {
+    this.player?.deserialize(data.player);
+    this.character?.deserialize(data.character);
+    this.body.vel = data.body.vel;
   }
 }

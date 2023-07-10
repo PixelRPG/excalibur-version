@@ -82,8 +82,7 @@ PrpgTeleporterComponent> {
 
       
       // Remove the player from the current map and add it to the target map
-      this.scene.world.remove(entry, false); // false means non-deferred removal, see https://github.com/excaliburjs/Excalibur/issues/2687
-      targetMapScene.add(entry);
+      this.scene.transfer(entry, targetMapScene);
         
       // If the entry is the current player, go to the target map
       const player = entry.get(PrpgPlayerComponent);
