@@ -1,22 +1,22 @@
 import { System, SystemType, Logger, Entity, Actor, vec, Color } from 'excalibur';
 import { MapScene } from '../scenes/map.scene';
 import { TiledObjectGroup } from '@excaliburjs/plugin-tiled';
-import { PrpgTiledMapComponent } from '../components';
+import { PrpgMapComponent } from '../components';
 import { PrpgTeleportActor, PrpgPlayerActor } from '../actors';
 import { newSpawnPointEntity } from '../entities';
-import { PrpgComponentType, SpawnPointType } from '../types';
+import { PrpgComponentType, SpawnPointType, GameOptions } from '../types';
 import { stringToDirection } from '../utilities/direction';
-import { resources } from '../resources';
+import { resources } from '../managers/resource.manager';
 
-export class PrpgTiledMapSystem extends System<
-PrpgTiledMapComponent, MapScene> {
+export class PrpgMapSystem extends System<
+PrpgMapComponent, MapScene> {
     public readonly types = [PrpgComponentType.TILED_MAP] as const;
     public priority = 100;
     public systemType = SystemType.Update;
     private scene: MapScene;
     private logger = Logger.getInstance();
 
-    constructor() {
+    constructor(protected readonly gameOptions: GameOptions) {
       super();
     }
 
@@ -33,7 +33,7 @@ PrpgTiledMapComponent, MapScene> {
     /**
      * Init properties defined in tiled map
      */
-    private _initProperties(tiledMap: PrpgTiledMapComponent) {
+    private _initProperties(tiledMap: PrpgMapComponent) {
       const tiledObjectGroups = tiledMap.map.data.getExcaliburObjects();
       if (tiledObjectGroups.length > 0) {
         
@@ -41,7 +41,7 @@ PrpgTiledMapComponent, MapScene> {
           console.debug(tiledMap.name, tiledObjectGroup);
           this._initPolyLines(tiledObjectGroup);
           this._initPolygons(tiledObjectGroup);
-          this._initTeleporter(tiledObjectGroup);
+          this._initTeleports(tiledObjectGroup);
           this._initSpawnPoints(tiledObjectGroup);
         }
       }
@@ -59,7 +59,7 @@ PrpgTiledMapComponent, MapScene> {
           const z = start.getProperty<number>('zindex')?.value || 0;
           const playerNumber = start.getProperty<number>('player')?.value || (i + 1);
           const direction = start.getProperty<string>('direction')?.value;
-          const player = PrpgPlayerActor.createInstance({ spriteSheet: resources.sprites.scientist, playerNumber });
+          const player = PrpgPlayerActor.createInstance(this.gameOptions, { spriteSheet: resources.sprites.scientist, playerNumber });
           
           this.scene.add(player);
           this.scene.add(newSpawnPointEntity(SpawnPointType.START, start.x, start.y, z, stringToDirection(direction), player));
@@ -128,9 +128,9 @@ PrpgTiledMapComponent, MapScene> {
       }
     }
 
-    private _initTeleporter(tiledObjectGroup: TiledObjectGroup) {
-      const teleporters = tiledObjectGroup.getObjectsByType('teleporter');
-      for (const teleObj of teleporters) {
+    private _initTeleports(tiledObjectGroup: TiledObjectGroup) {
+      const teleports = tiledObjectGroup.getObjectsByType('teleport');
+      for (const teleObj of teleports) {
         const mapName = teleObj.getProperty<string>('map-name')?.value;
         const spawnName = teleObj.getProperty<string>('teleport-spawn-name')?.value;
         const z = teleObj.getProperty<number>('zindex')?.value || 0;
@@ -138,16 +138,16 @@ PrpgTiledMapComponent, MapScene> {
         const y = teleObj.y + Math.round((teleObj.height ?? 0) / 2);
 
         if (!mapName) {
-          this.logger.warn('"mapName" property for teleporter not found!', teleObj);
+          this.logger.warn('"mapName" property for teleport not found!', teleObj);
           continue;
         }
 
         if (!spawnName) {
-          this.logger.warn('"teleport-spawn-name" property for teleporter not found!', teleObj);
+          this.logger.warn('"teleport-spawn-name" property for teleport not found!', teleObj);
           continue;
         }
 
-        const teleporter = new PrpgTeleportActor({
+        const teleport = new PrpgTeleportActor({
           mapName,
           spawnName,
           pos: vec(x, y),
@@ -155,12 +155,12 @@ PrpgTiledMapComponent, MapScene> {
           height: teleObj.height,
           z
         });
-        this.scene.add(teleporter);
+        this.scene.add(teleport);
       }
     }
 
     public initialize(scene: MapScene) {
-      this.logger.debug('[PrpgTiledMapSystem] initialize');
+      this.logger.debug('[PrpgMapSystem] initialize');
       this.scene = scene;
       this._initTiledMapComponents();
     }

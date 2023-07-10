@@ -234,7 +234,7 @@
   <properties>
    <property name="excalibur" type="bool" value="true"/>
   </properties>
-  <object id="67" name="Go to Player's house" type="teleporter" x="688" y="720" width="16" height="8">
+  <object id="67" name="Go to Player's house" type="teleport" x="688" y="720" width="16" height="8">
    <properties>
     <property name="act10" value="transition_teleport player_house_downstairs.tmx,5,7,0.5"/>
     <property name="cond10" value="is player_at"/>

@@ -1,5 +1,5 @@
 { "frames": {
-   "scientist (layer1) 0.aseprite": {
+   "scientist 0.aseprite": {
     "frame": { "x": 0, "y": 0, "w": 16, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -7,7 +7,7 @@
     "sourceSize": { "w": 16, "h": 32 },
     "duration": 200
    },
-   "scientist (layer1) 1.aseprite": {
+   "scientist 1.aseprite": {
     "frame": { "x": 16, "y": 0, "w": 16, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -15,15 +15,7 @@
     "sourceSize": { "w": 16, "h": 32 },
     "duration": 200
    },
-   "scientist (layer1) 2.aseprite": {
-    "frame": { "x": 0, "y": 0, "w": 16, "h": 32 },
-    "rotated": false,
-    "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 32 },
-    "sourceSize": { "w": 16, "h": 32 },
-    "duration": 200
-   },
-   "scientist (layer1) 3.aseprite": {
+   "scientist 2.aseprite": {
     "frame": { "x": 32, "y": 0, "w": 16, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -31,15 +23,7 @@
     "sourceSize": { "w": 16, "h": 32 },
     "duration": 200
    },
-   "scientist (layer1) 4.aseprite": {
-    "frame": { "x": 0, "y": 0, "w": 16, "h": 32 },
-    "rotated": false,
-    "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 32 },
-    "sourceSize": { "w": 16, "h": 32 },
-    "duration": 200
-   },
-   "scientist (layer1) 5.aseprite": {
+   "scientist 3.aseprite": {
     "frame": { "x": 48, "y": 0, "w": 16, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -47,7 +31,7 @@
     "sourceSize": { "w": 16, "h": 32 },
     "duration": 200
    },
-   "scientist (layer1) 6.aseprite": {
+   "scientist 4.aseprite": {
     "frame": { "x": 64, "y": 0, "w": 16, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -55,15 +39,7 @@
     "sourceSize": { "w": 16, "h": 32 },
     "duration": 200
    },
-   "scientist (layer1) 7.aseprite": {
-    "frame": { "x": 48, "y": 0, "w": 16, "h": 32 },
-    "rotated": false,
-    "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 32 },
-    "sourceSize": { "w": 16, "h": 32 },
-    "duration": 200
-   },
-   "scientist (layer1) 8.aseprite": {
+   "scientist 5.aseprite": {
     "frame": { "x": 80, "y": 0, "w": 16, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -71,15 +47,7 @@
     "sourceSize": { "w": 16, "h": 32 },
     "duration": 200
    },
-   "scientist (layer1) 9.aseprite": {
-    "frame": { "x": 48, "y": 0, "w": 16, "h": 32 },
-    "rotated": false,
-    "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 32 },
-    "sourceSize": { "w": 16, "h": 32 },
-    "duration": 200
-   },
-   "scientist (layer1) 10.aseprite": {
+   "scientist 6.aseprite": {
     "frame": { "x": 96, "y": 0, "w": 16, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -87,7 +55,7 @@
     "sourceSize": { "w": 16, "h": 32 },
     "duration": 200
    },
-   "scientist (layer1) 11.aseprite": {
+   "scientist 7.aseprite": {
     "frame": { "x": 112, "y": 0, "w": 16, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -95,15 +63,7 @@
     "sourceSize": { "w": 16, "h": 32 },
     "duration": 200
    },
-   "scientist (layer1) 12.aseprite": {
-    "frame": { "x": 96, "y": 0, "w": 16, "h": 32 },
-    "rotated": false,
-    "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 32 },
-    "sourceSize": { "w": 16, "h": 32 },
-    "duration": 200
-   },
-   "scientist (layer1) 13.aseprite": {
+   "scientist 8.aseprite": {
     "frame": { "x": 128, "y": 0, "w": 16, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -111,15 +71,7 @@
     "sourceSize": { "w": 16, "h": 32 },
     "duration": 200
    },
-   "scientist (layer1) 14.aseprite": {
-    "frame": { "x": 96, "y": 0, "w": 16, "h": 32 },
-    "rotated": false,
-    "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 32 },
-    "sourceSize": { "w": 16, "h": 32 },
-    "duration": 200
-   },
-   "scientist (layer1) 15.aseprite": {
+   "scientist 9.aseprite": {
     "frame": { "x": 144, "y": 0, "w": 16, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -127,7 +79,7 @@
     "sourceSize": { "w": 16, "h": 32 },
     "duration": 200
    },
-   "scientist (layer1) 16.aseprite": {
+   "scientist 10.aseprite": {
     "frame": { "x": 160, "y": 0, "w": 16, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -135,15 +87,7 @@
     "sourceSize": { "w": 16, "h": 32 },
     "duration": 200
    },
-   "scientist (layer1) 17.aseprite": {
-    "frame": { "x": 144, "y": 0, "w": 16, "h": 32 },
-    "rotated": false,
-    "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 32 },
-    "sourceSize": { "w": 16, "h": 32 },
-    "duration": 200
-   },
-   "scientist (layer1) 18.aseprite": {
+   "scientist 11.aseprite": {
     "frame": { "x": 176, "y": 0, "w": 16, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -151,8 +95,64 @@
     "sourceSize": { "w": 16, "h": 32 },
     "duration": 200
    },
-   "scientist (layer1) 19.aseprite": {
-    "frame": { "x": 144, "y": 0, "w": 16, "h": 32 },
+   "scientist 12.aseprite": {
+    "frame": { "x": 192, "y": 0, "w": 16, "h": 32 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 32 },
+    "sourceSize": { "w": 16, "h": 32 },
+    "duration": 200
+   },
+   "scientist 13.aseprite": {
+    "frame": { "x": 208, "y": 0, "w": 16, "h": 32 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 32 },
+    "sourceSize": { "w": 16, "h": 32 },
+    "duration": 200
+   },
+   "scientist 14.aseprite": {
+    "frame": { "x": 224, "y": 0, "w": 16, "h": 32 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 32 },
+    "sourceSize": { "w": 16, "h": 32 },
+    "duration": 200
+   },
+   "scientist 15.aseprite": {
+    "frame": { "x": 240, "y": 0, "w": 16, "h": 32 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 32 },
+    "sourceSize": { "w": 16, "h": 32 },
+    "duration": 200
+   },
+   "scientist 16.aseprite": {
+    "frame": { "x": 256, "y": 0, "w": 16, "h": 32 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 32 },
+    "sourceSize": { "w": 16, "h": 32 },
+    "duration": 200
+   },
+   "scientist 17.aseprite": {
+    "frame": { "x": 272, "y": 0, "w": 16, "h": 32 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 32 },
+    "sourceSize": { "w": 16, "h": 32 },
+    "duration": 200
+   },
+   "scientist 18.aseprite": {
+    "frame": { "x": 288, "y": 0, "w": 16, "h": 32 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 32 },
+    "sourceSize": { "w": 16, "h": 32 },
+    "duration": 200
+   },
+   "scientist 19.aseprite": {
+    "frame": { "x": 304, "y": 0, "w": 16, "h": 32 },
     "rotated": false,
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 32 },
@@ -162,10 +162,10 @@
  },
  "meta": {
   "app": "http://www.aseprite.org/",
-  "version": "1.2.30-x64",
+  "version": "1.2.40-x64",
   "image": "scientist.png",
   "format": "I8",
-  "size": { "w": 192, "h": 32 },
+  "size": { "w": 320, "h": 32 },
   "scale": "1",
   "frameTags": [
    { "name": "back", "from": 0, "to": 0, "direction": "forward" },

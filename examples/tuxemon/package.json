@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "yarn run barrel && yarn run assets && esbuilder --outfile ./dist/main.js",
-    "barrel": "barreler ./src/actors ./src/components ./src/entities ./src/entities ./src/scenes ./src/systems ./src/types ./src/utilities",
+    "barrel": "barreler ./src/actors ./src/components ./src/entities ./src/entities ./src/scenes ./src/systems ./src/types ./src/utilities ./src/managers",
     "assets": "mkdir -p ./dist && cp -r ./src/assets ./dist && cp ./src/index.html ./dist",
     "serve:dev": "yarn run serve -- --dev",
     "serve": "yarn run assets && esbuilder --serve --outfile ./dist/main.js",
@@ -20,7 +20,8 @@
     "@excaliburjs/dev-tools": "^0.27.1",
     "@excaliburjs/plugin-aseprite": "workspace:^",
     "@excaliburjs/plugin-tiled": "workspace:^",
-    "excalibur": "workspace:^"
+    "excalibur": "workspace:^",
+    "yjs": "^13.6.6"
   },
   "devDependencies": {
     "@pixelrpg/esbuild": "workspace:^",

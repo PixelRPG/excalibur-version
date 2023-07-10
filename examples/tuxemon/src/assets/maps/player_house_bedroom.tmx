@@ -51,7 +51,7 @@
   <properties>
    <property name="excalibur" type="bool" value="true"/>
   </properties>
-  <object id="28" name="player-start" type="player-start" x="78" y="88">
+  <object id="28" name="Player 1 Start" type="player-start" x="78" y="88">
    <properties>
     <property name="direction" value="front"/>
     <property name="player" type="int" value="1"/>
@@ -65,7 +65,7 @@
    </properties>
    <point/>
   </object>
-  <object id="34" name="Go Downstairs" type="teleporter" x="116" y="48" width="6" height="16">
+  <object id="34" name="Go Downstairs" type="teleport" x="116" y="48" width="6" height="16">
    <properties>
     <property name="map-name" value="player_house_downstairs.tmx"/>
     <property name="teleport-spawn-name" value="From Upstairs"/>
@@ -79,9 +79,9 @@
    </properties>
    <point/>
   </object>
-  <object id="37" name="player-start" type="player-start" x="124.909" y="110">
+  <object id="37" name="Player 2 Start" type="player-start" x="124.909" y="110">
    <properties>
-    <property name="direction" value="front"/>
+    <property name="direction" value="up"/>
     <property name="player" type="int" value="2"/>
     <property name="zindex" type="int" value="0"/>
    </properties>
@@ -92,12 +92,12 @@
   <properties>
    <property name="excalibur" type="bool" value="true"/>
   </properties>
-  <object id="1" type="BoxCollider" x="16" y="32" width="144" height="16"/>
-  <object id="2" type="BoxCollider" x="160" y="48" width="16" height="80"/>
-  <object id="3" type="BoxCollider" x="16" y="128" width="144" height="16"/>
-  <object id="4" type="BoxCollider" x="0" y="48" width="16" height="80"/>
+  <object id="1" type="BoxCollider" x="16" y="0" width="144" height="48"/>
+  <object id="2" type="BoxCollider" x="160" y="0" width="16" height="128"/>
+  <object id="3" type="BoxCollider" x="0" y="128" width="176" height="16"/>
+  <object id="4" type="BoxCollider" x="0" y="0" width="16" height="128"/>
   <object id="5" type="BoxCollider" x="16" y="48" width="16" height="32"/>
-  <object id="6" type="BoxCollider" x="112" y="65" width="15.8182" height="13"/>
+  <object id="6" type="BoxCollider" x="112" y="65" width="32" height="13"/>
   <object id="7" type="BoxCollider" x="112" y="48" width="4" height="17"/>
   <object id="8" type="BoxCollider" x="147" y="117" width="10" height="9"/>
   <object id="27" type="BoxCollider" x="52" y="48" width="8" height="10"/>

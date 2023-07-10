@@ -19,7 +19,7 @@ import {
 } from '../components';
 import { PrpgPlayerActor } from '../actors';
 import { MapScene } from '../scenes/map.scene';
-import { PrpgComponentType } from '../types';
+import { GameOptions, PrpgComponentType } from '../types';
 
 export class PrpgPlayerSystem extends System<
 | PrpgPlayerComponent
@@ -37,7 +37,7 @@ export class PrpgPlayerSystem extends System<
   private scene: MapScene;
   private logger = Logger.getInstance();
 
-  constructor() {
+  constructor(readonly options: GameOptions) {
     super();
   }
 
@@ -67,71 +67,121 @@ export class PrpgPlayerSystem extends System<
     this.scene.camera.strategy.limitCameraBounds(mapBox);
   }
 
-  private _initCamera(entity: PrpgPlayerActor) {
+  private _initCameraForPlayer(entity: PrpgPlayerActor) {
     // this.scene.camera.strategy.elasticToActor(entity, 1, 1);
-    this.scene.camera.strategy.lockToActor(entity);
-    this._limitCameraBoundsToMap();
+    const player = entity.get(PrpgPlayerComponent);
+    if(!player) {
+      this.logger.warn('PlayerComponent for entry not found!');
+      return;
+    }
+
+    if(player.playerNumber === this.options.playerNumber) {
+      this.scene.camera.strategy.lockToActor(entity);
+    }    
   }
 
   private _handleInput(entity: Entity) {
-    const body = entity.get(BodyComponent);
-    if (!body) {
-      this.logger.warn('BodyComponent for player input not found!');
-      return;
-    }
     const player = entity.get(PrpgPlayerComponent);
     if(!player) {
       this.logger.warn('PlayerComponent for player input not found!');
       return;
     }
-    if (player.playerNumber !== 1) {
+    if (player.playerNumber !== this.options.playerNumber) {
       // Ignore input for other players
+      return;
+    }
+
+    const body = entity.get(BodyComponent);
+    if (!body) {
+      this.logger.warn('BodyComponent for player input not found!');
       return;
     }
 
     body.vel.setTo(0, 0);
     const speed = 64;
     const pad1 = this.scene.engine.input.gamepads.at(0);
+    const pad2 = this.scene.engine.input.gamepads.at(1);
     const keyboard = this.scene.engine.input.keyboard;
-    const axesLeftX = pad1.getAxes(Input.Axes.LeftStickX);
-    const axesLeftY = pad1.getAxes(Input.Axes.LeftStickY);
+    const pad1AxesLeftX = pad1.getAxes(Input.Axes.LeftStickX);
+    const pad1AxesLeftY = pad1.getAxes(Input.Axes.LeftStickY);
 
-    if (
-      keyboard.isHeld(Input.Keys.Right) ||
-      pad1.isButtonHeld(Input.Buttons.DpadRight)
-    ) {
-      body.vel.x = speed;
-    }
-    if (
-      keyboard.isHeld(Input.Keys.Left) ||
-      pad1.isButtonHeld(Input.Buttons.DpadLeft)
-    ) {
-      body.vel.x = -speed;
-    }
-    if (
-      keyboard.isHeld(Input.Keys.Up) ||
-      pad1.isButtonHeld(Input.Buttons.DpadUp)
-    ) {
-      body.vel.y = -speed;
-    }
-    if (
-      keyboard.isHeld(Input.Keys.Down) ||
-      pad1.isButtonHeld(Input.Buttons.DpadDown)
-    ) {
-      body.vel.y = speed;
-    }
+    const pad2AxesLeftX = pad1.getAxes(Input.Axes.LeftStickX);
+    const pad2AxesLeftY = pad1.getAxes(Input.Axes.LeftStickY);
 
-    if (keyboard.wasPressed(Input.Keys.D)) {
+    if (keyboard.wasPressed(Input.Keys.F1)) {
       this.scene.engine.toggleDebug();
     }
 
-    // Axes movement
-    if (Math.abs(axesLeftX) > 0) {
-      body.vel.x = axesLeftX * speed;
+    if(this.options.playerNumber === 1) {
+      if (
+        keyboard.isHeld(Input.Keys.Right) ||
+        pad1.isButtonHeld(Input.Buttons.DpadRight)
+      ) {
+        body.vel.x = speed;
+      }
+      if (
+        keyboard.isHeld(Input.Keys.Left) ||
+        pad1.isButtonHeld(Input.Buttons.DpadLeft)
+      ) {
+        body.vel.x = -speed;
+      }
+      if (
+        keyboard.isHeld(Input.Keys.Up) ||
+        pad1.isButtonHeld(Input.Buttons.DpadUp)
+      ) {
+        body.vel.y = -speed;
+      }
+      if (
+        keyboard.isHeld(Input.Keys.Down) ||
+        pad1.isButtonHeld(Input.Buttons.DpadDown)
+      ) {
+        body.vel.y = speed;
+      }
+
+      // Axes movement
+      if (Math.abs(pad1AxesLeftX) > 0) {
+        body.vel.x = pad1AxesLeftX * speed;
+      }
+      if (Math.abs(pad1AxesLeftY) > 0) {
+        body.vel.y = pad1AxesLeftY * speed;
+      }
     }
-    if (Math.abs(axesLeftY) > 0) {
-      body.vel.y = axesLeftY * speed;
+
+    if(this.options.playerNumber === 2) {
+      if (
+        keyboard.isHeld(Input.Keys.D) ||
+        pad2.isButtonHeld(Input.Buttons.DpadRight)
+      ) {
+        body.vel.x = speed;
+      }
+      if (
+        keyboard.isHeld(Input.Keys.A) ||
+        pad2.isButtonHeld(Input.Buttons.DpadLeft)
+      ) {
+        body.vel.x = -speed;
+      }
+      if (
+        keyboard.isHeld(Input.Keys.W) ||
+        pad2.isButtonHeld(Input.Buttons.DpadUp)
+      ) {
+        body.vel.y = -speed;
+      }
+      if (
+        keyboard.isHeld(Input.Keys.S) ||
+        pad2.isButtonHeld(Input.Buttons.DpadDown)
+      ) {
+        body.vel.y = speed;
+      }
+
+      // Axes movement
+      if (Math.abs(pad2AxesLeftX) > 0) {
+        body.vel.x = pad2AxesLeftX * speed;
+      }
+      if (Math.abs(pad2AxesLeftY) > 0) {
+        body.vel.y = pad2AxesLeftY * speed;
+      }
     }
+
   }
 
   /**
@@ -203,8 +253,10 @@ export class PrpgPlayerSystem extends System<
 
     const players = playerQuery.getEntities() as PrpgPlayerActor[];
     for (const player of players) {
-      this._initCamera(player);
+      this._initCameraForPlayer(player);
     }
+
+    this._limitCameraBoundsToMap();
   }
 
   public update(entities: (Entity | PrpgPlayerActor)[], delta: number) {

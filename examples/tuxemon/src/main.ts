@@ -12,11 +12,13 @@ import {
   LogLevel,
   GamepadAxisEvent
 } from 'excalibur';
-import { DevTool } from '@excaliburjs/dev-tools';
-import { resources } from './resources';
+// import { DevTool } from '@excaliburjs/dev-tools';
+import { resources, StateManager } from './managers/index';
 
 // Scenes
 import { MapScene } from './scenes/map.scene';
+
+import type { GameOptions } from './types';
 
 // Flags.useWebGL();
 // Flags.useCanvasGraphicsContext();
@@ -26,25 +28,28 @@ export class PixelRPG {
 
   private logger = Logger.getInstance();
   private engine: Engine;
+  private state: StateManager; 
 
-  constructor() {
+  constructor(readonly options: GameOptions) {
     this.engine = new Engine({
-      displayMode: DisplayMode.FillScreen,
-      canvasElementId: 'game',
+      displayMode: DisplayMode.FitContainerAndFill,
+      canvasElementId: 'p'  + options.playerNumber,
       pointerScope: Input.PointerScope.Canvas,
       antialiasing: false,
       snapToPixel: false,
-      suppressPlayButton: true, // Disable play button, enable to fix audio issue 
+      suppressPlayButton: true, // Disable play button, enable to fix audio issue, currently only used for dev
       backgroundColor: Color.Black
     });
-    new DevTool(this.engine);
+    this.state = StateManager.getSingleton(options);
+    // new DevTool(this.engine);
   }
 
-  public addMaps() {
+  public addMapScenes() {
     const mapNames = Object.keys(resources.maps);
     for (const mapName of mapNames) {
       if (resources.maps[mapName]) {
-        this.engine.add(mapName, new MapScene(resources.maps[mapName], mapName));
+        this.engine.add(mapName, new MapScene(resources.maps[mapName], mapName, this.options));
+        this.state.addScene(mapName);
       }
     }
     return resources.maps;
@@ -77,7 +82,7 @@ export class PixelRPG {
       this.logger.debug('[Main] axis', ev.axis, ev.value);
     });
 
-    this.addMaps();
+    this.addMapScenes();
     this.engine.goToScene('player_house_bedroom.tmx');
 
     this.logger.debug('[Main] pixelRatio', this.engine.pixelRatio);
@@ -92,5 +97,8 @@ export class PixelRPG {
   };
 }
 
-const pixelRpg = new PixelRPG();
-pixelRpg.start();
+const player1 = new PixelRPG({ playerNumber: 1});
+const player2 = new PixelRPG({ playerNumber: 2});
+
+player1.start();
+player2.start();

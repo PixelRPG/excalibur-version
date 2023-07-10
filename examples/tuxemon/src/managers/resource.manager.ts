@@ -1,4 +1,4 @@
-import './typings';
+import '../typings';
 import { Loadable } from 'excalibur';
 import { TiledMapResource, TiledMap } from '@excaliburjs/plugin-tiled';
 import { AsepriteResource } from '@excaliburjs/plugin-aseprite/src/index';
@@ -17,9 +17,9 @@ interface Sprites {
 interface Maps {
   [key: string]: TiledMapResource;
 }
-class Resources {
+class ResourceManager {
 
-  private static instance?: Resources;
+  private static instance?: ResourceManager;
 
   public sprites: Sprites = {
     scientist: new AsepriteResource(scientistPath, false)
@@ -36,11 +36,11 @@ class Resources {
   }
 
   public static getSingleton() {
-    if (Resources.instance) {
-      return Resources.instance;
+    if (ResourceManager.instance) {
+      return ResourceManager.instance;
     }
-    Resources.instance = new Resources();
-    return Resources.instance;
+    ResourceManager.instance = new ResourceManager();
+    return ResourceManager.instance;
   }
 
   private _toArray<T = any>(obj: {[key:string]: Loadable<T>}) {
@@ -65,6 +65,4 @@ class Resources {
   }
 }
 
-const resources = Resources.getSingleton();
-
-export { resources };
+export const resources = ResourceManager.getSingleton();

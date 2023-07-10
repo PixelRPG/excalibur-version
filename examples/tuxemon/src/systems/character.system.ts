@@ -13,7 +13,7 @@ import {
 } from 'excalibur';
 import { PrpgCharacterComponent } from '../components';
 import { PrpgCharacterActor } from '../actors';
-import { resources } from '../resources';
+import { resources } from '../managers/resource.manager';
 import { MapScene } from '../scenes/map.scene';
 import { CharacterAnimation, PrpgComponentType, Direction } from '../types';
 
@@ -127,9 +127,9 @@ PrpgCharacterComponent | BodyComponent | TransformComponent | MotionComponent | 
     }
     for (const entity of entities) {
       entity.graphics.use(front);
-      entity.on('pointerup', () => {
-        this.logger.debug('[PrpgCharacterSystem] pointerup');
-      });
+      // entity.on('pointerup', () => {
+      //   this.logger.debug('[PrpgCharacterSystem] pointerup');
+      // });
     }
   }
 

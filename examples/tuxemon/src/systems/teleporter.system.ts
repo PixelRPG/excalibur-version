@@ -4,7 +4,7 @@ import { PrpgPlayerComponent, PrpgTeleporterComponent } from '../components';
 import { newSpawnPointEntity } from '../entities';
 import { PrpgPlayerActor } from '../actors';
 import { MapScene } from '../scenes/map.scene';
-import { PrpgComponentType, SpawnPointType, Direction } from '../types';
+import { PrpgComponentType, SpawnPointType, Direction, GameOptions } from '../types';
 import { stringToDirection } from '../utilities/direction';
 
 export class PrpgTeleporterSystem extends System<
@@ -16,7 +16,7 @@ PrpgTeleporterComponent> {
     private logger = Logger.getInstance();
     private teleporterQuery?: Query<PrpgTeleporterComponent>;
 
-    constructor() {
+    constructor(readonly options: GameOptions) {
       super();
     }
 
@@ -84,11 +84,10 @@ PrpgTeleporterComponent> {
       // Remove the player from the current map and add it to the target map
       this.scene.world.remove(entry, false); // false means non-deferred removal, see https://github.com/excaliburjs/Excalibur/issues/2687
       targetMapScene.add(entry);
-      
         
       // If the entry is the current player, go to the target map
-      // TODO check current player, not only player 1 for split screen
-      if(entry === PrpgPlayerActor.getByPlayerNumber(1)) {
+      const player = entry.get(PrpgPlayerComponent);
+      if(player?.playerNumber === this.options.playerNumber) {
         this.scene.engine.goToScene(teleporter.mapName);
       }
       
