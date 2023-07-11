@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "yarn run barrel && yarn run assets && esbuilder --outfile ./dist/main.js",
-    "barrel": "barreler ./src/actors ./src/components ./src/entities ./src/entities ./src/scenes ./src/systems ./src/types ./src/utilities ./src/managers",
+    "barrel": "barreler ./src/actors ./src/components ./src/entities ./src/entities ./src/scenes ./src/systems ./src/types ./src/utilities ./src/managers ./src/screen-elements",
     "assets": "mkdir -p ./dist && cp -r ./src/assets ./dist && cp ./src/index.html ./dist",
     "serve:dev": "yarn run serve -- --dev",
     "serve": "yarn run assets && esbuilder --serve --outfile ./dist/main.js",

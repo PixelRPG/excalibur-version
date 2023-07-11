@@ -1,7 +1,8 @@
+import { Color } from 'excalibur';
 import { PrpgEngine } from './engine';
 
 const player1 = new PrpgEngine({}, { playerNumber: 1});
-const player2 = new PrpgEngine({}, { playerNumber: 2});
+const player2 = new PrpgEngine({ backgroundColor: Color.Blue }, { playerNumber: 2});
 
 player1.start();
 player2.start();

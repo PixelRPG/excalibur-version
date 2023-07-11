@@ -10,8 +10,8 @@ export class PrpgSpawnPointComponent extends Component<PrpgComponentType.SPAWN_P
     public y: number,
     public z = 0,
     public direction = Direction.DOWN,
-    /** The entry for which this span point is, mostly this is one of the players */
-    public entry: Entity
+    /** The entity for which this span point is, mostly this is one of the players */
+    public entity: Entity
   ) {
     super();
   }

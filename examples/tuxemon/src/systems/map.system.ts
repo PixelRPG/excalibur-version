@@ -160,6 +160,7 @@ PrpgMapComponent, MapScene> {
     }
 
     public initialize(scene: MapScene) {
+      super.initialize?.(scene);
       this.logger.debug('[PrpgMapSystem] initialize');
       this.scene = scene;
       this._initTiledMapComponents();

@@ -1,6 +1,6 @@
 import { Actor, vec, CollisionType, Logger } from 'excalibur';
-import { PrpgCharacterComponent, PrpgPlayerComponent } from '../components';
-import { Player, GameOptions, MultiplayerData } from '../types';
+import { PrpgCharacterComponent, PrpgPlayerComponent, PrpgTeleportableComponent } from '../components';
+import { Player, GameOptions, NetworkSerializable } from '../types';
 
 const DEFAULT_ARGS: Partial<Player> = {
   name: 'player',
@@ -10,12 +10,15 @@ const DEFAULT_ARGS: Partial<Player> = {
   collisionType: CollisionType.Active
 };
 
-export class PrpgPlayerActor extends Actor implements MultiplayerData {
+export class PrpgPlayerActor extends Actor implements NetworkSerializable {
   private constructor(protected readonly gameOptions: GameOptions, config: Player) {
     super({...DEFAULT_ARGS, ...config});
     const isCurrentPlayer = gameOptions.playerNumber === config.playerNumber;
     this.addComponent(new PrpgCharacterComponent(config.spriteSheet));
     this.addComponent(new PrpgPlayerComponent(config.playerNumber, isCurrentPlayer));
+    if(isCurrentPlayer) {
+      this.addComponent(new PrpgTeleportableComponent());
+    }
   }
 
   private static instances: {
@@ -73,7 +76,7 @@ export class PrpgPlayerActor extends Actor implements MultiplayerData {
   }
 
   serialize() {
-    // Ignore body updates for other players, because they are not controlled by us
+    // Do not send updates for other players, because they are not controlled by us
     if (!this.player?.isCurrentPlayer) {
       return;
     }
@@ -89,7 +92,7 @@ export class PrpgPlayerActor extends Actor implements MultiplayerData {
   }
 
   deserialize(data: any) {
-    // Ignore body updates for or own player, because we control them
+    // Ignore updates for or own player, because we control them
     if (this.player?.isCurrentPlayer) {
       return;
     }

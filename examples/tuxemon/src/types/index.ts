@@ -1,8 +1,10 @@
 export { CharacterAnimation } from './character-animation';
 export { PrpgComponentType } from './component-type';
 export { Direction } from './direction';
+export { FadeScreen } from './fade-screen';
 export { GameOptions } from './game-options';
-export { MultiplayerData } from './multiplayer-data';
+export { NetworkSerializable } from './network-serializable';
 export { Player } from './player';
+export { SpawnPoint } from './spawn-point';
 export { SpawnPointType } from './spawn-point-type';
 export { Teleport } from './teleport';

@@ -114,6 +114,7 @@ PrpgCharacterComponent | BodyComponent | TransformComponent | MotionComponent | 
   }
 
   public initialize?(scene: MapScene) {
+    super.initialize?.(scene);
     this.scene = scene;
 
     if (!this.characterQuery) {

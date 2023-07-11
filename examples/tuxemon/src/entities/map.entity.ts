@@ -3,5 +3,7 @@ import { TiledMapResource } from '@excaliburjs/plugin-tiled';
 import { PrpgMapComponent } from '../components';
 
 export const newMapEntity = (map: TiledMapResource, name: string) => {
-  return new Entity([new PrpgMapComponent(map, name)]);
+  const entry = new Entity([new PrpgMapComponent(map, name)]);
+  console.debug('new map entity', entry);
+  return entry;
 };

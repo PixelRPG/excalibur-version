@@ -1,11 +1,12 @@
-import { Scene, Logger, Query, Entity } from 'excalibur';
+import { Scene, Logger, Query } from 'excalibur';
 import { TiledMapResource } from '@excaliburjs/plugin-tiled';
-import { PrpgCharacterSystem, PrpgPlayerSystem, PrpgTeleporterSystem, PrpgMapSystem } from '../systems';
-import { newMapEntity } from '../entities';
+import { PrpgCharacterSystem, PrpgPlayerSystem, PrpgTeleportSystem, PrpgMapSystem, PrpgFadeSystem } from '../systems';
+import { newMapEntity, newSpawnPointEntity } from '../entities';
 import { PrpgPlayerActor } from '../actors';
-import { PrpgMapComponent, PrpgPlayerComponent } from '../components';
-import { PrpgComponentType } from '../types';
-import type { GameOptions } from '../types';
+import { PrpgFadeScreenElement } from '../screen-elements';
+import { PrpgMapComponent, PrpgPlayerComponent, PrpgTeleportableComponent, PrpgFadeScreenComponent } from '../components';
+import { PrpgComponentType, SpawnPointType } from '../types';
+import type { GameOptions, SpawnPoint } from '../types';
 
 // enum ActivationTrigger {
 //   NEW_GAME,
@@ -21,23 +22,27 @@ export class MapScene extends Scene {
   public logger = Logger.getInstance();
   private mapQuery: Query<PrpgMapComponent>;
   private playerQuery: Query<PrpgPlayerComponent>;
+  private fadeQuery: Query<PrpgFadeScreenComponent>;
+
 
   // private activationSettings: MapSceneActivationSettings = {
   //   trigger: ActivationTrigger.NEW_GAME
   // }
 
-  constructor(private readonly map: TiledMapResource, private readonly name: string, private readonly gameOptions: GameOptions) {
+  constructor(private readonly map: TiledMapResource, public readonly name: string, private readonly gameOptions: GameOptions) {
     super();
-    this.world.add(newMapEntity(map, name));
+    this.add(newMapEntity(map, name));
     this.mapQuery = this.world.queryManager.createQuery([PrpgComponentType.TILED_MAP]);
     this.playerQuery = this.world.queryManager.createQuery<PrpgPlayerComponent>([PrpgComponentType.PLAYER]);
+    this.fadeQuery = this.world.queryManager.createQuery<PrpgFadeScreenComponent>([PrpgComponentType.FADE_SCREEN]);
   }
 
   public onInitialize() {
+    this.world.add(new PrpgFadeSystem());
     this.world.add(new PrpgMapSystem(this.gameOptions));
     this.world.add(new PrpgCharacterSystem());
     this.world.add(new PrpgPlayerSystem(this.gameOptions));
-    this.world.add(new PrpgTeleporterSystem(this.gameOptions));
+    this.world.add(new PrpgTeleportSystem(this.gameOptions));
   }
 
   getMap() {
@@ -46,15 +51,6 @@ export class MapScene extends Scene {
       const tiledMap = mapEntity.get(PrpgMapComponent);
       return tiledMap;
     }
-  }
-
-  /**
-   * Transfer an entry to a new map.
-   * Removes the entry from the current map and add it to the target map
-   */
-  transfer(entity: Entity, targetScene: MapScene) {
-    this.world.remove(entity, false); // false means non-deferred removal, see https://github.com/excaliburjs/Excalibur/issues/2687
-    targetScene.add(entity);
   }
   
   /** Current active players of this map scene */
@@ -73,13 +69,29 @@ export class MapScene extends Scene {
 
   deserializePlayers(playersData: ReturnType<PrpgPlayerActor['serialize']>[]) {
     const playerActors = this.playerQuery.getEntities() as PrpgPlayerActor[];
-    // TODO: It would be faster if we have the same entry id here if the is the same on each player instance but this must be implemented in Excalibur
+    // TODO: It would be faster if we have the same entity id here if the is the same on each player instance but this must be implemented in Excalibur
     for (const playerActor of playerActors) {
       const updatePlayer = playersData.find(playerData => playerData?.player?.playerNumber === playerActor.player?.playerNumber);
-      if(!updatePlayer) {
+
+      // If the other player is not on the map, remove it
+      if(!updatePlayer && !playerActor.player?.isCurrentPlayer) {
+        this.world.remove(playerActor, false);
         continue;
       }
       playerActor.deserialize(updatePlayer);
+    }
+
+    // Add new players on the map
+    for (const playerData of playersData) {
+      const playerActor = playerActors.find(playerActor => playerActor.player?.playerNumber === playerData?.player?.playerNumber);
+      if(!playerActor && playerData?.player.playerNumber) {
+        const missingPlayer = PrpgPlayerActor.getPlayer(this.gameOptions, playerData.player.playerNumber);
+        if(!missingPlayer) {
+          continue;
+        }
+        missingPlayer.deserialize(playerData);
+        this.add(missingPlayer);
+      }
     }
   }
 
@@ -97,11 +109,11 @@ export class MapScene extends Scene {
   }
 
   deserialize(map: ReturnType<MapScene['serialize']>) {
-    const { players, name } = map;
-    if(name === this.name) {
-      this.deserializePlayers(players);
+    if(map.name === this.name) {
+      this.deserializePlayers(map.players);
     } else {
-      this.logger.warn(`Map name mismatch. Expected ${this.name} but got ${name}`);
+      // Got updates from a different map, ignore
+      this.logger.warn(`Map name mismatch. Expected ${this.name} but got ${map.name}`);
     }
   }
 }

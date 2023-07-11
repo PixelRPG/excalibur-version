@@ -71,7 +71,7 @@ export class PrpgPlayerSystem extends System<
     // this.scene.camera.strategy.elasticToActor(entity, 1, 1);
     const player = entity.get(PrpgPlayerComponent);
     if(!player) {
-      this.logger.warn('PlayerComponent for entry not found!');
+      this.logger.warn('PlayerComponent for entity not found!');
       return;
     }
 
@@ -218,16 +218,14 @@ export class PrpgPlayerSystem extends System<
       }
       if (!player) {
         this.logger.warn(
-          'PrpgPlayerComponent for player entry not found!'
+          'PrpgPlayerComponent for player entity not found!'
         );
         return;
       }
 
-      if(spawnPoint.entry) {
-        if (spawnPoint.entry !== playerEntity) {
-          // Ignore span point for other players
-          return;
-        }
+      // Ignore span point for other players
+      if(spawnPoint.entity && spawnPoint.entity !== playerEntity) {
+        return;
       }
 
       body.pos.x = spawnPoint.x;
@@ -259,7 +257,7 @@ export class PrpgPlayerSystem extends System<
     this._limitCameraBoundsToMap();
   }
 
-  public update(entities: (Entity | PrpgPlayerActor)[], delta: number) {
+  public update(entities: PrpgPlayerActor[], delta: number) {
     for (const entity of entities) {
       this._handleInput(entity);
       this._handleSpawnPoints(entity);

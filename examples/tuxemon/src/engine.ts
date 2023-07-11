@@ -3,18 +3,15 @@ import {
     Timer, TileMap, Actor, Entity, LogLevel, ScreenElement, GamepadConnectEvent, GamepadDisconnectEvent,
     GamepadButtonEvent, GamepadAxisEvent
 } from 'excalibur';
-import { Doc } from 'yjs';
 
 // Scenes
 import { MapScene } from './scenes/map.scene';
 
-import { GameOptions, PrpgComponentType, MultiplayerData } from './types';
-import { PrpgPlayerComponent } from './components';
+import { GameOptions, NetworkSerializable } from './types';
 import { resources } from './managers/index';
-import { PrpgPlayerActor } from './actors/index';
 
 
-export class PrpgEngine extends ExcaliburEngine implements MultiplayerData {
+export class PrpgEngine extends ExcaliburEngine implements NetworkSerializable {
 
     private logger = Logger.getInstance();
 
@@ -23,10 +20,13 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerData {
     } = {};
 
     constructor(engineOptions: EngineOptions, readonly gameOptions: GameOptions) {
+        const canvasElementId = 'p' + gameOptions.playerNumber;
         const defaults = {
-            displayMode: DisplayMode.FitContainerAndFill,
-            canvasElementId: 'p'  + gameOptions.playerNumber,
+            displayMode: DisplayMode.FillContainer, // TODO: Contribute a new option to ignore aspect ratio / resolution
+            canvasElementId,
             pointerScope: Input.PointerScope.Canvas,
+            width: document.getElementById(canvasElementId)?.clientWidth || 800,
+            height: document.getElementById(canvasElementId)?.clientHeight || 600,
             antialiasing: false,
             snapToPixel: false,
             suppressPlayButton: true, // Disable play button, enable to fix audio issue, currently only used for dev
@@ -155,12 +155,6 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerData {
 
         await super.start(loader);
     }
-
-    // override onPreUpdate(engine: PrpgEngine, delta: number) {
-    //     // Experimental only send data from player 1 to the other players
-    //     const data = this.serialize();
-    //     this.emit('sceneUpdate', data);
-    // }
 
     override onPostUpdate(engine: PrpgEngine, delta: number) {
         // Experimental only send data from player 1 to the other players

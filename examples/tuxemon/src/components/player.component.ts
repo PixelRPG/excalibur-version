@@ -1,7 +1,7 @@
 import { Component } from 'excalibur';
-import { PrpgComponentType, MultiplayerData } from '../types';
+import { PrpgComponentType, NetworkSerializable } from '../types';
 
-export class PrpgPlayerComponent extends Component<PrpgComponentType.PLAYER> implements MultiplayerData {
+export class PrpgPlayerComponent extends Component<PrpgComponentType.PLAYER> implements NetworkSerializable {
   public readonly type = PrpgComponentType.PLAYER;
 
   constructor(public playerNumber: number, public isCurrentPlayer = false) {
