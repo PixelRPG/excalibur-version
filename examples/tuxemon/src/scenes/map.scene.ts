@@ -75,7 +75,7 @@ export class MapScene extends Scene {
     const playerActors = this.playerQuery.getEntities() as PrpgPlayerActor[];
     // TODO: It would be faster if we have the same entry id here if the is the same on each player instance but this must be implemented in Excalibur
     for (const playerActor of playerActors) {
-      const updatePlayer = playersData.find(playerData => playerData.player?.playerNumber === playerActor.player?.playerNumber);
+      const updatePlayer = playersData.find(playerData => playerData?.player?.playerNumber === playerActor.player?.playerNumber);
       if(!updatePlayer) {
         continue;
       }

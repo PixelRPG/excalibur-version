@@ -4,7 +4,7 @@ import { PrpgComponentType, MultiplayerData } from '../types';
 export class PrpgPlayerComponent extends Component<PrpgComponentType.PLAYER> implements MultiplayerData {
   public readonly type = PrpgComponentType.PLAYER;
 
-  constructor(public playerNumber: number) {
+  constructor(public playerNumber: number, public isCurrentPlayer = false) {
     super();
   }
 

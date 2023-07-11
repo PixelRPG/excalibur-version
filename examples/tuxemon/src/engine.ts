@@ -30,7 +30,8 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerData {
             antialiasing: false,
             snapToPixel: false,
             suppressPlayButton: true, // Disable play button, enable to fix audio issue, currently only used for dev
-            backgroundColor: Color.Black
+            backgroundColor: Color.Black,
+            maxFps: 60,
         }
         super({...defaults, ...engineOptions});
     }
@@ -155,12 +156,16 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerData {
         await super.start(loader);
     }
 
+    // override onPreUpdate(engine: PrpgEngine, delta: number) {
+    //     // Experimental only send data from player 1 to the other players
+    //     const data = this.serialize();
+    //     this.emit('sceneUpdate', data);
+    // }
+
     override onPostUpdate(engine: PrpgEngine, delta: number) {
         // Experimental only send data from player 1 to the other players
-        if(this.gameOptions.playerNumber === 1) {
-            const data = this.serialize();
-            this.emit('sceneUpdate', data);
-        }
+        const data = this.serialize();
+        this.emit('sceneUpdate', data);
     }
 
     serialize() {

@@ -10,3 +10,8 @@ player2.start();
 player1.on('sceneUpdate', (data: any) => {
   player2.deserialize(data);
 });
+
+// Simulate sending data from player 2 to player 1
+player2.on('sceneUpdate', (data: any) => {
+  player1.deserialize(data);
+});
