@@ -15,7 +15,7 @@ import {
 import {
   PrpgCharacterComponent,
   PrpgPlayerComponent,
-  PrpgSpawnPointComponent
+  PrpgTeleportableComponent
 } from '../components';
 import { PrpgPlayerActor } from '../actors';
 import { MapScene } from '../scenes/map.scene';
@@ -97,7 +97,15 @@ export class PrpgPlayerSystem extends System<
       return;
     }
 
+    // Reset velocity
     body.vel.setTo(0, 0);
+
+    const teleportable = entity.get(PrpgTeleportableComponent);
+    if(teleportable?.isTeleporting) {
+      // Ignore input while teleporting
+      return;
+    }
+
     const speed = 64;
     const pad1 = this.scene.engine.input.gamepads.at(0);
     const pad2 = this.scene.engine.input.gamepads.at(1);
@@ -181,64 +189,6 @@ export class PrpgPlayerSystem extends System<
         body.vel.y = pad2AxesLeftY * speed;
       }
     }
-
-  }
-
-  /**
-   * Init properties defined in tiled map
-   */
-  private _handleSpawnPoints(playerEntity: Entity) {
-    const spawnPointQuery =
-      this.scene.world.queryManager.createQuery<PrpgSpawnPointComponent>([
-        PrpgComponentType.SPAWN_POINT
-      ]);
-    const spawnPointEntities = spawnPointQuery.getEntities();
-
-    if (spawnPointEntities.length > 0) {
-      const spawnPointEntity = spawnPointEntities[0];
-      const body = playerEntity.get(BodyComponent);
-      const character = playerEntity.get(PrpgCharacterComponent);
-      const player = playerEntity.get(PrpgPlayerComponent);
-      const spawnPoint = spawnPointEntity.get(PrpgSpawnPointComponent);
-
-      if (!spawnPoint) {
-        this.logger.warn('SpawnPointComponent for Spawn Point Entity not found!');
-        return;
-      }
-
-      if (!body) {
-        this.logger.warn('BodyComponent for player start position not found!');
-        return;
-      }
-      if (!character) {
-        this.logger.warn(
-          'PrpgCharacterComponent for player start position not found!'
-        );
-        return;
-      }
-      if (!player) {
-        this.logger.warn(
-          'PrpgPlayerComponent for player entity not found!'
-        );
-        return;
-      }
-
-      // Ignore span point for other players
-      if(spawnPoint.entity && spawnPoint.entity !== playerEntity) {
-        return;
-      }
-
-      body.pos.x = spawnPoint.x;
-      body.pos.y = spawnPoint.y;
-      character.direction = spawnPoint.direction;
-      if (typeof (playerEntity as PrpgPlayerActor).z === 'number') {
-        (playerEntity as PrpgPlayerActor).z = spawnPoint.z;
-      } else {
-        this.logger.warn('Can\'t set character z index');
-      }
-
-      this.scene.remove(spawnPointEntity);
-    }
   }
 
   public initialize?(scene: MapScene) {
@@ -260,7 +210,6 @@ export class PrpgPlayerSystem extends System<
   public update(entities: PrpgPlayerActor[], delta: number) {
     for (const entity of entities) {
       this._handleInput(entity);
-      this._handleSpawnPoints(entity);
     }
   }
 }

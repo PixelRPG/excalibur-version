@@ -3,9 +3,9 @@ import { PrpgFadeScreenComponent } from '../components';
 import { FadeScreen } from '../types'
 
 export class PrpgFadeScreenElement extends ScreenElement {
-  constructor(data: Partial<FadeScreen>, actorArgs: ActorArgs = {}) {
+  constructor(public data: Partial<FadeScreen>, actorArgs: ActorArgs = {}) {
     const defaults: FadeScreen = {
-      fadeSpeed: 100,
+      fadeSpeed: 200,
       color: Color.Black,
       isOutro: false,
       width: 100,
@@ -22,5 +22,17 @@ export class PrpgFadeScreenElement extends ScreenElement {
     };
     super({...actorArgs, ...actorDefaults, ...data });
     this.addComponent(new PrpgFadeScreenComponent(data as FadeScreen));
+  
+    if(this.data.isOutro) {
+      // Outro starts with a black screen and fades to transparent
+      this.graphics.opacity = 1;
+    } else {
+      // Intro starts with a transparent screen and fades to black (or other color)
+      this.graphics.opacity = 0;
+    }
+  }
+
+  get fadeScreen() {
+    return this.get(PrpgFadeScreenComponent)?.data;
   }
 }

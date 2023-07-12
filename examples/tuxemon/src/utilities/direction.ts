@@ -21,6 +21,6 @@ export const stringToDirection = (direction?: string | Direction) => {
       return Direction.DOWN;
     default:
       Logger.getInstance().warn(`Ignore unknown direction "${direction}"!`);
-      return Direction.UP;
+      return Direction.DOWN;
   }
 };

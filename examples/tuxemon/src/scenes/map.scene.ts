@@ -112,8 +112,8 @@ export class MapScene extends Scene {
     if(map.name === this.name) {
       this.deserializePlayers(map.players);
     } else {
-      // Got updates from a different map, ignore
-      this.logger.warn(`Map name mismatch. Expected ${this.name} but got ${map.name}`);
+      // TODO: Got updates from a different map, ignore for now.
+      // this.logger.warn(`Map name mismatch. Expected ${this.name} but got ${map.name}`);
     }
   }
 }

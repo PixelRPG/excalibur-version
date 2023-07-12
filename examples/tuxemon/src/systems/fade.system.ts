@@ -12,7 +12,7 @@ import { PrpgComponentType } from '../types';
 
 export class PrpgFadeSystem extends System<PrpgFadeScreenComponent> {
   public readonly types = [PrpgComponentType.FADE_SCREEN] as const;
-  // public priority = 500;
+  public priority = 500;
   public systemType = SystemType.Update;
   private logger = Logger.getInstance();
   private scene: MapScene;
@@ -28,39 +28,53 @@ export class PrpgFadeSystem extends System<PrpgFadeScreenComponent> {
 
   
    
-  public update(actors: PrpgFadeScreenElement[], delta: number) {
-    for (const actor of actors) {
-      const fade = actor.get(PrpgFadeScreenComponent);
-      if (!fade) {
+  public update(fadeScreenElements: PrpgFadeScreenElement[], delta: number) {
+    for (const fadeScreenElement of fadeScreenElements) {
+      const fadeScreen = fadeScreenElement.get(PrpgFadeScreenComponent)?.data;
+      if (!fadeScreen) {
         continue;
       }
 
-      if(fade.data.isComplete) {
-        // TODO: remove the fade screen element?
+      if(fadeScreen.isComplete) {
+        if(fadeScreen.isComplete) {
+          this.scene.world.remove(fadeScreenElement, false);
+        }
         continue;
       }
 
-      for (const name in actor.graphics.graphics) {
+      // WORKAROUND: The fade screen is sometimes not detected as complete
+      if(fadeScreen.isOutro && fadeScreen.isFading && fadeScreenElement.graphics.opacity <= 0) {
+        fadeScreenElement.graphics.opacity = 0;
+        fadeScreen.isComplete = true;
+        fadeScreen.isFading = false;
+      }
+
+      if(!fadeScreen.isOutro && fadeScreen.isFading && fadeScreenElement.graphics.opacity >= 1) {
+        fadeScreenElement.graphics.opacity = 1;
+        fadeScreen.isComplete = true;
+        fadeScreen.isFading = false;
+      }
+
+      for (const name in fadeScreenElement.graphics.graphics) {
         // Sync the width and height of the graphics with the canvas width and height for the case that the user resizes the window
-        actor.graphics.graphics[name].width = this.scene.engine.canvasWidth;
-        actor.graphics.graphics[name].height = this.scene.engine.canvasHeight;
+        fadeScreenElement.graphics.graphics[name].width = this.scene.engine.canvasWidth;
+        fadeScreenElement.graphics.graphics[name].height = this.scene.engine.canvasHeight;
       }
 
-      if(!fade.data.isFading) {
-        if(fade.data.isOutro) {
-          actor.graphics.opacity = 1;
-          actor.actions.fade(0, fade.data.fadeSpeed).toPromise().then(() => {
-            fade.data.isComplete = true;
+      if(!fadeScreen.isFading) {
+        if(fadeScreen.isOutro) {
+          fadeScreenElement.actions.fade(0, fadeScreen.fadeSpeed).toPromise().then(() => {
+            fadeScreen.isComplete = true;
+            fadeScreen.isFading = false;
           });
           
         } else {
-          actor.graphics.opacity = 0;
-          actor.actions.fade(1, fade.data.fadeSpeed);
-          actor.actions.fade(0, fade.data.fadeSpeed).toPromise().then(() => {
-            fade.data.isComplete = true;
+          fadeScreenElement.actions.fade(1, fadeScreen.fadeSpeed).toPromise().then(() => {
+            fadeScreen.isComplete = true;
+            fadeScreen.isFading = false;
           });
         }
-        fade.data.isFading = true;
+        fadeScreen.isFading = true;
       }
 
     }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="64" height="60" tilewidth="16" tileheight="16" infinite="0" nextlayerid="9" nextobjectid="162">
+<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="64" height="60" tilewidth="16" tileheight="16" infinite="0" nextlayerid="9" nextobjectid="163">
  <properties>
   <property name="edges" value="clamped"/>
  </properties>
@@ -129,10 +129,8 @@
   <object id="31" type="BoxCollider" x="432" y="176" width="16" height="16"/>
   <object id="32" type="BoxCollider" x="784" y="0" width="32" height="48"/>
   <object id="33" type="BoxCollider" x="192" y="160" width="96" height="16"/>
-  <object id="34" type="BoxCollider" x="192" y="64" width="3" height="112"/>
+  <object id="34" type="BoxCollider" x="192" y="0" width="3" height="176"/>
   <object id="161" type="BoxCollider" x="285" y="64" width="3" height="96"/>
-  <object id="35" type="BoxCollider" x="192" y="0" width="64" height="80"/>
-  <object id="36" type="BoxCollider" x="256" y="0" width="64" height="32"/>
   <object id="37" type="BoxCollider" x="480" y="656" width="80" height="32"/>
   <object id="38" type="BoxCollider" x="479" y="672" width="47" height="32"/>
   <object id="39" type="BoxCollider" x="543" y="673" width="18" height="32"/>
@@ -216,28 +214,19 @@
   <object id="63" type="BoxCollider" x="576" y="0" width="32" height="48"/>
   <object id="64" type="BoxCollider" x="528" y="192" width="16" height="16"/>
   <object id="65" type="BoxCollider" x="288" y="64" width="16" height="16"/>
-  <object id="104" type="BoxCollider" x="304" y="-16" width="48" height="16"/>
-  <object id="105" type="BoxCollider" x="112" y="160" width="16" height="64"/>
-  <object id="106" type="BoxCollider" x="816" y="16" width="16" height="208"/>
+  <object id="104" type="BoxCollider" x="192" y="-16" width="160" height="16"/>
+  <object id="106" type="BoxCollider" x="823" y="16" width="9" height="208"/>
   <object id="113" type="BoxCollider" x="576" y="544" width="16" height="16"/>
   <object id="141" type="BoxCollider" x="352" y="80" width="16" height="16"/>
-  <object id="154" type="BoxCollider" x="0" y="160" width="176" height="16"/>
-  <object id="158" type="BoxCollider" x="176" y="160" width="16" height="16">
-   <properties>
-    <property name="continue" value="down"/>
-    <property name="enter_from" value="up"/>
-    <property name="exit_to" value="down"/>
-   </properties>
-  </object>
+  <object id="154" type="BoxCollider" x="0" y="160" width="192" height="16"/>
+  <object id="162" type="BoxCollider" x="-16" y="160" width="16" height="64"/>
  </objectgroup>
- <objectgroup color="#ffff00" id="7" name="Objects" visible="0">
+ <objectgroup color="#ffff00" id="7" name="Objects">
   <properties>
    <property name="excalibur" type="bool" value="true"/>
   </properties>
   <object id="67" name="Go to Player's house" type="teleport" x="688" y="720" width="16" height="8">
    <properties>
-    <property name="act10" value="transition_teleport player_house_downstairs.tmx,5,7,0.5"/>
-    <property name="cond10" value="is player_at"/>
     <property name="map-name" value="player_house_downstairs.tmx"/>
     <property name="teleport-spawn-name" value="From Outside"/>
    </properties>

@@ -48,7 +48,8 @@ PrpgMapComponent, MapScene> {
     }
 
     /**
-     * Players first spawn point e.g. on a new game
+     * Init spawn points defined on the map, e.g. players first spawn point.
+     * Creates a new spawn point entity and adds it to the scene.
      */
     private _initSpawnPoints(tiledObjectGroup: TiledObjectGroup) {
       let hasStartPoint = false;
@@ -62,7 +63,15 @@ PrpgMapComponent, MapScene> {
           const player = PrpgPlayerActor.newPlayer(this.gameOptions, { spriteSheet: resources.sprites.scientist, playerNumber });
           
           this.scene.add(player);
-          this.scene.add(newSpawnPointEntity(SpawnPointType.START, start.x, start.y, z, stringToDirection(direction), player));
+          this.scene.add(newSpawnPointEntity({
+            type: SpawnPointType.START,
+            x: start.x,
+            y: start.y,
+            z,
+            direction: stringToDirection(direction),
+            entity: player,
+            mapScene: this.scene,
+          }));
         }
       }
       return hasStartPoint;

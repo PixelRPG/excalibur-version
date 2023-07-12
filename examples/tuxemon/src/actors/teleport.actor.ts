@@ -1,4 +1,4 @@
-import { Actor, CollisionType, vec, Color, Collider } from 'excalibur';
+import { Actor, CollisionType } from 'excalibur';
 import { PrpgTeleportComponent } from '../components';
 import { Teleport } from '../types';
 
