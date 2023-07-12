@@ -131,7 +131,7 @@ PrpgTeleportableComponent> {
       this.logger.info(`Teleport to ${target.mapScene.name} at ${target.x}, ${target.y}, ${target.z}`);
 
       // Use the fade screen to run the garbage collector if available
-      const gc = (window as any).gc || (window as any).opera.collect || (window as any).CollectGarbage;
+      const gc = (window as any).gc || (window as any).opera?.collect || (window as any).CollectGarbage;
       if(gc) {
         gc();
       }
