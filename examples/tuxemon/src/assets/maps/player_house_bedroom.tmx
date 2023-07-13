@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="11" height="9" tilewidth="16" tileheight="16" infinite="0" nextlayerid="8" nextobjectid="38">
+<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="11" height="9" tilewidth="16" tileheight="16" infinite="0" nextlayerid="8" nextobjectid="40">
  <tileset firstgid="1" name="floors and walls" tilewidth="16" tileheight="16" tilecount="88" columns="11">
   <image source="../tilesets/floorsandwalls.png" width="176" height="128"/>
  </tileset>
@@ -81,8 +81,24 @@
   </object>
   <object id="37" name="Player 2 Start" type="player-start" x="124.909" y="110">
    <properties>
-    <property name="direction" value="up"/>
+    <property name="direction" value="right"/>
     <property name="player" type="int" value="2"/>
+    <property name="zindex" type="int" value="0"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="38" name="Player 3 Start" type="player-start" x="33.4545" y="107.636">
+   <properties>
+    <property name="direction" value="up"/>
+    <property name="player" type="int" value="3"/>
+    <property name="zindex" type="int" value="0"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="39" name="Player 4 Start" type="player-start" x="67.2727" y="120.909">
+   <properties>
+    <property name="direction" value="up"/>
+    <property name="player" type="int" value="4"/>
     <property name="zindex" type="int" value="0"/>
    </properties>
    <point/>

@@ -14,7 +14,7 @@ export interface SpawnPoint {
     /** The direction the entity is facing */
     direction: Direction;
     /** The entity for which this span point is, mostly this is the current player */
-    entity: Entity;
+    entityName: string;
     /** The map scene this spawn point is on */
     mapScene: MapScene;
 }

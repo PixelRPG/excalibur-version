@@ -1,7 +1,6 @@
-import type { ActorArgs } from 'excalibur';
-import type { AsepriteResource } from '@excaliburjs/plugin-aseprite/src/index';
+import type { AsepriteResource } from '@excaliburjs/plugin-aseprite';
 
-export interface Player extends Partial<ActorArgs> {
+export interface Player {
   playerNumber: number;
-  spriteSheet: AsepriteResource
+  isCurrentPlayer?: boolean;
 }

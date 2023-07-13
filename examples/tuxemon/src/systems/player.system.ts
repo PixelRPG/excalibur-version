@@ -34,7 +34,7 @@ export class PrpgPlayerSystem extends System<
   public readonly types = [PrpgComponentType.PLAYER] as const;
   public priority = 99;
   public systemType = SystemType.Update;
-  private scene: MapScene;
+  private scene?: MapScene;
   private logger = Logger.getInstance();
 
   constructor(readonly options: GameOptions) {
@@ -42,14 +42,19 @@ export class PrpgPlayerSystem extends System<
   }
 
   private _limitCameraBoundsToMap() {
-    const tiledMap = this.scene.getMap();
+    const tiledMap = this.scene?.getMap();
     if (!tiledMap) {
-      this.logger.warn('Current scene has no map!');
+      this.logger.error('Current scene has no map!');
       return;
     }
 
-    const vw = this.scene.camera.viewport.width
-    const vh = this.scene.camera.viewport.height;
+    if (!this.scene) {
+      this.logger.error('Current scene not found!');
+      return;
+    }
+
+    const vw = this.scene?.camera.viewport.width
+    const vh = this.scene?.camera.viewport.height;
 
     const mapWidth = tiledMap.map.data.width * tiledMap.map.data.tileWidth;
     const mapHeight = tiledMap.map.data.height * tiledMap.map.data.tileHeight;
@@ -69,21 +74,21 @@ export class PrpgPlayerSystem extends System<
 
   private _initCameraForPlayer(entity: PrpgPlayerActor) {
     // this.scene.camera.strategy.elasticToActor(entity, 1, 1);
-    const player = entity.get(PrpgPlayerComponent);
+    const player = entity.get(PrpgPlayerComponent)?.data;
     if(!player) {
       this.logger.warn('PlayerComponent for entity not found!');
       return;
     }
 
     if(player.playerNumber === this.options.playerNumber) {
-      this.scene.camera.strategy.lockToActor(entity);
+      this.scene?.camera.strategy.lockToActor(entity);
     }    
   }
 
   private _handleInput(entity: Entity) {
-    const player = entity.get(PrpgPlayerComponent);
+    const player = entity.get(PrpgPlayerComponent)?.data;
     if(!player) {
-      this.logger.warn('PlayerComponent for player input not found!');
+      this.logger.error('PlayerComponent for player input not found!');
       return;
     }
     if (player.playerNumber !== this.options.playerNumber) {
@@ -91,16 +96,21 @@ export class PrpgPlayerSystem extends System<
       return;
     }
 
+    if(!this.scene) {
+      this.logger.error('Current scene not found!');
+      return;
+    }
+
     const body = entity.get(BodyComponent);
     if (!body) {
-      this.logger.warn('BodyComponent for player input not found!');
+      this.logger.error('BodyComponent for player input not found!');
       return;
     }
 
     // Reset velocity
     body.vel.setTo(0, 0);
 
-    const teleportable = entity.get(PrpgTeleportableComponent);
+    const teleportable = entity.get(PrpgTeleportableComponent)?.data;
     if(teleportable?.isTeleporting) {
       // Ignore input while teleporting
       return;

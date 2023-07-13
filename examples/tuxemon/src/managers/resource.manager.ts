@@ -1,7 +1,7 @@
 import '../typings';
 import { Loadable } from 'excalibur';
 import { TiledMapResource, TiledMap } from '@excaliburjs/plugin-tiled';
-import { AsepriteResource } from '@excaliburjs/plugin-aseprite/src/index';
+import { AsepriteResource } from '@excaliburjs/plugin-aseprite';
 
 // Sprites
 const scientistPath = './assets/sprites/scientist/scientist.json';

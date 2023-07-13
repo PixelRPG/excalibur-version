@@ -1,18 +1,3 @@
-import { Color } from 'excalibur';
-import { PrpgEngine } from './engine';
+import { PrpgGame } from './game';
 
-const player1 = new PrpgEngine({}, { playerNumber: 1});
-const player2 = new PrpgEngine({ backgroundColor: Color.Blue }, { playerNumber: 2});
-
-player1.start();
-player2.start();
-
-// Simulate sending data from player 1 to player 2
-player1.on('sceneUpdate', (data: any) => {
-  player2.deserialize(data);
-});
-
-// Simulate sending data from player 2 to player 1
-player2.on('sceneUpdate', (data: any) => {
-  player1.deserialize(data);
-});
+new PrpgGame().start();

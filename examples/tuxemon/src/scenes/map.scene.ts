@@ -45,7 +45,11 @@ export class MapScene extends Scene {
     this.world.add(new PrpgTeleportSystem(this.gameOptions));
   }
 
-  getMap() {
+  public getEntityByName(name: string) {
+    return this.entities.find(entity => entity.name === name);
+  }
+
+  public getMap() {
     const mapEntities = this.mapQuery.getEntities();
     for (const mapEntity of mapEntities) {
       const tiledMap = mapEntity.get(PrpgMapComponent);
@@ -54,7 +58,7 @@ export class MapScene extends Scene {
   }
   
   /** Current active players of this map scene */
-  serializePlayers() {
+  public serializePlayers() {
     const players: ReturnType<PrpgPlayerActor['serialize']>[] = [];
     const playerActors = this.playerQuery.getEntities() as PrpgPlayerActor[];
     for (const playerActor of playerActors) {
@@ -67,14 +71,14 @@ export class MapScene extends Scene {
     return players;
   }
 
-  deserializePlayers(playersData: ReturnType<PrpgPlayerActor['serialize']>[]) {
+  public deserializePlayers(playersData: ReturnType<PrpgPlayerActor['serialize']>[]) {
     const playerActors = this.playerQuery.getEntities() as PrpgPlayerActor[];
     // TODO: It would be faster if we have the same entity id here if the is the same on each player instance but this must be implemented in Excalibur
     for (const playerActor of playerActors) {
-      const updatePlayer = playersData.find(playerData => playerData?.player?.playerNumber === playerActor.player?.playerNumber);
+      const updatePlayer = playersData.find(playerData => playerData?.player?.playerNumber === playerActor.player?.data.playerNumber);
 
       // If the other player is not on the map, remove it
-      if(!updatePlayer && !playerActor.player?.isCurrentPlayer) {
+      if(!updatePlayer && !playerActor.player?.data.isCurrentPlayer) {
         this.world.remove(playerActor, false);
         continue;
       }
@@ -83,7 +87,7 @@ export class MapScene extends Scene {
 
     // Add new players on the map
     for (const playerData of playersData) {
-      const playerActor = playerActors.find(playerActor => playerActor.player?.playerNumber === playerData?.player?.playerNumber);
+      const playerActor = playerActors.find(playerActor => playerActor.player?.data.playerNumber === playerData?.player?.playerNumber);
       if(!playerActor && playerData?.player.playerNumber) {
         const missingPlayer = PrpgPlayerActor.getPlayer(this.gameOptions, playerData.player.playerNumber);
         if(!missingPlayer) {
@@ -97,10 +101,10 @@ export class MapScene extends Scene {
 
 
   /**
-   * Get the map data like players, npcs, name, etc.
+   * Get the map data like players, NPCs, name, etc.
    * @returns 
    */
-  serialize() {
+  public serialize() {
     const players = this.serializePlayers();
     return {
       name: this.name,
@@ -108,12 +112,9 @@ export class MapScene extends Scene {
     }
   }
 
-  deserialize(map: ReturnType<MapScene['serialize']>) {
+  public deserialize(map: ReturnType<MapScene['serialize']>) {
     if(map.name === this.name) {
       this.deserializePlayers(map.players);
-    } else {
-      // TODO: Got updates from a different map, ignore for now.
-      // this.logger.warn(`Map name mismatch. Expected ${this.name} but got ${map.name}`);
     }
   }
 }

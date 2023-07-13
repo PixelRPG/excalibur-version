@@ -6,13 +6,15 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "yarn run barrel && yarn run assets && esbuilder --outfile ./dist/main.js",
-    "barrel": "barreler ./src/actors ./src/components ./src/entities ./src/entities ./src/scenes ./src/systems ./src/types ./src/utilities ./src/managers ./src/screen-elements",
+    "barrel": "barreler ./src/actors ./src/components ./src/entities ./src/entities ./src/scenes ./src/systems ./src/types ./src/utilities ./src/managers ./src/screen-elements ./src/events",
     "assets": "mkdir -p ./dist && cp -r ./src/assets ./dist && cp ./src/index.html ./dist",
     "serve:dev": "yarn run serve -- --dev",
     "serve": "yarn run assets && esbuilder --serve --outfile ./dist/main.js",
     "start:dev": "yarn run serve:dev",
-    "start": "yarn run serve",
-    "clear": "rimraf dist"
+    "start": "yarn run assets && yarn run serve",
+    "clear": "rimraf dist",
+    "lint": "yarn run lint:types",
+    "lint:types": "tsc --noEmit"
   },
   "author": "Pascal Garber <pascal@artandcode.studio>",
   "license": "GPL-3.0-or-later",
@@ -27,6 +29,7 @@
     "@pixelrpg/esbuild": "workspace:^",
     "barreler": "^0.0.5",
     "esbuild": "^0.18.11",
-    "rimraf": "^5.0.1"
+    "rimraf": "^5.0.1",
+    "typescript": "^5.1.6"
   }
 }

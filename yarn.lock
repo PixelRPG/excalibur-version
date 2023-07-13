@@ -3032,10 +3032,12 @@ __metadata:
     "@excaliburjs/plugin-aseprite": "workspace:^"
     "@excaliburjs/plugin-tiled": "workspace:^"
     "@pixelrpg/esbuild": "workspace:^"
+    "@syncedstore/core": ^0.5.1
     barreler: ^0.0.5
     esbuild: ^0.18.11
     excalibur: "workspace:^"
     rimraf: ^5.0.1
+    typescript: ^5.1.6
     yjs: ^13.6.6
   languageName: unknown
   linkType: soft
@@ -3051,6 +3053,13 @@ __metadata:
   version: 1.0.0-next.21
   resolution: "@polka/url@npm:1.0.0-next.21"
   checksum: c7654046d38984257dd639eab3dc770d1b0340916097b2fac03ce5d23506ada684e05574a69b255c32ea6a144a957c8cd84264159b545fca031c772289d88788
+  languageName: node
+  linkType: hard
+
+"@reactivedata/reactive@npm:0.2.0":
+  version: 0.2.0
+  resolution: "@reactivedata/reactive@npm:0.2.0"
+  checksum: d84b966378048093ca7c575245b273020ab914ce942b18da90256239ecde6151f1b61c37eea850fda951941dadac6d9041c815c3e05132570f8c2f6a5433504e
   languageName: node
   linkType: hard
 
@@ -4223,6 +4232,30 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@syncedstore/core@npm:^0.5.1":
+  version: 0.5.1
+  resolution: "@syncedstore/core@npm:0.5.1"
+  dependencies:
+    "@reactivedata/reactive": 0.2.0
+    "@syncedstore/yjs-reactive-bindings": ^0.5.1
+    "@types/eslint": 6.8.0
+  peerDependencies:
+    yjs: ^13.5.13
+  checksum: 6c453a59a782bff0a000e2ff645042bddb0f1e642250f9bfa963b1eef2e56d1d1b05bc185ac791118ddd68ee291a7f3dd2842950e4a13537744bd6f064b25d70
+  languageName: node
+  linkType: hard
+
+"@syncedstore/yjs-reactive-bindings@npm:^0.5.1":
+  version: 0.5.1
+  resolution: "@syncedstore/yjs-reactive-bindings@npm:0.5.1"
+  dependencies:
+    "@types/eslint": 6.8.0
+  peerDependencies:
+    yjs: ^13.5.13
+  checksum: f5276e4edf498cbd55e1d0f179cf3865b880fcba5ebb51cdaad9f16fed9796f4467547079a56f5b185dd0d519a7c3a3893db96d3f9079bb543f09902651928b2
+  languageName: node
+  linkType: hard
+
 "@tokenizer/token@npm:^0.3.0":
   version: 0.3.0
   resolution: "@tokenizer/token@npm:0.3.0"
@@ -4331,6 +4364,16 @@ __metadata:
     "@types/estree": "*"
     "@types/json-schema": "*"
   checksum: a4780e45e677e3af21c44a900846996cb6d9ae8f71d51940942a047163ae93a05444392c005f491ed46aa169f3b25f8be125ab42c5d8bdb571154bf62a7c828a
+  languageName: node
+  linkType: hard
+
+"@types/eslint@npm:6.8.0":
+  version: 6.8.0
+  resolution: "@types/eslint@npm:6.8.0"
+  dependencies:
+    "@types/estree": "*"
+    "@types/json-schema": "*"
+  checksum: 205b60ec9b18715a29da8297d704d20cadb9522707f89c4e3b985fc4b82faa8aba7e8a36587f50adc80c0b15922fa1a617f75cdc70260510666cccdafacba668
   languageName: node
   linkType: hard
 

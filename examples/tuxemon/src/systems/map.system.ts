@@ -4,7 +4,7 @@ import { TiledObjectGroup } from '@excaliburjs/plugin-tiled';
 import { PrpgMapComponent } from '../components';
 import { PrpgTeleportActor, PrpgPlayerActor } from '../actors';
 import { newSpawnPointEntity } from '../entities';
-import { PrpgComponentType, SpawnPointType, GameOptions } from '../types';
+import { PrpgComponentType, SpawnPointType, GameOptions, Direction } from '../types';
 import { stringToDirection } from '../utilities/direction';
 import { resources } from '../managers/resource.manager';
 
@@ -13,7 +13,7 @@ PrpgMapComponent, MapScene> {
     public readonly types = [PrpgComponentType.TILED_MAP] as const;
     public priority = 100;
     public systemType = SystemType.Update;
-    private scene: MapScene;
+    private scene?: MapScene;
     private logger = Logger.getInstance();
 
     constructor(protected readonly gameOptions: GameOptions) {
@@ -21,6 +21,10 @@ PrpgMapComponent, MapScene> {
     }
 
     private _initTiledMapComponents() {
+      if (!this.scene) {
+        this.logger.error('No scene found!');
+        return;
+      }
       const tiledMap = this.scene.getMap();
       if (!tiledMap) {
         this.logger.warn('No tiled map found!');
@@ -52,6 +56,10 @@ PrpgMapComponent, MapScene> {
      * Creates a new spawn point entity and adds it to the scene.
      */
     private _initSpawnPoints(tiledObjectGroup: TiledObjectGroup) {
+      if (!this.scene) {
+        this.logger.error('No scene found!');
+        return;
+      }
       let hasStartPoint = false;
       const starts = tiledObjectGroup.getObjectsByClass('player-start');
       if (starts.length > 0) {
@@ -60,7 +68,7 @@ PrpgMapComponent, MapScene> {
           const z = start.getProperty<number>('zindex')?.value || 0;
           const playerNumber = start.getProperty<number>('player')?.value || (i + 1);
           const direction = start.getProperty<string>('direction')?.value;
-          const player = PrpgPlayerActor.newPlayer(this.gameOptions, { spriteSheet: resources.sprites.scientist, playerNumber });
+          const player = PrpgPlayerActor.newPlayer(this.gameOptions, { spriteSheet: resources.sprites.scientist, playerNumber, direction: Direction.DOWN });
           
           this.scene.add(player);
           this.scene.add(newSpawnPointEntity({
@@ -69,7 +77,7 @@ PrpgMapComponent, MapScene> {
             y: start.y,
             z,
             direction: stringToDirection(direction),
-            entity: player,
+            entityName: player.name,
             mapScene: this.scene,
           }));
         }
@@ -79,7 +87,11 @@ PrpgMapComponent, MapScene> {
 
     /** Currently just an example */
     private _initPolyLines(tiledObjectGroup: TiledObjectGroup) {
-    // Use polyline for patrols
+      if (!this.scene) {
+        this.logger.error('No scene found!');
+        return;
+      }
+      // Use polyline for patrols
       const lines = tiledObjectGroup.getPolyLines();
       for (const line of lines) {
         if (line && line.polyline) {
@@ -109,7 +121,11 @@ PrpgMapComponent, MapScene> {
 
     /** Currently just an example */
     private _initPolygons(tiledObjectGroup: TiledObjectGroup) {
-    // Use polygon for patrols
+      if (!this.scene) {
+        this.logger.error('No scene found!');
+        return;
+      }
+      // Use polygon for patrols
       const polys = tiledObjectGroup.getPolygons();
       for (const poly of polys) {
         if (poly && poly.polygon) {
@@ -138,6 +154,10 @@ PrpgMapComponent, MapScene> {
     }
 
     private _initTeleports(tiledObjectGroup: TiledObjectGroup) {
+      if (!this.scene) {
+        this.logger.error('No scene found!');
+        return;
+      }
       const teleports = tiledObjectGroup.getObjectsByType('teleport');
       for (const teleObj of teleports) {
         const mapName = teleObj.getProperty<string>('map-name')?.value;

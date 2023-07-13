@@ -15,10 +15,6 @@ export class PrpgEngine extends ExcaliburEngine implements NetworkSerializable {
 
     private logger = Logger.getInstance();
 
-    private yScenes: {
-        [scene: string]: any;// Doc
-    } = {};
-
     constructor(engineOptions: EngineOptions, readonly gameOptions: GameOptions) {
         const canvasElementId = 'p' + gameOptions.playerNumber;
         const defaults = {
@@ -46,14 +42,14 @@ export class PrpgEngine extends ExcaliburEngine implements NetworkSerializable {
      */
     addScene(key: string, scene: Scene, sync = false) {
         super.addScene(key, scene);
-        if(this.yScenes?.[key]) {
-            throw new Error(`Scene ${key} already exists!`);
-        }
-        if(sync) {
-            this.logger.info(`Syncing scene ${key}`);
-            this.yScenes ||= {};
-            this.yScenes[key] = {}; //new Doc();
-        }
+        // if(this.yScenes?.[key]) {
+        //     throw new Error(`Scene ${key} already exists!`);
+        // }
+        // if(sync) {
+        //     this.logger.info(`Syncing scene ${key}`);
+        //     this.yScenes ||= {};
+        //     this.yScenes[key] = this.yDoc.get('sharedJson', Y.JsonObject)
+        // }
     }
 
     /**
@@ -108,6 +104,7 @@ export class PrpgEngine extends ExcaliburEngine implements NetworkSerializable {
             this.addScene(mapName, new MapScene(resources.maps[mapName], mapName, this.gameOptions), true);
           }
         }
+
         return resources.maps;
     }   
 
@@ -162,20 +159,39 @@ export class PrpgEngine extends ExcaliburEngine implements NetworkSerializable {
         this.emit('sceneUpdate', data);
     }
 
-    serialize() {
-        let map: ReturnType<MapScene['serialize']> | undefined;
-        if(this.currentScene instanceof MapScene) {
-            map = this.currentScene.serialize();
+    serializeMapScenes() {
+        const mapsScenes: Record<string, ReturnType<MapScene['serialize']>> = {};
+        for (const name in this.scenes) {
+            const scene = this.scenes[name] as MapScene | Scene;
+            if(scene instanceof MapScene) {
+                mapsScenes[name] = scene.serialize();
+            }
         }
-        
-        return {
-            map
+        return mapsScenes
+    }
+
+    deserializeMapScenes(maps: Record<string, ReturnType<MapScene['serialize']>>) {
+        for (const name in maps) {
+            const updatedScene = maps[name];
+            const myScene = this.scenes[name] as MapScene | Scene;
+            if(updatedScene && myScene instanceof MapScene) {
+                if(this.currentScene instanceof MapScene && this.currentScene.name === name) {
+                    this.currentScene.deserialize(maps[name]);
+                } else {
+                    myScene.deserialize(updatedScene);
+                }
+            }
         }
     }
 
-    deserialize(data: ReturnType<PrpgEngine['serialize']>) {
-        if(this.currentScene instanceof MapScene && data.map) {
-            this.currentScene.deserialize(data.map);
+    serialize() {
+        const data = {
+            maps: this.serializeMapScenes(),
         }
+        return data
+    }
+
+    deserialize(data: ReturnType<PrpgEngine['serialize']>) {
+        this.deserializeMapScenes(data.maps);
     }
 }
