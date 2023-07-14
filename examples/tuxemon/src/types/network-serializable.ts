@@ -12,10 +12,10 @@
  * any string produced by the `serialize` method back into instance data.
  */
 export interface NetworkSerializable<T = any> {
-    /**
-     * Returns the data to be synced across the other players
-     */
-    serialize(): T;
+
+    get state(): T;
+
+    initState(state: Partial<T>): T;
 
     /**
      * Applies the data received from the other players

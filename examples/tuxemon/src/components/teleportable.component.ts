@@ -1,32 +1,58 @@
-import { Component } from 'excalibur';
-import { PrpgComponentType, NetworkSerializable, Teleportable } from '../types';
+import { Component, InitializeEvent } from 'excalibur';
+import { proxy } from 'valtio';
+import { PrpgComponentType, NetworkSerializable, TeleportableState, SpawnPointState } from '../types';
 
 /**
  * Used to get an entity the ability to teleport to a different map
  */
-export class PrpgTeleportableComponent extends Component<PrpgComponentType.TELEPORTABLE> implements NetworkSerializable {
+export class PrpgTeleportableComponent extends Component<PrpgComponentType.TELEPORTABLE> implements NetworkSerializable<TeleportableState> {
   public readonly type = PrpgComponentType.TELEPORTABLE;
 
-  constructor(public data: Partial<Teleportable> = {}) {
-    data.followTeleport ||= false;
-    data.isTeleporting ||= false;
+  private _state: TeleportableState = {
+    isTeleporting: false,
+    teleportTo: undefined, 
+  };
+
+  get state() {
+    return this._state;
+  }
+
+  get isTeleporting() {
+    return this._state.isTeleporting;
+  }
+
+  set isTeleporting(value: boolean) {
+    this._state.isTeleporting = value;
+  }
+
+  get teleportTo() {
+    return this._state.teleportTo;
+  }
+
+  set teleportTo(value: SpawnPointState | undefined) {
+    this._state.teleportTo = value;
+  }
+
+  public followTeleport: boolean;
+
+  constructor(initialState: Partial<TeleportableState> = {}) {
     super();
+    this.followTeleport ||= false;
+    this._state = this.initState(initialState);
   }
 
-  serialize() {    
-    return {
-      isTeleporting: this.data.isTeleporting,
-      // Ignore follow teleport, it is set on each client separately
-      // followTeleport: this.data.followTeleport,
-      teleportTo: this.data.teleportTo,
-    }
+  initState(initialState: Partial<TeleportableState>): TeleportableState {
+    this._state = {...this.state, ...initialState};
+    this.state.isTeleporting ||= false;
+
+    return proxy(this._state);
   }
 
-  deserialize(data: Teleportable) {
-    this.data.isTeleporting = data.isTeleporting;
+  deserialize(data: Partial<TeleportableState>) {
+    this.state.isTeleporting = data.isTeleporting || false;
     // Ignore follow teleport, it is set on each client separately
     // this.data.followTeleport = data.followTeleport;
-    this.data.teleportTo = data.teleportTo;
+    this.state.teleportTo = data.teleportTo;
   }
 }
 

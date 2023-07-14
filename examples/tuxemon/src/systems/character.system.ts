@@ -52,7 +52,7 @@ PrpgCharacterComponent | BodyComponent | TransformComponent | MotionComponent | 
 
     // Right
     if (motion.vel.x > 0) {
-      character.data.direction = Direction.RIGHT;
+      character.direction = Direction.RIGHT;
       const animation = resources.sprites.scientist.getAnimation(CharacterAnimation.RIGHT_WALK);
       if (!animation) {
         this.logger.warn(`${CharacterAnimation.RIGHT_WALK} animation not found!`);
@@ -62,7 +62,7 @@ PrpgCharacterComponent | BodyComponent | TransformComponent | MotionComponent | 
     }
     // Left
     if (motion.vel.x < 0) {
-      character.data.direction = Direction.LEFT;
+      character.direction = Direction.LEFT;
       const animation = resources.sprites.scientist.getAnimation(CharacterAnimation.LEFT_WALK);
       if (!animation) {
         this.logger.warn(`${CharacterAnimation.LEFT_WALK} animation not found!`);
@@ -72,7 +72,7 @@ PrpgCharacterComponent | BodyComponent | TransformComponent | MotionComponent | 
     }
     // Up
     if (motion.vel.y < 0) {
-      character.data.direction = Direction.UP;
+      character.direction = Direction.UP;
       const animation = resources.sprites.scientist.getAnimation(CharacterAnimation.BACK_WALK);
       if (!animation) {
         this.logger.warn(`${CharacterAnimation.BACK_WALK} animation not found!`);
@@ -82,7 +82,7 @@ PrpgCharacterComponent | BodyComponent | TransformComponent | MotionComponent | 
     }
     // Down
     if (motion.vel.y > 0) {
-      character.data.direction = Direction.DOWN;
+      character.direction = Direction.DOWN;
       const animation = resources.sprites.scientist.getAnimation(CharacterAnimation.FRONT_WALK);
       if (!animation) {
         this.logger.warn(`${CharacterAnimation.FRONT_WALK} animation not found!`);
@@ -94,7 +94,7 @@ PrpgCharacterComponent | BodyComponent | TransformComponent | MotionComponent | 
     // Stands sill
     if (motion.vel.y === 0 && motion.vel.x === 0) {
       let animation = resources.sprites.scientist.getAnimation(CharacterAnimation.FRONT);
-      switch (character.data.direction) {
+      switch (character.direction) {
         case Direction.RIGHT:
           animation = resources.sprites.scientist.getAnimation(CharacterAnimation.RIGHT);
           break;
@@ -106,7 +106,7 @@ PrpgCharacterComponent | BodyComponent | TransformComponent | MotionComponent | 
           break;
       }
       if (!animation) {
-        this.logger.warn(`${character.data.direction} animation not found!`);
+        this.logger.warn(`${character.direction} animation not found!`);
         return;
       }
       graphics.use(animation);

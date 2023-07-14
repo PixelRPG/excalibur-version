@@ -1,6 +1,7 @@
-import { Class, Color } from 'excalibur';
+import { Class, Color, GameEvent } from 'excalibur';
+import { subscribe } from 'valtio';
 import { PrpgEngine } from './engine';
-import { Doc, applyUpdate } from 'yjs';
+import { GameState } from './types';
 
 export class PrpgGame extends Class {
     /** One instance per player in splitscreen */
@@ -13,34 +14,38 @@ export class PrpgGame extends Class {
         // const player4 = new PrpgEngine({ backgroundColor: Color.Orange }, { playerNumber: 4});
 
         PrpgGame.instances.push(player1, player2);
+
+        // subscribe(player1.state.maps, () => {
+        //   const s = JSON.parse(JSON.stringify(player1.state)) as GameState;
+        //   debugger;
+        //   console.debug('player1.state changed', s);
+        //   // player2.deserialize(s);
+        // });
+
+        // subscribe(player2.state.maps, () => {
+        //   const s = JSON.parse(JSON.stringify(player2.state)) as GameState;
+        //   console.debug('player2.state changed', s);
+        //   // player1.deserialize(s);
+        // });
         
         // Simulate sending data from player 1 to player 2
-        player1.on('sceneUpdate', (data: any) => {
-          player2.deserialize(data);
+        player1.on('sceneUpdate', (data: GameEvent<GameState>) => {
+          const s = JSON.parse(JSON.stringify(data.target)) as GameState;
+          console.debug('player1.sceneUpdate', s);
+          player2.deserialize(s);
         //   player3.deserialize(data);
         //   player4.deserialize(data);
         });
         
         // Simulate sending data from player 2 to player 1
-        player2.on('sceneUpdate', (data: any) => {
-          player1.deserialize(data);
+        player2.on('sceneUpdate', (data: GameEvent<GameState>) => {
+          const s = JSON.parse(JSON.stringify(data.target)) as GameState;
+          player1.deserialize(s);
         //   player3.deserialize(data);
         //   player4.deserialize(data);
         });
 
-        // // Simulate sending data from player 2 to player 1
-        // player3.on('sceneUpdate', (data: any) => {
-        //     player1.deserialize(data);
-        //     player2.deserialize(data);
-        //     player4.deserialize(data);
-        // });
 
-        // // Simulate sending data from player 2 to player 1
-        // player4.on('sceneUpdate', (data: any) => {
-        //     player1.deserialize(data);
-        //     player2.deserialize(data);
-        //     player3.deserialize(data);
-        // });
 
         player1.start();
         player2.start();

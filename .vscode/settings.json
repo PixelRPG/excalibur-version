@@ -13,8 +13,10 @@
   "typescript.tsdk": ".yarn/sdks/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "cSpell.words": [
+    "Aseprite",
     "Prpg",
     "splitscreen",
+    "Syncable",
     "Teleportable",
     "Teleportables",
     "Teleporting"

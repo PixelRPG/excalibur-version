@@ -3032,12 +3032,13 @@ __metadata:
     "@excaliburjs/plugin-aseprite": "workspace:^"
     "@excaliburjs/plugin-tiled": "workspace:^"
     "@pixelrpg/esbuild": "workspace:^"
-    "@syncedstore/core": ^0.5.1
     barreler: ^0.0.5
     esbuild: ^0.18.11
     excalibur: "workspace:^"
+    react: ^18.2.0
     rimraf: ^5.0.1
     typescript: ^5.1.6
+    valtio: ^1.10.7
     yjs: ^13.6.6
   languageName: unknown
   linkType: soft
@@ -3053,13 +3054,6 @@ __metadata:
   version: 1.0.0-next.21
   resolution: "@polka/url@npm:1.0.0-next.21"
   checksum: c7654046d38984257dd639eab3dc770d1b0340916097b2fac03ce5d23506ada684e05574a69b255c32ea6a144a957c8cd84264159b545fca031c772289d88788
-  languageName: node
-  linkType: hard
-
-"@reactivedata/reactive@npm:0.2.0":
-  version: 0.2.0
-  resolution: "@reactivedata/reactive@npm:0.2.0"
-  checksum: d84b966378048093ca7c575245b273020ab914ce942b18da90256239ecde6151f1b61c37eea850fda951941dadac6d9041c815c3e05132570f8c2f6a5433504e
   languageName: node
   linkType: hard
 
@@ -4232,30 +4226,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@syncedstore/core@npm:^0.5.1":
-  version: 0.5.1
-  resolution: "@syncedstore/core@npm:0.5.1"
-  dependencies:
-    "@reactivedata/reactive": 0.2.0
-    "@syncedstore/yjs-reactive-bindings": ^0.5.1
-    "@types/eslint": 6.8.0
-  peerDependencies:
-    yjs: ^13.5.13
-  checksum: 6c453a59a782bff0a000e2ff645042bddb0f1e642250f9bfa963b1eef2e56d1d1b05bc185ac791118ddd68ee291a7f3dd2842950e4a13537744bd6f064b25d70
-  languageName: node
-  linkType: hard
-
-"@syncedstore/yjs-reactive-bindings@npm:^0.5.1":
-  version: 0.5.1
-  resolution: "@syncedstore/yjs-reactive-bindings@npm:0.5.1"
-  dependencies:
-    "@types/eslint": 6.8.0
-  peerDependencies:
-    yjs: ^13.5.13
-  checksum: f5276e4edf498cbd55e1d0f179cf3865b880fcba5ebb51cdaad9f16fed9796f4467547079a56f5b185dd0d519a7c3a3893db96d3f9079bb543f09902651928b2
-  languageName: node
-  linkType: hard
-
 "@tokenizer/token@npm:^0.3.0":
   version: 0.3.0
   resolution: "@tokenizer/token@npm:0.3.0"
@@ -4364,16 +4334,6 @@ __metadata:
     "@types/estree": "*"
     "@types/json-schema": "*"
   checksum: a4780e45e677e3af21c44a900846996cb6d9ae8f71d51940942a047163ae93a05444392c005f491ed46aa169f3b25f8be125ab42c5d8bdb571154bf62a7c828a
-  languageName: node
-  linkType: hard
-
-"@types/eslint@npm:6.8.0":
-  version: 6.8.0
-  resolution: "@types/eslint@npm:6.8.0"
-  dependencies:
-    "@types/estree": "*"
-    "@types/json-schema": "*"
-  checksum: 205b60ec9b18715a29da8297d704d20cadb9522707f89c4e3b985fc4b82faa8aba7e8a36587f50adc80c0b15922fa1a617f75cdc70260510666cccdafacba668
   languageName: node
   linkType: hard
 
@@ -15365,6 +15325,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"proxy-compare@npm:2.5.1":
+  version: 2.5.1
+  resolution: "proxy-compare@npm:2.5.1"
+  checksum: c7cc151ac255150bcb24becde6495b3e399416c31991af377ce082255b51f07eaeb5d861bf8bf482703e92f88b90a5892ad57d3153ea29450d03ef921683d9fa
+  languageName: node
+  linkType: hard
+
 "proxy-from-env@npm:1.1.0":
   version: 1.1.0
   resolution: "proxy-from-env@npm:1.1.0"
@@ -15711,6 +15678,15 @@ __metadata:
     loose-envify: ^1.1.0
     object-assign: ^4.1.1
   checksum: b254cc17ce3011788330f7bbf383ab653c6848902d7936a87b09d835d091e3f295f7e9dd1597c6daac5dc80f90e778c8230218ba8ad599f74adcc11e33b9d61b
+  languageName: node
+  linkType: hard
+
+"react@npm:^18.2.0":
+  version: 18.2.0
+  resolution: "react@npm:18.2.0"
+  dependencies:
+    loose-envify: ^1.1.0
+  checksum: 88e38092da8839b830cda6feef2e8505dec8ace60579e46aa5490fc3dc9bba0bd50336507dc166f43e3afc1c42939c09fe33b25fae889d6f402721dcd78fca1b
   languageName: node
   linkType: hard
 
@@ -18669,6 +18645,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"use-sync-external-store@npm:1.2.0":
+  version: 1.2.0
+  resolution: "use-sync-external-store@npm:1.2.0"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+  checksum: 5c639e0f8da3521d605f59ce5be9e094ca772bd44a4ce7322b055a6f58eeed8dda3c94cabd90c7a41fb6fa852210092008afe48f7038792fd47501f33299116a
+  languageName: node
+  linkType: hard
+
 "use@npm:^3.1.0":
   version: 3.1.1
   resolution: "use@npm:3.1.1"
@@ -18766,6 +18751,21 @@ __metadata:
     spdx-correct: ^3.0.0
     spdx-expression-parse: ^3.0.0
   checksum: 35703ac889d419cf2aceef63daeadbe4e77227c39ab6287eeb6c1b36a746b364f50ba22e88591f5d017bc54685d8137bc2d328d0a896e4d3fd22093c0f32a9ad
+  languageName: node
+  linkType: hard
+
+"valtio@npm:^1.10.7":
+  version: 1.10.7
+  resolution: "valtio@npm:1.10.7"
+  dependencies:
+    proxy-compare: 2.5.1
+    use-sync-external-store: 1.2.0
+  peerDependencies:
+    react: ">=16.8"
+  peerDependenciesMeta:
+    react:
+      optional: true
+  checksum: fec3aa06e494d8230e5074a2da1077835c0940e383a411935f92e27db2d75ca28d53b63cb815b07dca0edb4bb4c3b6beabd6bec475be70bf26c03b04bd201058
   languageName: node
   linkType: hard
 

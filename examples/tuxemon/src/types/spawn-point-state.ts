@@ -1,9 +1,8 @@
 import type { Direction } from "./direction";
-import type { Entity } from "excalibur";
 import type { MapScene } from "../scenes/map.scene";
 import type { SpawnPointType } from "./spawn-point-type";
 
-export interface SpawnPoint {
+export interface SpawnPointState {
     type: SpawnPointType;
     /** x position on the map */
     x: number;

@@ -1,25 +1,38 @@
 import { Component } from 'excalibur';
-import { PrpgComponentType, NetworkSerializable, Player } from '../types';
+import { PrpgComponentType, NetworkSerializable, PlayerState } from '../types';
 
-export class PrpgPlayerComponent extends Component<PrpgComponentType.PLAYER> implements NetworkSerializable {
+import { proxy } from 'valtio';
+
+export class PrpgPlayerComponent extends Component<PrpgComponentType.PLAYER> implements NetworkSerializable<PlayerState> {
   public readonly type = PrpgComponentType.PLAYER;
 
-  constructor(public data: Player) {
+  private _state: PlayerState = {
+    playerNumber: -1,
+  };
+
+  constructor(protected initialState: PlayerState, public isCurrentPlayer: boolean) {
     super();
+    this._state = this.initState(initialState);
   }
 
-  serialize() {
-    return {
-      playerNumber: this.data.playerNumber,
-      // Current player is not serialized, it is set on each client separately
-      // isCurrentPlayer: this.data.isCurrentPlayer,
-    };
+  initState(initialState: Partial<PlayerState>): PlayerState {
+    this._state = {...this._state, ...initialState};
+    return proxy(this._state);
   }
 
-  deserialize(data: Player) {
+  get state() {
+    return this._state;
+  }
+
+  get playerNumber() {
+    return this._state.playerNumber;
+  }
+
+  deserialize(data: PlayerState) {
     // Player number not changed after creation
-    // this.data.playerNumber = data.playerNumber;
+    // this._state.playerNumber = data.playerNumber;
+
     // Current player is not serialized, it is set on each client separately
-    // this.data.isCurrentPlayer = data.isCurrentPlayer;
+    // this._state.isCurrentPlayer = data.isCurrentPlayer;
   }
 }

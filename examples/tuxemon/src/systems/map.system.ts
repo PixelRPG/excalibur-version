@@ -68,7 +68,10 @@ PrpgMapComponent, MapScene> {
           const z = start.getProperty<number>('zindex')?.value || 0;
           const playerNumber = start.getProperty<number>('player')?.value || (i + 1);
           const direction = start.getProperty<string>('direction')?.value;
-          const player = PrpgPlayerActor.newPlayer(this.gameOptions, { spriteSheet: resources.sprites.scientist, playerNumber, direction: Direction.DOWN });
+          const player = PrpgPlayerActor.newPlayer(this.gameOptions, {}, {
+            character: { spriteSheet: resources.sprites.scientist, direction: Direction.DOWN },
+            player: { playerNumber }
+          });
           
           this.scene.add(player);
           this.scene.add(newSpawnPointEntity({

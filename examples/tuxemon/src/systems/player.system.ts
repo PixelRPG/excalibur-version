@@ -74,7 +74,7 @@ export class PrpgPlayerSystem extends System<
 
   private _initCameraForPlayer(entity: PrpgPlayerActor) {
     // this.scene.camera.strategy.elasticToActor(entity, 1, 1);
-    const player = entity.get(PrpgPlayerComponent)?.data;
+    const player = entity.get(PrpgPlayerComponent);
     if(!player) {
       this.logger.warn('PlayerComponent for entity not found!');
       return;
@@ -86,7 +86,7 @@ export class PrpgPlayerSystem extends System<
   }
 
   private _handleInput(entity: Entity) {
-    const player = entity.get(PrpgPlayerComponent)?.data;
+    const player = entity.get(PrpgPlayerComponent);
     if(!player) {
       this.logger.error('PlayerComponent for player input not found!');
       return;
@@ -110,7 +110,7 @@ export class PrpgPlayerSystem extends System<
     // Reset velocity
     body.vel.setTo(0, 0);
 
-    const teleportable = entity.get(PrpgTeleportableComponent)?.data;
+    const teleportable = entity.get(PrpgTeleportableComponent);
     if(teleportable?.isTeleporting) {
       // Ignore input while teleporting
       return;

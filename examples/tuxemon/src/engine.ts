@@ -1,21 +1,31 @@
 import {
     Engine as ExcaliburEngine, EngineOptions, DisplayMode, Input, Color, Logger, Scene, Loader,
     Timer, TileMap, Actor, Entity, LogLevel, ScreenElement, GamepadConnectEvent, GamepadDisconnectEvent,
-    GamepadButtonEvent, GamepadAxisEvent
+    GamepadButtonEvent, GamepadAxisEvent, GameEvent
 } from 'excalibur';
+
 
 // Scenes
 import { MapScene } from './scenes/map.scene';
 
-import { GameOptions, NetworkSerializable } from './types';
+import { GameOptions, NetworkSerializable, GameState } from './types';
 import { resources } from './managers/index';
+import { proxy } from 'valtio'
 
 
-export class PrpgEngine extends ExcaliburEngine implements NetworkSerializable {
+export class PrpgEngine extends ExcaliburEngine implements NetworkSerializable<GameState> {
 
     private logger = Logger.getInstance();
 
-    constructor(engineOptions: EngineOptions, readonly gameOptions: GameOptions) {
+    public _state: GameState = {
+        maps: {},
+    }
+
+    get state() {
+        return this._state;
+    }
+
+    constructor(engineOptions: EngineOptions, readonly gameOptions: GameOptions, initialState?: Partial<GameState>) {
         const canvasElementId = 'p' + gameOptions.playerNumber;
         const defaults = {
             displayMode: DisplayMode.FillContainer, // TODO: Contribute a new option to ignore aspect ratio / resolution
@@ -30,6 +40,39 @@ export class PrpgEngine extends ExcaliburEngine implements NetworkSerializable {
             maxFps: 60,
         }
         super({...defaults, ...engineOptions});
+        this._state = this.initState(initialState);
+    }
+
+    syncMapScenesStates() {
+        const mapsScenesStates = this.getMapScenesStates();
+        for (const name in mapsScenesStates) {
+            const scene = this.scenes[name] as MapScene | Scene;
+            if(scene instanceof MapScene) {
+                if(!this.state.maps[name]) {
+                    this.state.maps[name] = mapsScenesStates[name];
+                } else if(this.state.maps[name] !== mapsScenesStates[name]) {
+                    this.logger.warn(`Map scene ${name} state is out of sync!`);
+                    this.state.maps[name] = mapsScenesStates[name];
+                }
+            }
+        }
+    }
+
+    getMapScenesStates() {
+        const mapsScenes: GameState['maps'] = {};
+        for (const name in this.scenes) {
+            const scene = this.scenes[name] as MapScene | Scene;
+            if(scene instanceof MapScene) {
+                mapsScenes[name] = scene.state;
+            }
+        }
+        return mapsScenes
+    }
+
+    initState(initialState: Partial<GameState> = {}): GameState {
+        this._state = {...this._state, ...initialState};
+        this._state.maps = this.getMapScenesStates()
+        return proxy(this._state);
     }
 
     /**
@@ -101,7 +144,7 @@ export class PrpgEngine extends ExcaliburEngine implements NetworkSerializable {
         const mapNames = Object.keys(resources.maps);
         for (const mapName of mapNames) {
           if (resources.maps[mapName]) {
-            this.addScene(mapName, new MapScene(resources.maps[mapName], mapName, this.gameOptions), true);
+            this.addScene(mapName, new MapScene(this.gameOptions, mapName, resources.maps[mapName]), true);
           }
         }
 
@@ -154,23 +197,14 @@ export class PrpgEngine extends ExcaliburEngine implements NetworkSerializable {
     }
 
     override onPostUpdate(engine: PrpgEngine, delta: number) {
-        // Experimental only send data from player 1 to the other players
-        const data = this.serialize();
-        this.emit('sceneUpdate', data);
+        super.onPostUpdate(engine, delta);
+        this.syncMapScenesStates();
+        const event = new GameEvent<GameState>()
+        event.target = this.state;
+        this.emit('sceneUpdate', event);
     }
 
-    serializeMapScenes() {
-        const mapsScenes: Record<string, ReturnType<MapScene['serialize']>> = {};
-        for (const name in this.scenes) {
-            const scene = this.scenes[name] as MapScene | Scene;
-            if(scene instanceof MapScene) {
-                mapsScenes[name] = scene.serialize();
-            }
-        }
-        return mapsScenes
-    }
-
-    deserializeMapScenes(maps: Record<string, ReturnType<MapScene['serialize']>>) {
+    deserializeMapScenes(maps: GameState['maps']) {
         for (const name in maps) {
             const updatedScene = maps[name];
             const myScene = this.scenes[name] as MapScene | Scene;
@@ -184,14 +218,9 @@ export class PrpgEngine extends ExcaliburEngine implements NetworkSerializable {
         }
     }
 
-    serialize() {
-        const data = {
-            maps: this.serializeMapScenes(),
+    deserialize(data: Partial<GameState>) {
+        if(data.maps) {
+            this.deserializeMapScenes(data.maps);
         }
-        return data
-    }
-
-    deserialize(data: ReturnType<PrpgEngine['serialize']>) {
-        this.deserializeMapScenes(data.maps);
     }
 }

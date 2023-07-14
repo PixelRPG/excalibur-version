@@ -1,11 +1,11 @@
 import { System, SystemType, Logger, Entity, Query, Direction, BodyComponent } from 'excalibur';
 import { TiledObject } from '@excaliburjs/plugin-tiled/src';
-import { PrpgTeleportableComponent, PrpgTeleportComponent, PrpgPlayerComponent, PrpgFadeScreenComponent, PrpgSpawnPointComponent, PrpgCharacterComponent } from '../components';
+import { PrpgTeleportableComponent, PrpgTeleportComponent, PrpgFadeScreenComponent, PrpgSpawnPointComponent, PrpgCharacterComponent } from '../components';
 import { newSpawnPointEntity } from '../entities';
 import { PrpgPlayerActor } from '../actors';
 import { PrpgFadeScreenElement } from '../screen-elements';
 import { MapScene } from '../scenes/map.scene';
-import { PrpgComponentType, SpawnPointType, GameOptions, SpawnPoint } from '../types';
+import { PrpgComponentType, SpawnPointType, GameOptions, SpawnPointState } from '../types';
 import { stringToDirection } from '../utilities/direction';
 
 export class PrpgTeleportSystem extends System<
@@ -25,7 +25,7 @@ PrpgTeleportableComponent> {
 
     public initialize(scene: MapScene) {
       super.initialize?.(scene);
-      this.logger.debug('[${this.gameOptions.playerNumber}] initialize');
+      this.logger.debug(`[${this.gameOptions.playerNumber}] initialize`);
       this.scene = scene;
 
       if (!this.teleportQuery) {
@@ -64,7 +64,7 @@ PrpgTeleportableComponent> {
      * Prepare teleport an entity to a new map.
      * Adds fade screen elements to the current and target map and adds a spawn point to the target map.
      */
-    public prepareTeleport(target: SpawnPoint) {
+    public prepareTeleport(target: SpawnPointState) {
       const teleportableEntity = this.scene?.getEntityByName(target.entityName);
 
       if(!teleportableEntity) {
@@ -72,7 +72,7 @@ PrpgTeleportableComponent> {
         return;
       }
 
-      const teleportable = teleportableEntity.get(PrpgTeleportableComponent)?.data;
+      const teleportable = teleportableEntity.get(PrpgTeleportableComponent);
 
       if(!teleportable) {
         this.logger.error(`[${this.gameOptions.playerNumber}] Entity ${teleportableEntity.id} is not teleportable`);
@@ -122,7 +122,7 @@ PrpgTeleportableComponent> {
      * If the entity is the current player, the scene will be changed to the target map.
      * Note: This method should be called after {@link PrpgTeleportSystem.prepareTeleport}
      **/
-    public teleport(spawnPoint: SpawnPoint) {
+    public teleport(spawnPoint: SpawnPointState) {
       const teleportableEntity = this.scene?.getEntityByName(spawnPoint.entityName);
 
       if(!teleportableEntity) {
@@ -130,7 +130,7 @@ PrpgTeleportableComponent> {
         return;
       }
 
-      const teleportable = teleportableEntity.get(PrpgTeleportableComponent)?.data;
+      const teleportable = teleportableEntity.get(PrpgTeleportableComponent);
 
       if(!teleportable) {
         this.logger.error(`[${this.gameOptions.playerNumber}] Entity ${teleportableEntity.id} is not teleportable`);
@@ -257,7 +257,7 @@ PrpgTeleportableComponent> {
         }
 
         if(character) {
-          character.data.direction = spawnPoint.direction;
+          character.state.direction = spawnPoint.direction;
         }
 
         if (typeof (teleportableEntity as PrpgPlayerActor).z === 'number') {
@@ -285,7 +285,7 @@ PrpgTeleportableComponent> {
         // Fade out is complete, move the player to the new map
         if (fadeScreen.isComplete && !fadeScreen.isOutro) {
           for (const teleportableEntity of teleportableEntities) {
-            const teleportable = teleportableEntity.get(PrpgTeleportableComponent)?.data;
+            const teleportable = teleportableEntity.get(PrpgTeleportableComponent);
             if (teleportable?.isTeleporting) {
               if(!teleportable.teleportTo) {
                 this.logger.error('Teleport target not found!');
@@ -300,7 +300,7 @@ PrpgTeleportableComponent> {
         // Teleport is complete
         if(fadeScreen?.isComplete && fadeScreen?.isOutro) {
           for (const entity of teleportableEntities) {
-            const teleportable = entity.get(PrpgTeleportableComponent)?.data;
+            const teleportable = entity.get(PrpgTeleportableComponent);
             // If the fade screen is complete or removed, the teleport is finished
             if (teleportable?.isTeleporting) {
               teleportable.isTeleporting = false;
