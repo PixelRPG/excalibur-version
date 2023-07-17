@@ -201,7 +201,7 @@ export class PrpgPlayerSystem extends System<
     }
   }
 
-  public initialize?(scene: MapScene) {
+  public initialize(scene: MapScene) {
     this.scene = scene;
 
     const playerQuery =

@@ -17,6 +17,7 @@ export class PrpgPlayerComponent extends Component<PrpgComponentType.PLAYER> imp
 
   initState(initialState: Partial<PlayerState>): PlayerState {
     this._state = {...this._state, ...initialState};
+    console.debug(`PrpgPlayerComponent initState:`, this._state);
     return proxy(this._state);
   }
 

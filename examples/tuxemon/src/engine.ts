@@ -43,8 +43,8 @@ export class PrpgEngine extends ExcaliburEngine implements NetworkSerializable<G
         this._state = this.initState(initialState);
     }
 
-    syncMapScenesStates() {
-        const mapsScenesStates = this.getMapScenesStates();
+    updateStatesMapScenes() {
+        const mapsScenesStates = this.getStatesMapScenes();
         for (const name in mapsScenesStates) {
             const scene = this.scenes[name] as MapScene | Scene;
             if(scene instanceof MapScene) {
@@ -58,7 +58,7 @@ export class PrpgEngine extends ExcaliburEngine implements NetworkSerializable<G
         }
     }
 
-    getMapScenesStates() {
+    getStatesMapScenes() {
         const mapsScenes: GameState['maps'] = {};
         for (const name in this.scenes) {
             const scene = this.scenes[name] as MapScene | Scene;
@@ -71,7 +71,7 @@ export class PrpgEngine extends ExcaliburEngine implements NetworkSerializable<G
 
     initState(initialState: Partial<GameState> = {}): GameState {
         this._state = {...this._state, ...initialState};
-        this._state.maps = this.getMapScenesStates()
+        this._state.maps = this.getStatesMapScenes()
         return proxy(this._state);
     }
 
@@ -198,7 +198,7 @@ export class PrpgEngine extends ExcaliburEngine implements NetworkSerializable<G
 
     override onPostUpdate(engine: PrpgEngine, delta: number) {
         super.onPostUpdate(engine, delta);
-        this.syncMapScenesStates();
+        this.updateStatesMapScenes();
         const event = new GameEvent<GameState>()
         event.target = this.state;
         this.emit('sceneUpdate', event);
@@ -214,6 +214,8 @@ export class PrpgEngine extends ExcaliburEngine implements NetworkSerializable<G
                 } else {
                     myScene.deserialize(updatedScene);
                 }
+            } else if(!myScene) {
+                this.logger.warn(`Scene ${name} to deserialize not found!`);
             }
         }
     }

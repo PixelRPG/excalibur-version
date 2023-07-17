@@ -15,6 +15,7 @@ export class MapScene extends Scene implements NetworkSerializable<MapSceneState
   private mapQuery: Query<PrpgMapComponent>;
   private playerQuery: Query<PrpgPlayerComponent>;
 
+  /** The syncable state */
   private _state: MapSceneState = {
     name: "",
     players: {},
@@ -24,6 +25,33 @@ export class MapScene extends Scene implements NetworkSerializable<MapSceneState
     return this._state;
   }
 
+  // get players() {
+  //   return this.state.players;
+  // }
+
+  private static _instances: {
+    [playerNumber: number]: {
+      [name: string]: MapScene;
+    }
+  } = {};
+
+  /**
+   * Get all map scenes for a player
+   * @returns 
+   */
+  public instances() {
+    return MapScene._instances[this.gameOptions.playerNumber];
+  }
+
+  /**
+   * 
+   * @paramGet map scene by name 
+   * @returns 
+   */
+  public getInstance(name: string) {
+    return MapScene._instances[this.gameOptions.playerNumber][name];
+  }
+
   constructor(private readonly gameOptions: GameOptions, public readonly name: string, private readonly map: TiledMapResource) {
     super();
     this.add(newMapEntity(map, name));
@@ -31,38 +59,32 @@ export class MapScene extends Scene implements NetworkSerializable<MapSceneState
     this.playerQuery = this.world.queryManager.createQuery<PrpgPlayerComponent>([PrpgComponentType.PLAYER]);
     this._state.name = name;
     this._state = this.initState({ name: name });
+
+    MapScene._instances[gameOptions.playerNumber] ||= {};
+    MapScene._instances[gameOptions.playerNumber][name] = this;
   }
 
   /**
-   * TODO: Extend BodyComponent / Actor, to make this sync automatic
+   * TODO: Sync which players are in this scene
    */
-  syncPlayers() {
-    const player = this.getStatePlayers();
-    for (const playerNumber in player) {
-      if(!this.state.players[playerNumber]) {
-        this.state.players[playerNumber] = player[playerNumber];
-      } else if (this.state.players[playerNumber] !== player[playerNumber]) {
-        console.warn(`Player ${playerNumber} state changed from ${this.state.players[playerNumber]} to ${player[playerNumber]}`);
-        this.state.players[playerNumber] = player[playerNumber];
-      }
+  syncStatePlayer() {
+    // TODO not needed anymore?
+    const currentPlayerState = this.getCurrentPlayer()?.state;
+    if(currentPlayerState) {
+      this.state.players[this.gameOptions.playerNumber] = currentPlayerState
     }
+  }
+
+  /**
+   * Sync the state of this scene
+   */
+  syncState() {
+    this.syncStatePlayer();
   }
 
   onPostUpdate(engine: Engine, delta: number) {
     super.onPostUpdate(engine, delta);
-    this.syncPlayers();
-  }
-
-  /** Current active players of this map scene */
-  public getStatePlayers(): MapSceneState['players'] {
-    // Do not send updates for other players, because they are not controlled by us
-    const result: MapSceneState['players'] = {};
-    const currentPlayer = this.getPlayer();
-    const playerNumber = currentPlayer?.player?.playerNumber || this.gameOptions.playerNumber;
-    if(currentPlayer?.state) {
-      result[playerNumber] = currentPlayer?.state;
-    }
-    return result;
+    this.syncState();
   }
 
   /**
@@ -71,8 +93,9 @@ export class MapScene extends Scene implements NetworkSerializable<MapSceneState
    */
   public initState(state: Partial<MapSceneState>): MapSceneState {
     this._state = {...this._state, ...state};
-    this.state.players = this.getStatePlayers();
-    return proxy(this.state);
+    this.syncState();
+    this.logger.debug(`MapScene initState:`, this._state);
+    return proxy(this._state);
   }
 
 
@@ -96,55 +119,146 @@ export class MapScene extends Scene implements NetworkSerializable<MapSceneState
     }
   }
 
+  /**
+   * Get all players on this map
+   * @returns 
+   */
   getPlayers() {
     return this.playerQuery.getEntities() as PrpgPlayerActor[];
   }
 
   /**
+   * Get a player by player number on this map
+   * @param playerNumber 
+   * @returns 
+   */
+  getPlayer(playerNumber: number) {
+    const playerActors = this.getPlayers();
+    return playerActors.find(playerActor => playerActor.player?.playerNumber === playerNumber);
+  }
+
+  /**
    * Get current player (you control) of this map scene
    */
-  getPlayer() {
+  getCurrentPlayer() {
     const playerActors = this.playerQuery.getEntities() as PrpgPlayerActor[];
     return playerActors.find(playerActor => playerActor.player?.isCurrentPlayer);
   }
 
-  public deserializePlayers(playersData: MapSceneState['players']) {
-    const playerActors = this.playerQuery.getEntities() as PrpgPlayerActor[];
-    // TODO: It would be faster if we have the same entity id here if the is the same on each player instance but this must be implemented in Excalibur
-    for (const playerActor of playerActors) {
-      const playerNumber = playerActor.state.player?.playerNumber;
-      if(playerNumber === undefined) {
-        continue;
-      }
-      const updatePlayer = playersData[playerNumber]
-
-      // If the other player is not on the map, remove it
-      if(!updatePlayer && !playerActor.player?.isCurrentPlayer) {
-        this.logger.warn(`Remove player ${playerNumber} from map ${this.name}`);
-        this.world.remove(playerActor, false);
-        continue;
-      }
-      playerActor.deserialize(updatePlayer);
+  public addPlayer(player: PrpgPlayerActor) {
+    const playerNumber = player.player?.playerNumber;
+    if(playerNumber === undefined) {
+      throw new Error(`Player ${player} does not have a playerNumber`);
+    }
+    if(player.player?.isCurrentPlayer && this.state.players[playerNumber] !== player.state) {
+      this.state.players[playerNumber] = player.state;
+    }
+    
+    if(player.player?.isCurrentPlayer) {
+      this.logger.debug(`[${this.gameOptions.playerNumber}] transferred current player to map ${this.name}`);
+    } else {
+      this.logger.debug(`[${this.gameOptions.playerNumber}] transferred player ${player.player?.playerNumber} to map ${this.name}`);
     }
 
-    // Add new players on the map
-    for (const playerNumber in playersData) {
-      const playerData = playersData[playerNumber];
-      const playerActor = playerActors.find(playerActor => playerActor.player?.playerNumber === playerData?.player?.playerNumber);
-      if(!playerActor && playerData?.player?.playerNumber) {
-        const missingPlayer = PrpgPlayerActor.getPlayer(this.gameOptions, playerData.player.playerNumber);
-        if(!missingPlayer) {
-          continue;
+    this.add(player);
+  }
+
+  transferPlayer(player: PrpgPlayerActor) {
+    const playerNumber = player.player?.playerNumber;
+    if(!playerNumber) {
+      throw new Error(`Player ${player} does not have a playerNumber`);
+    }
+
+    if(player.scene) {
+      if(player.scene instanceof MapScene) {
+        if(this.state.players[playerNumber]) {
+          player.scene.removePlayer(player);
         }
-        missingPlayer.deserialize(playerData);
-        this.add(missingPlayer);
+        
+      } else {
+        player.scene.world.remove(player, false);
+        player.scene?.emit('entityremoved', { target: player } as any);
       }
+    }
+
+    this.addPlayer(player);
+
+  }
+
+
+  public removePlayer(player: PrpgPlayerActor) {
+    const playerNumber = player.player?.playerNumber;
+    if(!playerNumber) {
+      throw new Error(`Player ${player} does not have a playerNumber`);
+    }
+
+    // Only remove player from the state if it is the current player
+    if(player.player?.isCurrentPlayer) {
+      delete this.state.players[playerNumber];
+    }
+
+    this.world.remove(player, false);
+
+    this?.emit('entityremoved', { target: player } as any);
+  }
+
+  public deserializePlayer(playerData: PlayerActorState) {
+    if(!playerData.player?.playerNumber) {
+      this.logger.error(`[${this.gameOptions.playerNumber}] Player number is missing in player data for map ${this.name}`);
+      return;
+    }
+    let playerActor = this.getPlayer(playerData.player?.playerNumber);
+    if(!playerActor) {
+      this.logger.warn(`[${this.gameOptions.playerNumber}] Player ${playerData.player?.playerNumber} is missing on map ${this.name}, adding it...`);
+      playerActor = PrpgPlayerActor.getPlayer(this.gameOptions, playerData.player.playerNumber);
+
+      if(!playerActor) {
+        this.logger.error(`[${this.gameOptions.playerNumber}] Player instance is missing for player ${playerData.player?.playerNumber}!`);
+        return;
+      }
+
+      // TODO: Use teleport logic here?
+      this.addPlayer(playerActor);
+    }
+
+    playerActor.deserialize(playerData);
+  }
+
+  removePlayerFromOtherMapScenes(player: PrpgPlayerActor, excludeMapName: string) {
+    const allMapScenes = this.instances();
+    for (const name in allMapScenes) {
+      const mapScene = allMapScenes[name];
+      if(mapScene.name === excludeMapName) {
+        continue;
+      }
+      mapScene.removePlayer(player);
     }
   }
 
   public deserialize(map: MapSceneState) {
+    
     if(map.name === this.name) {
-      return this.deserializePlayers(map.players);
+      for (const _playerNumber in map.players) {
+        const playerNumber = Number(_playerNumber); 
+        const player = map.players[playerNumber];
+        if(!playerNumber) {
+          this.logger.error(`[${this.gameOptions.playerNumber}] Player number is missing in player data for map ${this.name}`);
+          return;
+        }
+
+        if(playerNumber === this.gameOptions.playerNumber) {
+          this.logger.warn(`[${this.gameOptions.playerNumber}] Got update for own player, ignoring...`);
+          return;
+        }
+
+        this.deserializePlayer(player);
+        const playerActor = this.getPlayer(playerNumber);
+        if(playerActor) {
+          this.removePlayerFromOtherMapScenes(playerActor, map.name);
+        }
+      }
     }
+
+    // TODO: Remove the player from other map states
   }
 }

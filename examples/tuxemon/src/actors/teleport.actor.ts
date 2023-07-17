@@ -10,6 +10,9 @@ const DEFAULT_ARGS: Partial<Teleport> = {
   z: 0
 };
 
+/**
+ * TODO: Use entity with collision component instead of actor
+ */
 export class PrpgTeleportActor extends Actor {
   constructor(props: Teleport) {
     super({...DEFAULT_ARGS, ...props});

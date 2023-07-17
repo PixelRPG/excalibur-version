@@ -3,10 +3,6 @@ import { PrpgCharacterComponent, PrpgPlayerComponent, PrpgTeleportableComponent 
 import { PlayerState, PlayerActorState, GameOptions, NetworkSerializable, PlayerActorArgs, TeleportableState, BodyState, CharacterArgs } from '../types';
 import { proxy } from 'valtio';
 
-const DEFAULT_STATE: Partial<PlayerActorState> = {
-
-};
-
 const DEFAULT_ACTOR_STATE: Partial<ActorArgs> = {
   width: 12,
   height: 12,
@@ -51,7 +47,8 @@ export class PrpgPlayerActor extends Actor implements NetworkSerializable<Player
     const teleportable = new PrpgTeleportableComponent(initialState.teleportable);
     teleportable.followTeleport = isCurrentPlayer;
     this.addComponent(teleportable);
-   
+
+    this.logger.debug(`Created player actor ${this.name} for player ${initialState.player.playerNumber}`)
     this._state = this.initState(initialState);    
   }
 
@@ -62,6 +59,7 @@ export class PrpgPlayerActor extends Actor implements NetworkSerializable<Player
     this._state.teleportable = this.teleportable?.state;
 
     this.syncBodyState();
+    console.debug(`PrpgPlayerActor initState:`, this._state);
 
     return proxy(this._state);
   }
@@ -96,28 +94,39 @@ export class PrpgPlayerActor extends Actor implements NetworkSerializable<Player
    * @param gameOptions 
    * @param config 
    */
+  getPlayers() {
+    return PrpgPlayerActor.instances[this.gameOptions.playerNumber] ||= {};
+  }
+
   static getPlayers(gameOptions: GameOptions) {
-    return this.instances[gameOptions.playerNumber] ||= {};
+    return PrpgPlayerActor.instances[gameOptions.playerNumber] ||= {};
   }
 
   /**
    * Get current player you are controlling
    * @param gameOptions 
    */
-  static getPlayer(gameOptions: GameOptions): PrpgPlayerActor;
+  getPlayer(): PrpgPlayerActor;
 
   /**
-   * Get singleton instance by player number, each player in a splitscreen has is's own singleton instance of each player
+   * Get singleton instance by player number, each player in a splitscreen has is's own singleton instance of each player.
+   * With this method you can get the instance of any player from any map.
    * @param gameOptions 
    * @param playerNumber 
-   * @returns 
+   * @returns
    */
-  static getPlayer(gameOptions: GameOptions, playerNumber?: number): PrpgPlayerActor | undefined;
+  getPlayer(playerNumber?: number): PrpgPlayerActor | undefined;
 
-  static getPlayer(gameOptions: GameOptions, playerNumber?: number) {
-    playerNumber ||= gameOptions.playerNumber;
-    const instances = this.getPlayers(gameOptions);
+  getPlayer(playerNumber?: number) {
+    playerNumber ||= this.gameOptions.playerNumber;
+    const instances = this.getPlayers();
     return instances[playerNumber];
+  }
+
+  static getPlayer(gameOptions: GameOptions, playerNumber?: number): PrpgPlayerActor | undefined {
+    playerNumber ||= gameOptions.playerNumber;
+    const instances = PrpgPlayerActor.instances[playerNumber];
+    return instances?.[playerNumber];
   }
 
   /**
@@ -132,7 +141,7 @@ export class PrpgPlayerActor extends Actor implements NetworkSerializable<Player
     if (playerNumber === undefined) {
       throw new Error(`[PrpgPlayerActor] Player number is required!`);
     }
-    const instance = this.getPlayer (gameOptions, playerNumber);
+    const instance = this.getPlayer(gameOptions, playerNumber);
 
     if (instance) {
       Logger.getInstance().warn(`[PrpgPlayerActor] Player ${playerNumber} already exists!`);

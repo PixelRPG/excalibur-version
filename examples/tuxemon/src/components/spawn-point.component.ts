@@ -7,7 +7,7 @@ export class PrpgSpawnPointComponent extends Component<PrpgComponentType.SPAWN_P
   data: SpawnPointState;
 
   constructor(
-    data: Partial<SpawnPointState> & Pick<SpawnPointState, 'mapScene' | 'entityName'>
+    data: Partial<SpawnPointState> & Pick<SpawnPointState, 'sceneName' | 'entityName'>
   ) {
     super();
 

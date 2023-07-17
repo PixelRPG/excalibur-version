@@ -68,12 +68,17 @@ PrpgMapComponent, MapScene> {
           const z = start.getProperty<number>('zindex')?.value || 0;
           const playerNumber = start.getProperty<number>('player')?.value || (i + 1);
           const direction = start.getProperty<string>('direction')?.value;
+          if(playerNumber > this.gameOptions.players) {
+            this.logger.error(`Player number ${playerNumber} is higher than the number of players ${this.gameOptions.players}`);
+            continue;
+          }
+          
           const player = PrpgPlayerActor.newPlayer(this.gameOptions, {}, {
             character: { spriteSheet: resources.sprites.scientist, direction: Direction.DOWN },
             player: { playerNumber }
           });
           
-          this.scene.add(player);
+          this.scene.transferPlayer(player);
           this.scene.add(newSpawnPointEntity({
             type: SpawnPointType.START,
             x: start.x,
@@ -81,7 +86,7 @@ PrpgMapComponent, MapScene> {
             z,
             direction: stringToDirection(direction),
             entityName: player.name,
-            mapScene: this.scene,
+            sceneName: this.scene.name,
           }));
         }
       }
