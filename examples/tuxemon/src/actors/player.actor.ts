@@ -48,7 +48,7 @@ export class PrpgPlayerActor extends Actor implements NetworkSerializable<Player
     teleportable.followTeleport = isCurrentPlayer;
     this.addComponent(teleportable);
 
-    this.logger.debug(`Created player actor ${this.name} for player ${initialState.player.playerNumber}`)
+    this.logger.debug(`Created player actor ${this.name} for player ${gameOptions.playerNumber}`)
     this._state = this.initState(initialState);    
   }
 
@@ -125,7 +125,7 @@ export class PrpgPlayerActor extends Actor implements NetworkSerializable<Player
 
   static getPlayer(gameOptions: GameOptions, playerNumber?: number): PrpgPlayerActor | undefined {
     playerNumber ||= gameOptions.playerNumber;
-    const instances = PrpgPlayerActor.instances[playerNumber];
+    const instances = PrpgPlayerActor.instances[gameOptions.playerNumber];
     return instances?.[playerNumber];
   }
 
