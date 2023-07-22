@@ -1,5 +1,5 @@
 import { Actor, vec, CollisionType, ActorArgs } from 'excalibur';
-import { PrpgCharacterComponent } from '../components';
+import { PrpgCharacterComponent, PrpgBodyComponent } from '../components';
 import type { CharacterArgs } from '../types';
 import type { AsepriteResource } from '@excaliburjs/plugin-aseprite';
 
@@ -15,6 +15,7 @@ const DEFAULT_ARGS: Partial<CharacterArgs> & Partial<ActorArgs> = {
 export class PrpgCharacterActor extends Actor {
   constructor(spriteSheet: AsepriteResource, data: CharacterArgs) {
     super({...DEFAULT_ARGS, ...data});
+    this.addComponent(new PrpgBodyComponent());
     this.addComponent(new PrpgCharacterComponent(data));
   }
 }

@@ -1,6 +1,6 @@
-import { Actor, ActorArgs, vec, CollisionType, Logger, Engine } from 'excalibur';
-import { PrpgCharacterComponent, PrpgPlayerComponent, PrpgTeleportableComponent } from '../components';
-import { PlayerState, PlayerActorState, GameOptions, NetworkSerializable, PlayerActorArgs, TeleportableState, BodyState, CharacterArgs } from '../types';
+import { Actor, ActorArgs, vec, CollisionType, Logger, Engine, MotionComponent , BodyComponent} from 'excalibur';
+import { PrpgCharacterComponent, PrpgPlayerComponent, PrpgTeleportableComponent, PrpgBodyComponent } from '../components';
+import { PlayerState, PlayerActorState, GameOptions, MultiplayerSyncable, PlayerActorArgs, TeleportableState, BodyState } from '../types';
 import { proxy } from 'valtio';
 
 const DEFAULT_ACTOR_STATE: Partial<ActorArgs> = {
@@ -10,16 +10,20 @@ const DEFAULT_ACTOR_STATE: Partial<ActorArgs> = {
   collisionType: CollisionType.Active
 };
 
-export class PrpgPlayerActor extends Actor implements NetworkSerializable<PlayerActorState> {
+export class PrpgPlayerActor extends Actor implements MultiplayerSyncable<PlayerActorState> {
 
   private _state: PlayerActorState = {};
 
-  get state() {
+  get updates() {
     return this._state;
   }
 
   get player() {
     return this.get(PrpgPlayerComponent);
+  }
+
+  get ownBody() {
+    return this.get(PrpgBodyComponent);
   }
 
   get character() {
@@ -41,6 +45,7 @@ export class PrpgPlayerActor extends Actor implements NetworkSerializable<Player
 
     super({...DEFAULT_ACTOR_STATE, ...actor});
     
+    this.addComponent(new PrpgBodyComponent(initialState.body))
     this.addComponent(new PrpgCharacterComponent(initialState.character));
     this.addComponent(new PrpgPlayerComponent(initialState.player, isCurrentPlayer));
 
@@ -53,10 +58,11 @@ export class PrpgPlayerActor extends Actor implements NetworkSerializable<Player
   }
 
   initState(initialState: Partial<PlayerActorState>): PlayerActorState {    
-    this._state = {...this.state, ...initialState};
-    this._state.player = this.player?.state;
-    this._state.character = this.character?.state;
-    this._state.teleportable = this.teleportable?.state;
+    this._state = {...this._state, ...initialState};
+    this._state.player = this.player?.updates;
+    this._state.character = this.character?.updates;
+    this._state.teleportable = this.teleportable?.updates;
+    this._state.body = this.ownBody?.updates;
 
     this.syncBodyState();
     console.debug(`PrpgPlayerActor initState:`, this._state);
@@ -64,23 +70,23 @@ export class PrpgPlayerActor extends Actor implements NetworkSerializable<Player
     return proxy(this._state);
   }
 
-  /**
-   * TODO: Extend BodyComponent / Actor, to make this sync automatic
-   */
   syncBodyState() {
-    this.state.body ||= {} as BodyState;
-    this.state.body.pos ||= {} as BodyState['pos'];
-    this.state.body.vel ||= {} as BodyState['vel'];
-    this.state.body.pos.x = this.pos.x || 0;
-    this.state.body.pos.y = this.pos.y || 0;
-    this.state.body.vel.x = this.vel.x || 0;
-    this.state.body.vel.y = this.vel.y || 0;
-    return this.state.body;
+    this.ownBody?.syncState();
+  //   this._state.body ||= {} as BodyState;
+  //  this._state.body.pos ||= {} as BodyState['pos'];
+  //  this._state.body.pos.x = this.pos.x || 0;
+  //  this._state.body.pos.y = this.pos.y || 0;
+
+  //  this._state.body.vel ||= {} as MotionComponent['vel'];
+  //  this._state.body.vel.x = this.vel.x || 0;
+  //  this._state.body.vel.y = this.vel.y || 0;
   }
 
   onPostUpdate(engine: Engine, delta: number) {
     super.onPostUpdate(engine, delta);
+    // We need to trigger
     this.syncBodyState();
+    // this.logger.debug(`[${this.gameOptions.playerNumber}] PrpgPlayerActor onPostUpdate direction:`, this._state.character?.direction, this.name);
   }
 
   private static instances: {
@@ -95,18 +101,12 @@ export class PrpgPlayerActor extends Actor implements NetworkSerializable<Player
    * @param config 
    */
   getPlayers() {
-    return PrpgPlayerActor.instances[this.gameOptions.playerNumber] ||= {};
+    return PrpgPlayerActor.getPlayers(this.gameOptions);
   }
 
   static getPlayers(gameOptions: GameOptions) {
     return PrpgPlayerActor.instances[gameOptions.playerNumber] ||= {};
   }
-
-  /**
-   * Get current player you are controlling
-   * @param gameOptions 
-   */
-  getPlayer(): PrpgPlayerActor;
 
   /**
    * Get singleton instance by player number, each player in a splitscreen has is's own singleton instance of each player.
@@ -115,18 +115,25 @@ export class PrpgPlayerActor extends Actor implements NetworkSerializable<Player
    * @param playerNumber 
    * @returns
    */
-  getPlayer(playerNumber?: number): PrpgPlayerActor | undefined;
-
-  getPlayer(playerNumber?: number) {
-    playerNumber ||= this.gameOptions.playerNumber;
-    const instances = this.getPlayers();
-    return instances[playerNumber];
+  getPlayer(playerNumber: number) {
+    return PrpgPlayerActor.getPlayer(this.gameOptions, playerNumber);
+  }
+  /**
+   * Get player actor by player number from any map (each player in a splitscreen has is's own singleton instance of each player).
+   * @param gameOptions 
+   * @param playerNumber 
+   * @returns 
+   */
+  static getPlayer(gameOptions: GameOptions, playerNumber: number): PrpgPlayerActor | undefined {
+    return PrpgPlayerActor.instances[gameOptions.playerNumber]?.[playerNumber];
   }
 
-  static getPlayer(gameOptions: GameOptions, playerNumber?: number): PrpgPlayerActor | undefined {
-    playerNumber ||= gameOptions.playerNumber;
-    const instances = PrpgPlayerActor.instances[gameOptions.playerNumber];
-    return instances?.[playerNumber];
+  getCurrentPlayer() {
+    return PrpgPlayerActor.getCurrentPlayer(this.gameOptions);
+  }
+
+  static getCurrentPlayer(gameOptions: GameOptions): PrpgPlayerActor | undefined {
+    return PrpgPlayerActor.getPlayer(gameOptions, gameOptions.playerNumber);
   }
 
   /**
@@ -153,39 +160,22 @@ export class PrpgPlayerActor extends Actor implements NetworkSerializable<Player
     return instances[playerNumber] as PrpgPlayerActor;
   }
 
-  deserialize(data: Partial<PlayerActorState>) {
+  applyUpdates(data: Partial<PlayerActorState>) {
     // Ignore updates for or own player, because we control them
     if (this.player?.isCurrentPlayer) {
       return;
     }
     if(data.player) {
-      this.player?.deserialize(data.player);
+      this.player?.applyUpdates(data.player);
     }
     if(data.character) {
-      this.character?.deserialize(data.character);
+      this.character?.applyUpdates(data.character);
     }
     if(data.teleportable) {
-      this.teleportable?.deserialize(data.teleportable);
+      this.teleportable?.applyUpdates(data.teleportable);
     }
     if(data.body) {
-      if(data.body.vel.x) {
-        this.body.vel.x = data.body.vel.x;
-        this.vel.x = this.body.vel.x;
-      }
-      if(data.body.vel.y) {
-        this.body.vel.y = data.body.vel.y;
-        this.vel.y = this.body.vel.y;
-      }
-      if(data.body.pos.x) {
-        this.body.pos.x = data.body.pos.x;
-        this.pos.x = this.body.pos.x;
-      }
-      if(data.body.pos.y) {
-        this.body.pos.y = data.body.pos.y;
-        this.pos.y = this.body.pos.y;
-      }
-      this.syncBodyState();
+      this.ownBody?.applyUpdates(data.body);
     }
-    
   }
 }

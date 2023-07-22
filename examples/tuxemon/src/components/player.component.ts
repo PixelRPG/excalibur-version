@@ -1,9 +1,9 @@
 import { Component } from 'excalibur';
-import { PrpgComponentType, NetworkSerializable, PlayerState } from '../types';
+import { PrpgComponentType, MultiplayerSyncable, PlayerState } from '../types';
 
 import { proxy } from 'valtio';
 
-export class PrpgPlayerComponent extends Component<PrpgComponentType.PLAYER> implements NetworkSerializable<PlayerState> {
+export class PrpgPlayerComponent extends Component<PrpgComponentType.PLAYER> implements MultiplayerSyncable<PlayerState> {
   public readonly type = PrpgComponentType.PLAYER;
 
   private _state: PlayerState = {
@@ -21,7 +21,7 @@ export class PrpgPlayerComponent extends Component<PrpgComponentType.PLAYER> imp
     return proxy(this._state);
   }
 
-  get state() {
+  get updates() {
     return this._state;
   }
 
@@ -29,7 +29,7 @@ export class PrpgPlayerComponent extends Component<PrpgComponentType.PLAYER> imp
     return this._state.playerNumber;
   }
 
-  deserialize(data: PlayerState) {
+  applyUpdates(data: PlayerState) {
     // Player number not changed after creation
     // this._state.playerNumber = data.playerNumber;
 

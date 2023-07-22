@@ -1,6 +1,6 @@
 import { System, SystemType, Logger, Entity, Query, Direction, BodyComponent } from 'excalibur';
 import { TiledObject } from '@excaliburjs/plugin-tiled/src';
-import { PrpgTeleportableComponent, PrpgTeleportComponent, PrpgFadeScreenComponent, PrpgSpawnPointComponent, PrpgCharacterComponent, PrpgPlayerComponent } from '../components';
+import { PrpgTeleportableComponent, PrpgTeleportComponent, PrpgFadeScreenComponent, PrpgSpawnPointComponent, PrpgCharacterComponent, PrpgPlayerComponent, PrpgBodyComponent } from '../components';
 import { newSpawnPointEntity } from '../entities';
 import { PrpgPlayerActor } from '../actors';
 import { PrpgFadeScreenElement } from '../screen-elements';
@@ -144,6 +144,12 @@ PrpgTeleportableComponent> {
         return;
       }
 
+      // Teleport only entities which are not controlled by other players, this state is managed by the other player
+      const player = teleportableEntity.get(PrpgPlayerComponent);
+      if(player && !player.isCurrentPlayer) {
+        return;
+      }
+
       if(spawnPoint.sceneName === this.scene?.name) {
         this.logger.warn(`[${this.gameOptions.playerNumber}] Entity ${teleportableEntity.id} is already on scene ${spawnPoint.sceneName}`);
         return;
@@ -277,7 +283,7 @@ PrpgTeleportableComponent> {
         }
         this.logger.debug(`[${this.gameOptions.playerNumber}] Entity ${spawnPoint.entityName} on scene ${this.scene?.name} for spawn point found :)`);
 
-        const body = targetEntity.get(BodyComponent);
+        const body = targetEntity.get(PrpgBodyComponent);
         const character = targetEntity.get(PrpgCharacterComponent);       
 
         if (!body) {
@@ -290,7 +296,7 @@ PrpgTeleportableComponent> {
         }
 
         if(character) {
-          character.state.direction = spawnPoint.direction;
+          character.updates.direction = spawnPoint.direction;
         }
 
         // TODO also update the z value on other drawable entities

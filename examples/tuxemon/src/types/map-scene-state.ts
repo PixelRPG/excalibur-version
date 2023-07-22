@@ -6,6 +6,6 @@ export interface MapSceneState {
 
     /** The player state from which this update comes */
     players: {
-        [playerNumber: number]: PlayerActorState;
+        [playerNumber: string]: PlayerActorState | null;
     }
 }

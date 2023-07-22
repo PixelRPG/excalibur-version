@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "",
   "main": "src/main.ts",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "yarn run barrel && yarn run assets && esbuilder --outfile ./dist/main.js",
@@ -22,10 +23,10 @@
     "@excaliburjs/dev-tools": "^0.27.1",
     "@excaliburjs/plugin-aseprite": "workspace:^",
     "@excaliburjs/plugin-tiled": "workspace:^",
+    "@msgpack/msgpack": "^3.0.0-beta2",
     "excalibur": "workspace:^",
     "react": "^18.2.0",
-    "valtio": "^1.10.7",
-    "yjs": "^13.6.7"
+    "valtio": "^1.10.7"
   },
   "devDependencies": {
     "@pixelrpg/esbuild": "workspace:^",

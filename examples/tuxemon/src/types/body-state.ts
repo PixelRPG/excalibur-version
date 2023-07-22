@@ -1,10 +1,20 @@
 export interface BodyState {
-    vel: {
-        x?: number;
-        y?: number;
-    },
+    /** position */
     pos: {
-        x?: number;
-        y?: number;
+        /** x position on the map */
+        x: number;
+        /** y position on the map */
+        y: number;
     }
+
+    /** z-index on the map */
+    z: number;
+
+    /** velocity */
+    vel: {
+        /** x velocity */
+        x?: number;
+        /** y velocity */
+        y?: number;
+    };
 }

@@ -78,7 +78,7 @@ PrpgMapComponent, MapScene> {
             player: { playerNumber }
           });
           
-          this.scene.transferPlayer(player);
+          this.scene.addPlayer(player, true, true);
           this.scene.add(newSpawnPointEntity({
             type: SpawnPointType.START,
             x: start.x,

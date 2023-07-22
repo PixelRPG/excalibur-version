@@ -8,20 +8,20 @@ import {
 // Scenes
 import { MapScene } from './scenes/map.scene';
 
-import { GameOptions, NetworkSerializable, GameState } from './types';
+import { GameOptions, MultiplayerSyncable, GameState } from './types';
 import { resources } from './managers/index';
-import { proxy } from 'valtio'
+import { proxy, getVersion } from 'valtio'
 
 
-export class PrpgEngine extends ExcaliburEngine implements NetworkSerializable<GameState> {
+export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<GameState> {
 
     private logger = Logger.getInstance();
 
-    public _state: GameState = {
+    private _state: GameState = {
         maps: {},
     }
 
-    get state() {
+    get updates() {
         return this._state;
     }
 
@@ -37,7 +37,15 @@ export class PrpgEngine extends ExcaliburEngine implements NetworkSerializable<G
             snapToPixel: false,
             suppressPlayButton: true, // Disable play button, enable to fix audio issue, currently only used for dev
             backgroundColor: Color.Black,
-            maxFps: 60,
+            maxFps: 40,
+            configurePerformanceCanvas2DFallback: {
+                allow: true,
+                
+                threshold: {
+                    numberOfFrames: 10,
+                    fps: 5,
+                }
+            }
         }
         super({...defaults, ...engineOptions});
         this._state = this.initState(initialState);
@@ -48,11 +56,11 @@ export class PrpgEngine extends ExcaliburEngine implements NetworkSerializable<G
         for (const name in mapsScenesStates) {
             const scene = this.scenes[name] as MapScene | Scene;
             if(scene instanceof MapScene) {
-                if(!this.state.maps[name]) {
-                    this.state.maps[name] = mapsScenesStates[name];
-                } else if(this.state.maps[name] !== mapsScenesStates[name]) {
-                    this.logger.warn(`Map scene ${name} state is out of sync!`);
-                    this.state.maps[name] = mapsScenesStates[name];
+                if(!this._state.maps[name]) {
+                    this._state.maps[name] = mapsScenesStates[name];
+                } else if(this._state.maps[name] !== mapsScenesStates[name]) {
+                    // this.logger.warn(`Map scene ${name} state is out of sync!`, this._state.maps[name], mapsScenesStates[name]);
+                    this._state.maps[name] = mapsScenesStates[name];
                 }
             }
         }
@@ -63,7 +71,7 @@ export class PrpgEngine extends ExcaliburEngine implements NetworkSerializable<G
         for (const name in this.scenes) {
             const scene = this.scenes[name] as MapScene | Scene;
             if(scene instanceof MapScene) {
-                mapsScenes[name] = scene.state;
+                mapsScenes[name] = scene.updates;
             }
         }
         return mapsScenes
@@ -72,7 +80,8 @@ export class PrpgEngine extends ExcaliburEngine implements NetworkSerializable<G
     initState(initialState: Partial<GameState> = {}): GameState {
         this._state = {...this._state, ...initialState};
         this._state.maps = this.getStatesMapScenes()
-        return proxy(this._state);
+        this._state = proxy(this._state);
+        return this._state;
     }
 
     /**
@@ -166,20 +175,20 @@ export class PrpgEngine extends ExcaliburEngine implements NetworkSerializable<G
         });
 
         // Log when pads disconnect and connect
-        this.input.gamepads.on('connect', (evet: GamepadConnectEvent) => {
+        this.input.gamepads.on('connect', (event: GamepadConnectEvent) => {
         this.logger.debug('[Main] Gamepad connect');
         });
 
-        this.input.gamepads.on('disconnect', (evet: GamepadDisconnectEvent) => {
+        this.input.gamepads.on('disconnect', (event: GamepadDisconnectEvent) => {
         this.logger.debug('[Main] Gamepad disconnect');
         });
 
-        this.input.gamepads.at(0).on('button', (ev: GamepadButtonEvent) => {
-        this.logger.debug('[Main] button', ev.button, ev.value);
+        this.input.gamepads.at(0).on('button', (event: GamepadButtonEvent) => {
+        this.logger.debug('[Main] button', event.button, event.value);
         });
 
-        this.input.gamepads.at(0).on('axis', (ev: GamepadAxisEvent) => {
-        this.logger.debug('[Main] axis', ev.axis, ev.value);
+        this.input.gamepads.at(0).on('axis', (event: GamepadAxisEvent) => {
+        this.logger.debug('[Main] axis', event.axis, event.value);
         });
 
         this.addMapScenes();
@@ -200,7 +209,7 @@ export class PrpgEngine extends ExcaliburEngine implements NetworkSerializable<G
         super.onPostUpdate(engine, delta);
         this.updateStatesMapScenes();
         const event = new GameEvent<GameState>()
-        event.target = this.state;
+        event.target = this._state;
         this.emit('sceneUpdate', event);
     }
 
@@ -209,18 +218,14 @@ export class PrpgEngine extends ExcaliburEngine implements NetworkSerializable<G
             const updatedScene = maps[name];
             const myScene = this.scenes[name] as MapScene | Scene;
             if(updatedScene && myScene instanceof MapScene) {
-                if(this.currentScene instanceof MapScene && this.currentScene.name === name) {
-                    this.currentScene.deserialize(maps[name]);
-                } else {
-                    myScene.deserialize(updatedScene);
-                }
+                myScene.applyUpdates(updatedScene);
             } else if(!myScene) {
-                this.logger.warn(`Scene ${name} to deserialize not found!`);
+                this.logger.warn(`Scene ${name} can't be deserialized!`);
             }
         }
     }
 
-    deserialize(data: Partial<GameState>) {
+    applyUpdates(data: Partial<GameState>) {
         if(data.maps) {
             this.deserializeMapScenes(data.maps);
         }

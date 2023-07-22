@@ -6,4 +6,5 @@ export enum PrpgComponentType {
   TILED_MAP = 'prpg.tiled-map',
   SPAWN_POINT = 'prpg.spawn-point',
   FADE_SCREEN = 'prpg.fade',
+  BODY = 'prpg.body',
 }

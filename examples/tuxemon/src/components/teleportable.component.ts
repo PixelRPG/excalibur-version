@@ -1,11 +1,11 @@
 import { Component, InitializeEvent } from 'excalibur';
 import { proxy } from 'valtio';
-import { PrpgComponentType, NetworkSerializable, TeleportableState, SpawnPointState } from '../types';
+import { PrpgComponentType, MultiplayerSyncable, TeleportableState, SpawnPointState } from '../types';
 
 /**
  * Used to get an entity the ability to teleport to a different map
  */
-export class PrpgTeleportableComponent extends Component<PrpgComponentType.TELEPORTABLE> implements NetworkSerializable<TeleportableState> {
+export class PrpgTeleportableComponent extends Component<PrpgComponentType.TELEPORTABLE> implements MultiplayerSyncable<TeleportableState> {
   public readonly type = PrpgComponentType.TELEPORTABLE;
 
   private _state: TeleportableState = {
@@ -13,7 +13,7 @@ export class PrpgTeleportableComponent extends Component<PrpgComponentType.TELEP
     teleportTo: undefined, 
   };
 
-  get state() {
+  get updates() {
     return this._state;
   }
 
@@ -42,17 +42,17 @@ export class PrpgTeleportableComponent extends Component<PrpgComponentType.TELEP
   }
 
   initState(initialState: Partial<TeleportableState>): TeleportableState {
-    this._state = {...this.state, ...initialState};
-    this.state.isTeleporting ||= false;
+    this._state = {...this._state, ...initialState};
+    this._state.isTeleporting ||= false;
 
     return proxy(this._state);
   }
 
-  deserialize(data: Partial<TeleportableState>) {
-    this.state.isTeleporting = data.isTeleporting || false;
+  applyUpdates(data: Partial<TeleportableState>) {
+    this._state.isTeleporting = data.isTeleporting || false;
     // Ignore follow teleport, it is set on each client separately
     // this.data.followTeleport = data.followTeleport;
-    this.state.teleportTo = data.teleportTo;
+    this._state.teleportTo = data.teleportTo;
   }
 }
 

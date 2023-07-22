@@ -1,3 +1,4 @@
+export { PrpgBodyComponent } from './body.component';
 export { PrpgCharacterComponent } from './character.component';
 export { PrpgFadeScreenComponent } from './fade-screen.component';
 export { PrpgMapComponent } from './map.component';

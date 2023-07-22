@@ -104,6 +104,13 @@ PrpgCharacterComponent | BodyComponent | TransformComponent | MotionComponent | 
         case Direction.UP:
           animation = resources.sprites.scientist.getAnimation(CharacterAnimation.BACK);
           break;
+        case Direction.DOWN:
+          animation = resources.sprites.scientist.getAnimation(CharacterAnimation.FRONT);
+          break;
+        default:
+          this.logger.warn(`Use default direction: ${character.direction}`);
+          animation = resources.sprites.scientist.getAnimation(CharacterAnimation.FRONT);
+          break;
       }
       if (!animation) {
         this.logger.warn(`${character.direction} animation not found!`);

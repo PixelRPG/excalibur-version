@@ -1,57 +1,64 @@
 import { Class, Color, GameEvent } from 'excalibur';
-import { subscribe } from 'valtio';
+import { subscribe, snapshot } from 'valtio';
 import { PrpgEngine } from './engine';
 import { GameState } from './types';
+import { encode, decode } from "@msgpack/msgpack";
 
 export class PrpgGame extends Class {
     /** One instance per player in splitscreen */
-    static instances: PrpgEngine[] = [];
+    static screens: PrpgEngine[] = [];
+
+    constructor(public players = 2) {
+      super();
+      this.setPlayersHTMLClass();
+    }
+
+    private setPlayersHTMLClass() {
+      const htmlWrapperEl = document.querySelector('.players');
+      if(!htmlWrapperEl) {
+        throw new Error('No .players element found in HTML');
+      }
+      htmlWrapperEl.classList.remove('players-1');
+      htmlWrapperEl.classList.add(`players-${this.players}`);
+    }
+
+
+    /**
+     * One full screen if no splitscreen, multiple if splitscreen for each player.
+     */
+    createPlayerScreens() {
+      for (let playerNumber = 1; playerNumber <= this.players; playerNumber++) {
+        // For debugging, set different background colors for each player
+        const backgroundColor = playerNumber == 1 ? Color.Black : playerNumber == 2 ? Color.Blue : playerNumber == 3 ? Color.Green : Color.Orange; 
+        const player = new PrpgEngine({ backgroundColor }, { playerNumber, players: this.players});
+        PrpgGame.screens.push(player);
+      }
+
+      return PrpgGame.screens;
+    }
+
+    subscribeToPlayerState() {
+      for (const player of PrpgGame.screens) {
+        const unsubscribe = subscribe(player.updates, () => {
+          const s = decode(encode(snapshot(player.updates))) as GameState;
+          // console.debug(`player ${player.gameOptions.playerNumber} updates changed, sync to other players`, s);
+          for (const otherPlayer of PrpgGame.screens) {
+            if (otherPlayer === player) continue;
+            otherPlayer.applyUpdates(s);
+          }
+        });
+      }
+    }
+
+    startPlayerScreens() {
+      for (const player of PrpgGame.screens) {
+        player.start();
+      }
+    }
 
     start() {
-        const player1 = new PrpgEngine({}, { playerNumber: 1, players: 2});
-        const player2 = new PrpgEngine({ backgroundColor: Color.Blue }, { playerNumber: 2, players: 2});
-        // const player3 = new PrpgEngine({ backgroundColor: Color.Green }, { playerNumber: 3});
-        // const player4 = new PrpgEngine({ backgroundColor: Color.Orange }, { playerNumber: 4});
-
-        PrpgGame.instances.push(player1, player2);
-
-        const p1Unsubscribe = subscribe(player1.state, () => {
-          // const s = JSON.parse(JSON.stringify(player1.state)) as GameState;
-          const s = player1.state;
-          console.debug('player1.state changed, sync to player2', s);
-          player2.deserialize(s);
-        });
-
-        const p2Unsubscribe = subscribe(player2.state, () => {
-          // const s = JSON.parse(JSON.stringify(player2.state)) as GameState;
-          const s = player2.state;
-          console.debug('player2.state changed, sync to player1', s);
-          player1.deserialize(s);
-        });
-        
-        // // Simulate sending data from player 1 to player 2
-        // player1.on('sceneUpdate', (data: GameEvent<GameState>) => {
-        //   const s = JSON.parse(JSON.stringify(data.target)) as GameState;
-        //   console.debug('player1.sceneUpdate', s);
-        //   player2.deserialize(s);
-        // //   player3.deserialize(data);
-        // //   player4.deserialize(data);
-        // });
-        
-        // // Simulate sending data from player 2 to player 1
-        // player2.on('sceneUpdate', (data: GameEvent<GameState>) => {
-        //   const s = JSON.parse(JSON.stringify(data.target)) as GameState;
-        //   console.debug('player2.sceneUpdate', s);
-        //   player1.deserialize(s);
-        // //   player3.deserialize(data);
-        // //   player4.deserialize(data);
-        // });
-
-
-
-        player1.start();
-        player2.start();
-        // player3.start();
-        // player4.start();
+      this.createPlayerScreens();
+      this.subscribeToPlayerState();
+      this.startPlayerScreens();
     }
 }

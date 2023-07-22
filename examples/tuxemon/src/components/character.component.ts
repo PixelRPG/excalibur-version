@@ -1,16 +1,17 @@
 import { Component } from 'excalibur';
 import type { AsepriteResource } from '@excaliburjs/plugin-aseprite';
+import { PrpgBodyComponent } from './body.component';
 import { proxy } from 'valtio';
-import { PrpgComponentType, NetworkSerializable, CharacterState, CharacterArgs, Direction } from '../types';
+import { PrpgComponentType, MultiplayerSyncable, CharacterState, CharacterArgs, Direction } from '../types';
 
-export class PrpgCharacterComponent extends Component<PrpgComponentType.CHARACTER> implements NetworkSerializable<CharacterState> {
+export class PrpgCharacterComponent extends Component<PrpgComponentType.CHARACTER> implements MultiplayerSyncable<CharacterState> {
   public readonly type = PrpgComponentType.CHARACTER;
 
   private _state: CharacterState = {
     direction: Direction.DOWN,
   };
 
-  get state() {
+  get updates() {
     return this._state;
   }
 
@@ -32,15 +33,17 @@ export class PrpgCharacterComponent extends Component<PrpgComponentType.CHARACTE
     this._state = this.initState(initialState);
   }
 
+  dependencies = [PrpgBodyComponent]
+
   initState(initialState: Partial<CharacterState>): CharacterState {
     this._state = { ...this._state, ...initialState };
-    return {
-      direction: this._state.direction,
-    };
+    return proxy(this._state);
   }
 
-  deserialize(data: CharacterState) {
-    this._state.direction = data.direction;
+  applyUpdates(data: CharacterState) {
+    if(data.direction !== undefined) {
+      this._state.direction = data.direction;
+    }
   }
 }
 

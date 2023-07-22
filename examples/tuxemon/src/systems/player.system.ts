@@ -15,7 +15,8 @@ import {
 import {
   PrpgCharacterComponent,
   PrpgPlayerComponent,
-  PrpgTeleportableComponent
+  PrpgTeleportableComponent,
+  PrpgBodyComponent
 } from '../components';
 import { PrpgPlayerActor } from '../actors';
 import { MapScene } from '../scenes/map.scene';
@@ -25,6 +26,7 @@ export class PrpgPlayerSystem extends System<
 | PrpgPlayerComponent
 | PrpgCharacterComponent
 | BodyComponent
+| PrpgBodyComponent
 | TransformComponent
 | MotionComponent
 | GraphicsComponent
@@ -101,9 +103,9 @@ export class PrpgPlayerSystem extends System<
       return;
     }
 
-    const body = entity.get(BodyComponent);
+    const body = entity.get(PrpgBodyComponent);
     if (!body) {
-      this.logger.error('BodyComponent for player input not found!');
+      this.logger.error('PrpgBodyComponent for player input not found!');
       return;
     }
 

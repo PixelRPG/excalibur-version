@@ -1,3 +1,4 @@
+export { PlayerState } from './player-updates';
 export { ActorState } from './actor-state';
 export { BodyState } from './body-state';
 export { CharacterAnimation } from './character-animation';
@@ -9,7 +10,7 @@ export { FadeScreen } from './fade-screen';
 export { GameOptions } from './game-options';
 export { GameState } from './game-state';
 export { MapSceneState } from './map-scene-state';
-export { NetworkSerializable } from './network-serializable';
+export { MultiplayerSyncable } from './multiplayer-syncable';
 export { PlayerActorArgs, PlayerActorState } from './player-actor-state';
 export { PlayerState } from './player-state';
 export { SpawnPointState } from './spawn-point-state';
