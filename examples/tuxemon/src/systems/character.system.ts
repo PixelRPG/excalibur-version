@@ -50,7 +50,7 @@ PrpgCharacterComponent | BodyComponent | TransformComponent | MotionComponent | 
       return;
     }
 
-    // Right
+    // Walks Right
     if (motion.vel.x > 0) {
       character.direction = Direction.RIGHT;
       const animation = resources.sprites.scientist.getAnimation(CharacterAnimation.RIGHT_WALK);
@@ -60,7 +60,7 @@ PrpgCharacterComponent | BodyComponent | TransformComponent | MotionComponent | 
       }
       graphics.use(animation);
     }
-    // Left
+    // Walks Left
     if (motion.vel.x < 0) {
       character.direction = Direction.LEFT;
       const animation = resources.sprites.scientist.getAnimation(CharacterAnimation.LEFT_WALK);
@@ -70,7 +70,7 @@ PrpgCharacterComponent | BodyComponent | TransformComponent | MotionComponent | 
       }
       graphics.use(animation);
     }
-    // Up
+    // Walks Up
     if (motion.vel.y < 0) {
       character.direction = Direction.UP;
       const animation = resources.sprites.scientist.getAnimation(CharacterAnimation.BACK_WALK);
@@ -80,7 +80,7 @@ PrpgCharacterComponent | BodyComponent | TransformComponent | MotionComponent | 
       }
       graphics.use(animation);
     }
-    // Down
+    // Walks Down
     if (motion.vel.y > 0) {
       character.direction = Direction.DOWN;
       const animation = resources.sprites.scientist.getAnimation(CharacterAnimation.FRONT_WALK);

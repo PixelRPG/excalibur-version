@@ -10,7 +10,10 @@ import {
   MotionComponent,
   GraphicsComponent,
   ColliderComponent,
-  ActionsComponent
+  ActionsComponent,
+  Keys,
+  Buttons,
+  Axes,
 } from 'excalibur';
 import {
   PrpgCharacterComponent,
@@ -120,41 +123,48 @@ export class PrpgPlayerSystem extends System<
     }
 
     const speed = 64;
+
     const pad1 = this.scene.engine.input.gamepads.at(0);
     const pad2 = this.scene.engine.input.gamepads.at(1);
+    const pad3 = this.scene.engine.input.gamepads.at(1);
+
     const keyboard = this.scene.engine.input.keyboard;
-    const pad1AxesLeftX = pad1.getAxes(Input.Axes.LeftStickX);
-    const pad1AxesLeftY = pad1.getAxes(Input.Axes.LeftStickY);
 
-    const pad2AxesLeftX = pad1.getAxes(Input.Axes.LeftStickX);
-    const pad2AxesLeftY = pad1.getAxes(Input.Axes.LeftStickY);
+    const pad1AxesLeftX = pad1.getAxes(Axes.LeftStickX);
+    const pad1AxesLeftY = pad1.getAxes(Axes.LeftStickY);
 
-    if (keyboard.wasPressed(Input.Keys.F1)) {
+    const pad2AxesLeftX = pad2.getAxes(Axes.LeftStickX);
+    const pad2AxesLeftY = pad2.getAxes(Axes.LeftStickY);
+
+    const pad3AxesLeftX = pad3.getAxes(Axes.LeftStickX);
+    const pad3AxesLeftY = pad3.getAxes(Axes.LeftStickY);
+
+    if (keyboard.wasPressed(Keys.F1)) {
       this.scene.engine.toggleDebug();
     }
 
     if(this.options.playerNumber === 1) {
       if (
-        keyboard.isHeld(Input.Keys.Right) ||
-        pad1.isButtonHeld(Input.Buttons.DpadRight)
+        keyboard.isHeld(Keys.Right) ||
+        pad1.isButtonHeld(Buttons.DpadRight)
       ) {
         velX = speed;
       }
       if (
-        keyboard.isHeld(Input.Keys.Left) ||
-        pad1.isButtonHeld(Input.Buttons.DpadLeft)
+        keyboard.isHeld(Keys.Left) ||
+        pad1.isButtonHeld(Buttons.DpadLeft)
       ) {
         velX = -speed;
       }
       if (
-        keyboard.isHeld(Input.Keys.Up) ||
-        pad1.isButtonHeld(Input.Buttons.DpadUp)
+        keyboard.isHeld(Keys.Up) ||
+        pad1.isButtonHeld(Buttons.DpadUp)
       ) {
         velY = -speed;
       }
       if (
-        keyboard.isHeld(Input.Keys.Down) ||
-        pad1.isButtonHeld(Input.Buttons.DpadDown)
+        keyboard.isHeld(Keys.Down) ||
+        pad1.isButtonHeld(Buttons.DpadDown)
       ) {
         velY = speed;
       }
@@ -170,26 +180,26 @@ export class PrpgPlayerSystem extends System<
 
     if(this.options.playerNumber === 2) {
       if (
-        keyboard.isHeld(Input.Keys.D) ||
-        pad2.isButtonHeld(Input.Buttons.DpadRight)
+        keyboard.isHeld(Keys.D) ||
+        pad2.isButtonHeld(Buttons.DpadRight)
       ) {
         velX = speed;
       }
       if (
-        keyboard.isHeld(Input.Keys.A) ||
-        pad2.isButtonHeld(Input.Buttons.DpadLeft)
+        keyboard.isHeld(Keys.A) ||
+        pad2.isButtonHeld(Buttons.DpadLeft)
       ) {
         velX = -speed;
       }
       if (
-        keyboard.isHeld(Input.Keys.W) ||
-        pad2.isButtonHeld(Input.Buttons.DpadUp)
+        keyboard.isHeld(Keys.W) ||
+        pad2.isButtonHeld(Buttons.DpadUp)
       ) {
         velY = -speed;
       }
       if (
-        keyboard.isHeld(Input.Keys.S) ||
-        pad2.isButtonHeld(Input.Buttons.DpadDown)
+        keyboard.isHeld(Keys.S) ||
+        pad2.isButtonHeld(Buttons.DpadDown)
       ) {
         velY = speed;
       }
@@ -201,6 +211,43 @@ export class PrpgPlayerSystem extends System<
 
       if (Math.abs(pad2AxesLeftY) > 0) {
         velY = pad2AxesLeftY * speed;
+      }
+    }
+
+
+    if(this.options.playerNumber === 3) {
+      if (
+        keyboard.isHeld(Keys.Numpad3) ||
+        pad3.isButtonHeld(Buttons.DpadRight)
+      ) {
+        velX = speed;
+      }
+      if (
+        keyboard.isHeld(Keys.Numpad1) ||
+        pad3.isButtonHeld(Buttons.DpadLeft)
+      ) {
+        velX = -speed;
+      }
+      if (
+        keyboard.isHeld(Keys.Numpad5) ||
+        pad3.isButtonHeld(Buttons.DpadUp)
+      ) {
+        velY = -speed;
+      }
+      if (
+        keyboard.isHeld(Keys.Numpad2) ||
+        pad3.isButtonHeld(Buttons.DpadDown)
+      ) {
+        velY = speed;
+      }
+
+      // Axes movement
+      if (Math.abs(pad3AxesLeftX) > 0) {
+        velX = pad3AxesLeftX * speed;
+      }
+
+      if (Math.abs(pad3AxesLeftY) > 0) {
+        velY = pad3AxesLeftY * speed;
       }
     }
 

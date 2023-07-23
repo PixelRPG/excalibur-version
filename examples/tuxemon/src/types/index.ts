@@ -17,4 +17,5 @@ export { SpawnPointState } from './spawn-point-state';
 export { SpawnPointType } from './spawn-point-type';
 export { SyncDirection } from './sync-direction';
 export { Teleport } from './teleport';
-export { TeleportableState, TeleportableUpdates } from './teleportable-state';
+export { TeleportAnimation } from './teleport-animation';
+export { TeleportableArgs, TeleportableState, TeleportableUpdates } from './teleportable-state';

@@ -67,15 +67,35 @@ export class PrpgBodyComponent extends Component<PrpgComponentType.BODY> impleme
     return this._updates;
   }
 
-  public setPos(x: number | undefined, y: number | undefined) {
+  constructor(data: BodyUpdates = {}) {
+    super();
+    this.initState(data);
+  }
+
+  /**
+   * Get the current position of the body
+   * @param x x position
+   * @param y y position
+   * @param sendUpdates Set this to `true` if updates should be sent to the other players. For performance reasons this is set to `false` by default.
+   */
+  public setPos(x: number | undefined, y: number | undefined, sendUpdates = false) {
     x ||= this.original.pos.x;
     y ||= this.original.pos.y;
-    if(y !== this.original.pos.y || x !== this.original.pos.x) {
-      // this.original.pos = new Vector(x, y);
+
+    const needSync = x !== this.original.pos.x || y !== this.original.pos.y;
+
+    if(x !== this.original.pos.x) {
       this.original.pos.x = x;
-      this.original.pos.y = y;
-      this.syncStatePos();
     }
+
+    if(y !== this.original.pos.y) {
+      this.original.pos.y = y;
+    }
+
+    if(needSync) {
+      this.syncStatePos(sendUpdates);
+    }
+
   }
 
   set z(z: number) {
@@ -87,7 +107,10 @@ export class PrpgBodyComponent extends Component<PrpgComponentType.BODY> impleme
       this.original.vel.setTo(0, 0);
       this.original.vel.y = y;
       this.original.vel.x = x;
-      this.syncStateVel();
+      // Always sync the velocity to the other players
+      const sendUpdates = true;
+      this.syncStateVel(sendUpdates);
+      this.syncStatePos(sendUpdates);
     }
   }
 
@@ -96,48 +119,43 @@ export class PrpgBodyComponent extends Component<PrpgComponentType.BODY> impleme
     return this._state;
   }
 
-  syncStatePos(isIncomingUpdate = false) {
+  /**
+   * Get's the current position of the body from the original excalibur body component and updates the state of this component
+   * @param sendUpdates Set this to `true` if updates should be sent to the other players. For performance reasons this is set to `false` by default.
+   */
+  private syncStatePos(sendUpdates = false) {
     const x = this.original.pos.x;
     const y = this.original.pos.y;
     if(x !== this._state.pos.x || y !== this._state.pos.y) {
 
-      // // TEST
-      // this._state.pos ||= {} as BodyState['pos'];
-      // this._state.pos.y = y;
-      // this._updates.pos ||= {} as BodyState['pos'];
-      // this._updates.pos.y = y;
-      // return;
-
       const oldX = this._state.pos.x || 0;
       const oldY = this._state.pos.y || 0;
 
-      // Only update if the change is significant
       let diffY = y - oldY;
       if(diffY < 0) {
         diffY = -diffY;
       }
-
 
       let diffX = x - oldX;
       if(diffX < 0) {
         diffX = -diffX;
       }
 
+      // Only update if the change is significant
       if(diffX >= POSITION_THRESHOLD) {
         this._state.pos ||= {} as BodyState['pos'];
         this._state.pos.x = x;
-        // Do not send updates for incoming updates back
-        if(!isIncomingUpdate) {
+        if(sendUpdates) {
           this._updates.pos ||= {} as BodyState['pos'];
           this._updates.pos.x = x;
         }
       }
 
+      // Only update if the change is significant
       if(diffY >= POSITION_THRESHOLD) {
         this._state.pos ||= {} as BodyState['pos'];
         this._state.pos.y = y;
-        // Do not send updates for incoming updates back
-        if(!isIncomingUpdate) {
+        if(sendUpdates) {
           this._updates.pos ||= {} as BodyState['pos'];
           this._updates.pos.y = y;
         }
@@ -145,54 +163,67 @@ export class PrpgBodyComponent extends Component<PrpgComponentType.BODY> impleme
     }
   }
 
-  syncStateVelX(isIncomingUpdate = false) {
+  /**
+   * Get's the current `x` velocity of the body from the original excalibur body component and updates the state of this component
+   * @param sendUpdates Set this to `false` if no updates should be sent to the other players
+   */
+  private syncStateVelX(sendUpdates = true) {
     const x = this.original.vel.x;
     if(x !== this._state.vel.x) {
       this._state.vel.x = x;
       // Do not send updates for incoming updates back
-      if(!isIncomingUpdate) {
+      if(sendUpdates) {
         this._updates.vel ||= {} as BodyState['vel'];
         this._updates.vel.x = x;
       }
     }
   }
 
-  syncStateVelY(isIncomingUpdate = false) {
+  /**
+   * Get's the current `y` velocity of the body from the original excalibur body component and updates the state of this component
+   * @param sendUpdates Set this to `false` if no updates should be sent to the other players
+   */
+  private syncStateVelY(sendUpdates = true) {
     const y = this.original.vel.y;
     if(y !== this._state.vel.y) {
       this._state.vel.y = y;
       // Do not send updates for incoming updates back
-      if(!isIncomingUpdate) {
+      if(sendUpdates) {
         this._updates.vel ||= {} as BodyState['vel'];
         this._updates.vel.y = y;
       }
     }
   }
 
-  syncStateVel(isIncomingUpdate = false) {
-    this.syncStateVelX(isIncomingUpdate);
-    this.syncStateVelY(isIncomingUpdate);
+  /**
+   * Get's the current velocity of the body from the original excalibur body component and updates the state of this component
+   * @param sendUpdates Set this to `false` if no updates should be sent to the other players
+   */
+  private syncStateVel(sendUpdates = true) {
+    this.syncStateVelX(sendUpdates);
+    this.syncStateVelY(sendUpdates);
   }
 
-  syncState() {
-    this.syncStatePos();
-    this.syncStateVel();
+  /**
+   * Syncs the state of this component with the original excalibur body component
+   * @param sendUpdates Set this to `false` if no updates should be sent to the other players
+   */
+  public syncState() {
+    this.syncStatePos(false);
+    this.syncStateVel(true);
     // TODO this._state.pos.z = this.pos.z;
   }
 
-  applyUpdates(data: BodyUpdates) {
+  public applyUpdates(data: BodyUpdates) {
     if(!data) {
       return;
     }
 
     if(data.pos) {
-
-      debugger;
-
       if(data.pos.x !== undefined || data.pos.y !== undefined) {
-        this.setPos(data.pos.x, data.pos.y);
+        this.setPos(data.pos.x, data.pos.y, false);
       }
-      this.syncStatePos(true)
+      this.syncStatePos(false)
     }
 
     if(data.vel) {
@@ -204,13 +235,8 @@ export class PrpgBodyComponent extends Component<PrpgComponentType.BODY> impleme
         // this.velY = data.vel.y;
         this.original.vel.y = data.vel.y;
       }
-      this.syncStateVel(true)
+      this.syncStateVel(false)
     }
-  }
-
-  constructor(data: BodyUpdates = {}) {
-    super();
-    this.initState(data);
   }
 }
 

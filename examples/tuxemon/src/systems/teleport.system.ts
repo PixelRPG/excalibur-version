@@ -5,7 +5,7 @@ import { newSpawnPointEntity } from '../entities';
 import { PrpgPlayerActor } from '../actors';
 import { PrpgFadeScreenElement } from '../screen-elements';
 import { MapScene } from '../scenes/map.scene';
-import { PrpgComponentType, SpawnPointType, GameOptions, SpawnPointState } from '../types';
+import { PrpgComponentType, SpawnPointType, GameOptions, SpawnPointState, TeleportAnimation } from '../types';
 import { stringToDirection } from '../utilities/direction';
 
 export class PrpgTeleportSystem extends System<
@@ -94,20 +94,6 @@ PrpgTeleportableComponent> {
         return;
       }
 
-      // Fade out on current scene
-      this.scene?.add(new PrpgFadeScreenElement({
-        width: this.scene?.engine.canvasWidth,
-        height: this.scene?.engine.canvasHeight,
-      }));
-
-      // Fade in on target scene
-      targetMapScene.add(new PrpgFadeScreenElement({
-        width: this.scene?.engine.canvasWidth,
-        height: this.scene?.engine.canvasHeight,
-        isOutro: true,
-      }));
-
-
       const spawnPointEntity = newSpawnPointEntity({
         type: SpawnPointType.TELEPORT,
         x: target.x,
@@ -122,6 +108,31 @@ PrpgTeleportableComponent> {
 
       // Add spawn point as the teleport target. After this spawn point has been executed, it will be removed again
       targetMapScene.add(spawnPointEntity);
+
+      // Add fade screen to current and target map
+      if(teleportable.animation === TeleportAnimation.FadeScreen) {
+        // Fade out on current scene
+        this.scene?.add(new PrpgFadeScreenElement({
+          width: this.scene?.engine.canvasWidth,
+          height: this.scene?.engine.canvasHeight,
+        }));
+
+        // Fade in on target scene
+        targetMapScene.add(new PrpgFadeScreenElement({
+          width: this.scene?.engine.canvasWidth,
+          height: this.scene?.engine.canvasHeight,
+          isOutro: true,
+        }));
+      } else {
+        if(!teleportable.teleportTo) {
+          this.logger.error('Teleport target not found!');
+          return;
+        }
+        // If no fade screen is used, teleport the entity immediately
+        this.teleport(teleportable.teleportTo);
+        teleportable.isTeleporting = false;
+        teleportable.teleportTo = undefined;
+      }
     }
 
     /**
@@ -144,12 +155,6 @@ PrpgTeleportableComponent> {
         return;
       }
 
-      // Teleport only entities which are not controlled by other players, this state is managed by the other player
-      const player = teleportableEntity.get(PrpgPlayerComponent);
-      if(player && !player.isCurrentPlayer) {
-        return;
-      }
-
       if(spawnPoint.sceneName === this.scene?.name) {
         this.logger.warn(`[${this.gameOptions.playerNumber}] Entity ${teleportableEntity.id} is already on scene ${spawnPoint.sceneName}`);
         return;
@@ -169,10 +174,8 @@ PrpgTeleportableComponent> {
       if(gc) {
         gc();
       }
-        
 
       // TODO: Load assets for target spawnPoint here
-     
 
       // Teleport entity to new map
       if(teleportableEntity.get(PrpgPlayerComponent)) {
@@ -181,11 +184,7 @@ PrpgTeleportableComponent> {
         targetMapScene.transfer(teleportableEntity);
       }
 
-      // this.scene?.world.remove(teleportableEntity, false);
-      // targetMapScene.add(teleportableEntity);
-
-      // Just remove entity from current map
-      // this.scene?.world.remove(teleportableEntity, true);
+      teleportable.currentSceneName = targetMapScene.name;
 
       // If the engine should follow the entity, change the scene
       if(teleportable?.followTeleport) {
@@ -284,18 +283,23 @@ PrpgTeleportableComponent> {
         this.logger.debug(`[${this.gameOptions.playerNumber}] Entity ${spawnPoint.entityName} on scene ${this.scene?.name} for spawn point found :)`);
 
         const body = targetEntity.get(PrpgBodyComponent);
-        const character = targetEntity.get(PrpgCharacterComponent);       
+        const character = targetEntity.get(PrpgCharacterComponent);
+        const teleportable = targetEntity.get(PrpgTeleportableComponent);     
 
         if (!body) {
           this.logger.warn(`[${this.gameOptions.playerNumber}] BodyComponent for entity not found, only entities with a body have a position`);
         }
 
         if(body) {
-          body.setPos(spawnPoint.x, spawnPoint.y);
+          body.setPos(spawnPoint.x, spawnPoint.y, true);
         }
 
         if(character) {
           character.direction = spawnPoint.direction;
+        }
+
+        if(teleportable) {
+          teleportable.currentSceneName = spawnPoint.sceneName;
         }
 
         // TODO also update the z value on other drawable entities
@@ -321,10 +325,16 @@ PrpgTeleportableComponent> {
 
         const fadeScreen = fadeScreenEntity.fadeScreen;
 
-        // Fade out is complete, move the player to the new map
-        if (fadeScreen.isComplete && !fadeScreen.isOutro) {
-          for (const teleportableEntity of teleportableEntities) {
-            const teleportable = teleportableEntity.get(PrpgTeleportableComponent);
+        for (const teleportableEntity of teleportableEntities) {
+          const teleportable = teleportableEntity.get(PrpgTeleportableComponent);
+
+          // Ignore teleportables without fade screen animation
+          if(teleportable?.animation !== TeleportAnimation.FadeScreen) {
+            continue;
+          }
+
+          // Fade out is complete, move the player to the new map
+          if (fadeScreen.isComplete && !fadeScreen.isOutro) {
             if (teleportable?.isTeleporting) {
               if(!teleportable.teleportTo) {
                 this.logger.error('Teleport target not found!');
@@ -334,12 +344,9 @@ PrpgTeleportableComponent> {
               this.teleport(teleportable.teleportTo);
             }
           }
-        }
 
-        // Teleport is complete
-        if(fadeScreen?.isComplete && fadeScreen?.isOutro) {
-          for (const entity of teleportableEntities) {
-            const teleportable = entity.get(PrpgTeleportableComponent);
+          // Teleport is complete
+          if(fadeScreen?.isComplete && fadeScreen?.isOutro) {
             // If the fade screen is complete or removed, the teleport is finished
             if (teleportable?.isTeleporting) {
               teleportable.isTeleporting = false;

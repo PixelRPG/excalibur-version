@@ -140,11 +140,6 @@ export class MapScene extends Scene implements MultiplayerSyncableScene {
   }
 
   transferPlayer(player: PrpgPlayerActor, isUpdate = false) {
-    const playerNumber = player.player?.playerNumber;
-    if(!playerNumber) {
-      throw new Error(`Player ${player} does not have a playerNumber`);
-    }
-
     if(player.scene) {
       if(player.scene instanceof MapScene) {
         player.scene.removePlayer(player, isUpdate);
@@ -156,16 +151,6 @@ export class MapScene extends Scene implements MultiplayerSyncableScene {
   }
 
   public removePlayer(player: PrpgPlayerActor, isUpdate = false) {
-    const playerNumber = player.player?.playerNumber;
-    if(!playerNumber) {
-      throw new Error(`Player ${player} does not have a playerNumber`);
-    }
-
-    // const updatePlayerState = true || isUpdate || player.player?.isCurrentPlayer;
-    // if(updatePlayerState && this._state.players[playerNumber] !== null) {
-    //   this._state.players[playerNumber] = null;
-    // }
-
     this.world.remove(player, false);
 
     this?.emit('entityremoved', { target: player } as any);

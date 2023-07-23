@@ -1,6 +1,6 @@
 import { Component } from 'excalibur';
 import { MultiplayerSyncComponent } from '.';
-import { PrpgComponentType, MultiplayerSyncable, TeleportableState, SpawnPointState, SyncDirection, TeleportableUpdates } from '../types';
+import { PrpgComponentType, MultiplayerSyncable, TeleportableState, SpawnPointState, TeleportableArgs, SyncDirection, TeleportableUpdates, TeleportAnimation } from '../types';
 
 /**
  * Used to get an entity the ability to teleport to a different map
@@ -10,7 +10,8 @@ export class PrpgTeleportableComponent extends Component<PrpgComponentType.TELEP
 
   private _state: TeleportableState = {
     isTeleporting: false,
-    teleportTo: undefined, 
+    teleportTo: undefined,
+    currentSceneName: '',
   };
 
   private _updates: TeleportableUpdates = {};
@@ -59,22 +60,44 @@ export class PrpgTeleportableComponent extends Component<PrpgComponentType.TELEP
     }
   }
 
+  /**
+   * It can be useful to know what scene the entity is currently if the entity is teleportable.
+   */
+  get currentSceneName() {
+    return this._state.currentSceneName;
+  }
+
+  set currentSceneName(value: string | undefined) {
+    if(value !== this._state.currentSceneName) {
+      this._state.currentSceneName = value;
+      this._updates.currentSceneName = value;
+    }
+  }
+
   public followTeleport: boolean;
 
-  constructor(initialState: TeleportableUpdates = {}) {
+  public animation: TeleportAnimation;
+
+  constructor(initialState: TeleportableArgs = {}) {
     super();
-    this.followTeleport ||= false;
+    this.followTeleport = initialState.followTeleport || false;
+    this.animation = initialState.animation || TeleportAnimation.NONE;
     this.initState(initialState);
   }
 
-  initState(initialState: TeleportableUpdates): TeleportableState {
-    this._state = {...this._state, ...initialState};
+  initState(_initialState: TeleportableArgs): TeleportableState {
+    const initialState = {..._initialState};
+    delete initialState.followTeleport;
+    delete initialState.animation;
+  
+    this._state = {...this._state,  ...initialState};
     this._state.isTeleporting ||= false;
 
     return this._state;
   }
 
-  applyUpdates(data: TeleportableUpdates) {
+  applyUpdates(data: Readonly<TeleportableUpdates>) {
+    
     this._state.isTeleporting = data.isTeleporting || false;
     // Ignore follow teleport, it is set on each client separately
     // this.data.followTeleport = data.followTeleport;

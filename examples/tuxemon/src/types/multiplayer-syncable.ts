@@ -26,12 +26,6 @@ export interface MultiplayerSyncable<S = any, U = Partial<S>> {
     resetUpdates(): void;
 
     /**
-     * Initializes the state of the component, e.g., by setting default values and to initialize proxies.
-     * @param state 
-     */
-    initState(state: U): S;
-
-    /**
      * Applies the data received from the network (send from other players in P2P)
      * @param data
      * @returns

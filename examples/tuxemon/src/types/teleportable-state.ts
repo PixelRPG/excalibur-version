@@ -1,10 +1,19 @@
-import type { SpawnPointState } from '.';
+import type { SpawnPointState, TeleportAnimation } from '.';
+
+
 
 export interface TeleportableState {
     /** Is `true` if the entity is currently teleporting */
     isTeleporting: boolean;
     /** The target spawn point of the current teleport if any */
     teleportTo?: SpawnPointState;
+    /** The name of the scene the entity is currently in */
+    currentSceneName?: string;
 }
 
 export type TeleportableUpdates = Partial<TeleportableState>;
+
+export interface TeleportableArgs extends TeleportableUpdates {
+    followTeleport?: boolean;
+    animation?: TeleportAnimation;
+}
