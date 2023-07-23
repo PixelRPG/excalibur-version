@@ -1,7 +1,18 @@
+import { SyncDirection } from ".";
+
 /**
  * Interface for classes that support deserialization of data for network exchange in a multiplayer scenario.
  */
-export interface MultiplayerSyncable<T = any> {
+export interface MultiplayerSyncable<S = any, U = Partial<S>> {
+
+    get syncDirection(): SyncDirection;
+
+    get dirty(): boolean;
+
+    /**
+     * Contains the full state of the component.
+     */
+    get state(): Readonly<S>;
 
     /**
      * Contains the state or changes of the component that are sent over the network.
@@ -10,13 +21,15 @@ export interface MultiplayerSyncable<T = any> {
      * Changes to the object are automatically detected and transmitted to other participants over P2P.
      * For instance, with the Body component, the `position` object is only included when the position has changed beyond a certain threshold, preventing every minor decimal change from being transmitted.
      */
-    get updates(): T;
+    get updates(): Readonly<U>;
+
+    resetUpdates(): void;
 
     /**
      * Initializes the state of the component, e.g., by setting default values and to initialize proxies.
      * @param state 
      */
-    initState(state: Partial<T>): T;
+    initState(state: U): S;
 
     /**
      * Applies the data received from the network (send from other players in P2P)
@@ -24,7 +37,7 @@ export interface MultiplayerSyncable<T = any> {
      * @returns
      * @throws Error if the data is invalid
      */
-    applyUpdates(data: T): void;
+    applyUpdates(data: S): void;
 
 
 }

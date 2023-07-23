@@ -6,3 +6,5 @@ export interface TeleportableState {
     /** The target spawn point of the current teleport if any */
     teleportTo?: SpawnPointState;
 }
+
+export type TeleportableUpdates = Partial<TeleportableState>;

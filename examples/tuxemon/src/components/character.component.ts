@@ -1,18 +1,37 @@
 import { Component } from 'excalibur';
 import type { AsepriteResource } from '@excaliburjs/plugin-aseprite';
-import { PrpgBodyComponent } from './body.component';
-import { proxy } from 'valtio';
-import { PrpgComponentType, MultiplayerSyncable, CharacterState, CharacterArgs, Direction } from '../types';
+import { PrpgBodyComponent, MultiplayerSyncComponent } from '.';
+import { PrpgComponentType, MultiplayerSyncable, CharacterState, CharacterUpdates, CharacterArgs, Direction, SyncDirection } from '../types';
 
-export class PrpgCharacterComponent extends Component<PrpgComponentType.CHARACTER> implements MultiplayerSyncable<CharacterState> {
+export class PrpgCharacterComponent extends Component<PrpgComponentType.CHARACTER> implements MultiplayerSyncable<CharacterState, CharacterUpdates> {
   public readonly type = PrpgComponentType.CHARACTER;
 
   private _state: CharacterState = {
     direction: Direction.DOWN,
   };
 
-  get updates() {
+  private _updates: CharacterUpdates = {};
+
+  public get syncDirection() {
+    return this.owner?.get(MultiplayerSyncComponent)?.syncDirection || SyncDirection.NONE;
+  }
+
+  public resetUpdates(): void {
+    if(this.dirty) {
+      this._updates = {};
+    }
+  }
+
+  get dirty() {
+    return Object.keys(this._updates).length > 0;
+  }
+
+  get state(): Readonly<CharacterState> {
     return this._state;
+  }
+
+  get updates(): Readonly<CharacterUpdates> {
+    return this._updates;
   }
 
   public spriteSheet: AsepriteResource;
@@ -22,27 +41,30 @@ export class PrpgCharacterComponent extends Component<PrpgComponentType.CHARACTE
   }
 
   set direction(value: Direction) {
-    this._state.direction = value;
+    if(this._state.direction !== value) {
+      this._state.direction = value;
+      this._updates.direction = value;
+    }
   }
 
   constructor(data: CharacterArgs) {
     super();
     this.spriteSheet = data.spriteSheet;
   
-    const initialState: CharacterState = { direction: data.direction};
-    this._state = this.initState(initialState);
+    const initialState: CharacterState = { direction: data.direction || Direction.DOWN};
+    this.initState(initialState);
   }
 
   dependencies = [PrpgBodyComponent]
 
-  initState(initialState: Partial<CharacterState>): CharacterState {
+  initState(initialState: CharacterUpdates): CharacterState {
     this._state = { ...this._state, ...initialState };
-    return proxy(this._state);
+    return this._state;
   }
 
   applyUpdates(data: CharacterState) {
     if(data.direction !== undefined) {
-      this._state.direction = data.direction;
+      this.direction = data.direction;
     }
   }
 }

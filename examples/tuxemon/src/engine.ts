@@ -4,28 +4,59 @@ import {
     GamepadButtonEvent, GamepadAxisEvent, GameEvent
 } from 'excalibur';
 
+import { syncable } from './utilities';
 
 // Scenes
 import { MapScene } from './scenes/map.scene';
 
-import { GameOptions, MultiplayerSyncable, GameState } from './types';
+import { GameOptions, MultiplayerSyncable, GameState, GameUpdates, MultiplayerSyncableScene, SyncDirection } from './types';
 import { resources } from './managers/index';
-import { proxy, getVersion } from 'valtio'
 
-
-export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<GameState> {
+export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<GameState, GameUpdates> {
 
     private logger = Logger.getInstance();
 
     private _state: GameState = {
-        maps: {},
+        scenes: {},
     }
 
-    get updates() {
+    private _updates: GameUpdates = {
+        scenes: {},
+    }
+
+    public get syncDirection() {
+        return SyncDirection.BOTH;
+    }
+
+    private resetUpdatesScenes() {
+        const scenes: GameState['scenes'] = {};
+        for (const name in this.scenes) {
+            const scene = this.scenes[name] as Scene & MultiplayerSyncableScene;
+            if(scene.multiplayerSystem) {
+                scene.multiplayerSystem.resetUpdates();
+            }
+        }
+        return scenes
+    }
+
+    public resetUpdates(): void {
+        this.resetUpdatesScenes();
+        this._updates.scenes = {};
+    }
+
+    get dirty() {
+        return !!this._updates.scenes && Object.keys(this._updates.scenes).length > 0;
+    }
+
+    get state(): Readonly<GameState>  {
         return this._state;
     }
 
-    constructor(engineOptions: EngineOptions, readonly gameOptions: GameOptions, initialState?: Partial<GameState>) {
+    get updates(): Readonly<GameUpdates>  {
+        return this._updates;
+    }
+
+    constructor(engineOptions: EngineOptions, readonly gameOptions: GameOptions, initialState?: GameUpdates) {
         const canvasElementId = 'p' + gameOptions.playerNumber;
         const defaults = {
             displayMode: DisplayMode.FillContainer, // TODO: Contribute a new option to ignore aspect ratio / resolution
@@ -51,36 +82,62 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<G
         this._state = this.initState(initialState);
     }
 
-    updateStatesMapScenes() {
-        const mapsScenesStates = this.getStatesMapScenes();
-        for (const name in mapsScenesStates) {
-            const scene = this.scenes[name] as MapScene | Scene;
-            if(scene instanceof MapScene) {
-                if(!this._state.maps[name]) {
-                    this._state.maps[name] = mapsScenesStates[name];
-                } else if(this._state.maps[name] !== mapsScenesStates[name]) {
-                    // this.logger.warn(`Map scene ${name} state is out of sync!`, this._state.maps[name], mapsScenesStates[name]);
-                    this._state.maps[name] = mapsScenesStates[name];
+    collectStates() {
+        for (const name in this.scenes) {
+            const scene = this.scenes[name] as Scene & MultiplayerSyncableScene;
+            const sync = syncable(scene.multiplayerSystem?.syncDirection, SyncDirection.OUT)
+            if(sync && scene.multiplayerSystem) {
+                if(!this._state.scenes[name]) {
+                    this._state.scenes[name] = scene.multiplayerSystem.state;
+                } else if(this._state.scenes[name] !== scene.multiplayerSystem.state) {
+                    // this.logger.warn(`Map scene ${name} state is out of sync!`, this._state.maps[name], scene.multiplayerSystem?.state);
+                    this._state.scenes[name] = scene.multiplayerSystem.state;
                 }
             }
         }
     }
 
-    getStatesMapScenes() {
-        const mapsScenes: GameState['maps'] = {};
+    collectUpdates() {
         for (const name in this.scenes) {
-            const scene = this.scenes[name] as MapScene | Scene;
-            if(scene instanceof MapScene) {
-                mapsScenes[name] = scene.updates;
+            const scene = this.scenes[name] as Scene & MultiplayerSyncableScene;
+            const sync = syncable(scene.multiplayerSystem?.syncDirection, SyncDirection.OUT);
+            if(sync && scene.multiplayerSystem?.dirty) {
+                this._updates.scenes ||= {};
+                if(!this._updates.scenes[name]) {
+                    this._updates.scenes[name] = scene.multiplayerSystem.updates;
+                } else if(this._updates.scenes[name] !== scene.multiplayerSystem.updates) {
+                    // this.logger.warn(`Map scene ${name} state is out of sync!`, this._updates.maps[name], scene.updates);
+                    this._updates.scenes[name] = scene.multiplayerSystem.updates;
+                }
             }
         }
-        return mapsScenes
     }
 
-    initState(initialState: Partial<GameState> = {}): GameState {
+    getStatesScenes() {
+        const scenes: GameState['scenes'] = {};
+        for (const name in this.scenes) {
+            const scene = this.scenes[name] as Scene & MultiplayerSyncableScene;
+            if(scene.multiplayerSystem) {
+                scenes[name] = scene.multiplayerSystem.state || {};
+            }
+        }
+        return scenes
+    }
+
+    getUpdatesScenes() {
+        const scenes: GameUpdates['scenes'] = {};
+        for (const name in this.scenes) {
+            const scene = this.scenes[name] as Scene & MultiplayerSyncableScene;
+            if(scene.multiplayerSystem?.dirty) {
+                scenes[name] = scene.multiplayerSystem.updates || {};
+            }
+        }
+        return scenes
+    }
+
+    initState(initialState: GameUpdates = {}): GameState {
         this._state = {...this._state, ...initialState};
-        this._state.maps = this.getStatesMapScenes()
-        this._state = proxy(this._state);
+        this._state.scenes = this.getStatesScenes()
         return this._state;
     }
 
@@ -90,18 +147,9 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<G
      *
      * @param key  The name of the scene, must be unique
      * @param scene The scene to add to the engine
-     * @param sync  Whether or not to sync the scene state across players
      */
-    addScene(key: string, scene: Scene, sync = false) {
+    addScene(key: string, scene: Scene) {
         super.addScene(key, scene);
-        // if(this.yScenes?.[key]) {
-        //     throw new Error(`Scene ${key} already exists!`);
-        // }
-        // if(sync) {
-        //     this.logger.info(`Syncing scene ${key}`);
-        //     this.yScenes ||= {};
-        //     this.yScenes[key] = this.yDoc.get('sharedJson', Y.JsonObject)
-        // }
     }
 
     /**
@@ -143,7 +191,7 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<G
     public add(screenElement: ScreenElement): void;
     public add(...args: any[]): void {
         if (args.length >= 2) {
-          this.addScene(<string>args[0], <Scene>args[1], <boolean | undefined>args[2]);
+          this.addScene(<string>args[0], <Scene>args[1]);
           return;
         }
         super.add(args[0])
@@ -153,7 +201,7 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<G
         const mapNames = Object.keys(resources.maps);
         for (const mapName of mapNames) {
           if (resources.maps[mapName]) {
-            this.addScene(mapName, new MapScene(this.gameOptions, mapName, resources.maps[mapName]), true);
+            this.addScene(mapName, new MapScene(this.gameOptions, mapName, resources.maps[mapName]));
           }
         }
 
@@ -207,27 +255,40 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<G
 
     override onPostUpdate(engine: PrpgEngine, delta: number) {
         super.onPostUpdate(engine, delta);
-        this.updateStatesMapScenes();
-        const event = new GameEvent<GameState>()
-        event.target = this._state;
-        this.emit('sceneUpdate', event);
+
+        this.collectUpdates();
+        if(this.dirty) {
+            const updatesEvent = new GameEvent<Readonly<GameUpdates>>()
+            updatesEvent.target = this.updates;
+            this.emit('update', updatesEvent);
+            this.resetUpdates();
+        }
+
+        this.collectStates();
+        {
+            const stateEvent = new GameEvent<Readonly<GameState>>()
+            stateEvent.target = this.state;
+            this.emit('state', stateEvent);
+        }
+
+
     }
 
-    deserializeMapScenes(maps: GameState['maps']) {
-        for (const name in maps) {
-            const updatedScene = maps[name];
-            const myScene = this.scenes[name] as MapScene | Scene;
-            if(updatedScene && myScene instanceof MapScene) {
-                myScene.applyUpdates(updatedScene);
+    applySceneUpdates(scenes: GameState['scenes']) {
+        for (const name in scenes) {
+            const updatedScene = scenes[name];
+            const myScene = this.scenes[name] as Scene & MultiplayerSyncableScene;
+            if(updatedScene && myScene.multiplayerSystem && syncable(myScene.multiplayerSystem?.syncDirection, SyncDirection.IN)) {
+                myScene.multiplayerSystem.applyUpdates(updatedScene);
             } else if(!myScene) {
-                this.logger.warn(`Scene ${name} can't be deserialized!`);
+                this.logger.warn(`Scene ${name} is not syncable!`);
             }
         }
     }
 
     applyUpdates(data: Partial<GameState>) {
-        if(data.maps) {
-            this.deserializeMapScenes(data.maps);
+        if(data.scenes) {
+            this.applySceneUpdates(data.scenes);
         }
     }
 }

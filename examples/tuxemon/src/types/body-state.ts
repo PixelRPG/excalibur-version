@@ -13,8 +13,10 @@ export interface BodyState {
     /** velocity */
     vel: {
         /** x velocity */
-        x?: number;
+        x: number;
         /** y velocity */
-        y?: number;
+        y: number;
     };
 }
+
+export type BodyUpdates = Partial<BodyState>;

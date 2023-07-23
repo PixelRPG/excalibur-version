@@ -110,7 +110,8 @@ export class PrpgPlayerSystem extends System<
     }
 
     // Reset velocity
-    body.vel.setTo(0, 0);
+    let velX = 0;
+    let velY = 0;
 
     const teleportable = entity.get(PrpgTeleportableComponent);
     if(teleportable?.isTeleporting) {
@@ -137,33 +138,33 @@ export class PrpgPlayerSystem extends System<
         keyboard.isHeld(Input.Keys.Right) ||
         pad1.isButtonHeld(Input.Buttons.DpadRight)
       ) {
-        body.vel.x = speed;
+        velX = speed;
       }
       if (
         keyboard.isHeld(Input.Keys.Left) ||
         pad1.isButtonHeld(Input.Buttons.DpadLeft)
       ) {
-        body.vel.x = -speed;
+        velX = -speed;
       }
       if (
         keyboard.isHeld(Input.Keys.Up) ||
         pad1.isButtonHeld(Input.Buttons.DpadUp)
       ) {
-        body.vel.y = -speed;
+        velY = -speed;
       }
       if (
         keyboard.isHeld(Input.Keys.Down) ||
         pad1.isButtonHeld(Input.Buttons.DpadDown)
       ) {
-        body.vel.y = speed;
+        velY = speed;
       }
 
       // Axes movement
       if (Math.abs(pad1AxesLeftX) > 0) {
-        body.vel.x = pad1AxesLeftX * speed;
+        velX = pad1AxesLeftX * speed;
       }
       if (Math.abs(pad1AxesLeftY) > 0) {
-        body.vel.y = pad1AxesLeftY * speed;
+        velY = pad1AxesLeftY * speed;
       }
     }
 
@@ -172,35 +173,38 @@ export class PrpgPlayerSystem extends System<
         keyboard.isHeld(Input.Keys.D) ||
         pad2.isButtonHeld(Input.Buttons.DpadRight)
       ) {
-        body.vel.x = speed;
+        velX = speed;
       }
       if (
         keyboard.isHeld(Input.Keys.A) ||
         pad2.isButtonHeld(Input.Buttons.DpadLeft)
       ) {
-        body.vel.x = -speed;
+        velX = -speed;
       }
       if (
         keyboard.isHeld(Input.Keys.W) ||
         pad2.isButtonHeld(Input.Buttons.DpadUp)
       ) {
-        body.vel.y = -speed;
+        velY = -speed;
       }
       if (
         keyboard.isHeld(Input.Keys.S) ||
         pad2.isButtonHeld(Input.Buttons.DpadDown)
       ) {
-        body.vel.y = speed;
+        velY = speed;
       }
 
       // Axes movement
       if (Math.abs(pad2AxesLeftX) > 0) {
-        body.vel.x = pad2AxesLeftX * speed;
+        velX = pad2AxesLeftX * speed;
       }
+
       if (Math.abs(pad2AxesLeftY) > 0) {
-        body.vel.y = pad2AxesLeftY * speed;
+        velY = pad2AxesLeftY * speed;
       }
     }
+
+    body.setVel(velX, velY);
   }
 
   public initialize(scene: MapScene) {

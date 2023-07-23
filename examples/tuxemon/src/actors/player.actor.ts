@@ -1,7 +1,6 @@
 import { Actor, ActorArgs, vec, CollisionType, Logger, Engine, MotionComponent , BodyComponent} from 'excalibur';
-import { PrpgCharacterComponent, PrpgPlayerComponent, PrpgTeleportableComponent, PrpgBodyComponent } from '../components';
-import { PlayerState, PlayerActorState, GameOptions, MultiplayerSyncable, PlayerActorArgs, TeleportableState, BodyState } from '../types';
-import { proxy } from 'valtio';
+import { PrpgCharacterComponent, PrpgPlayerComponent, PrpgTeleportableComponent, PrpgBodyComponent, MultiplayerSyncComponent } from '../components';
+import { PlayerState, PlayerActorState, GameOptions, MultiplayerSyncable, PlayerActorArgs, PlayerActorUpdates, TeleportableState, SyncDirection } from '../types';
 
 const DEFAULT_ACTOR_STATE: Partial<ActorArgs> = {
   width: 12,
@@ -10,13 +9,8 @@ const DEFAULT_ACTOR_STATE: Partial<ActorArgs> = {
   collisionType: CollisionType.Active
 };
 
-export class PrpgPlayerActor extends Actor implements MultiplayerSyncable<PlayerActorState> {
-
-  private _state: PlayerActorState = {};
-
-  get updates() {
-    return this._state;
-  }
+// TODO remove MultiplayerSyncable
+export class PrpgPlayerActor extends Actor {
 
   get player() {
     return this.get(PrpgPlayerComponent);
@@ -44,7 +38,8 @@ export class PrpgPlayerActor extends Actor implements MultiplayerSyncable<Player
     actor.name ||= initialState.name;
 
     super({...DEFAULT_ACTOR_STATE, ...actor});
-    
+     
+    this.addComponent(new MultiplayerSyncComponent(isCurrentPlayer ? SyncDirection.OUT : SyncDirection.IN));
     this.addComponent(new PrpgBodyComponent(initialState.body))
     this.addComponent(new PrpgCharacterComponent(initialState.character));
     this.addComponent(new PrpgPlayerComponent(initialState.player, isCurrentPlayer));
@@ -53,40 +48,7 @@ export class PrpgPlayerActor extends Actor implements MultiplayerSyncable<Player
     teleportable.followTeleport = isCurrentPlayer;
     this.addComponent(teleportable);
 
-    this.logger.debug(`Created player actor ${this.name} for player ${gameOptions.playerNumber}`)
-    this._state = this.initState(initialState);    
-  }
-
-  initState(initialState: Partial<PlayerActorState>): PlayerActorState {    
-    this._state = {...this._state, ...initialState};
-    this._state.player = this.player?.updates;
-    this._state.character = this.character?.updates;
-    this._state.teleportable = this.teleportable?.updates;
-    this._state.body = this.ownBody?.updates;
-
-    this.syncBodyState();
-    console.debug(`PrpgPlayerActor initState:`, this._state);
-
-    return proxy(this._state);
-  }
-
-  syncBodyState() {
-    this.ownBody?.syncState();
-  //   this._state.body ||= {} as BodyState;
-  //  this._state.body.pos ||= {} as BodyState['pos'];
-  //  this._state.body.pos.x = this.pos.x || 0;
-  //  this._state.body.pos.y = this.pos.y || 0;
-
-  //  this._state.body.vel ||= {} as MotionComponent['vel'];
-  //  this._state.body.vel.x = this.vel.x || 0;
-  //  this._state.body.vel.y = this.vel.y || 0;
-  }
-
-  onPostUpdate(engine: Engine, delta: number) {
-    super.onPostUpdate(engine, delta);
-    // We need to trigger
-    this.syncBodyState();
-    // this.logger.debug(`[${this.gameOptions.playerNumber}] PrpgPlayerActor onPostUpdate direction:`, this._state.character?.direction, this.name);
+    this.logger.debug(`Created player actor ${this.name} for player ${gameOptions.playerNumber}`)  
   }
 
   private static instances: {
@@ -158,24 +120,5 @@ export class PrpgPlayerActor extends Actor implements MultiplayerSyncable<Player
     const instances = this.getPlayers(gameOptions);
     instances[playerNumber] = new this(gameOptions, actor, config);
     return instances[playerNumber] as PrpgPlayerActor;
-  }
-
-  applyUpdates(data: Partial<PlayerActorState>) {
-    // Ignore updates for or own player, because we control them
-    if (this.player?.isCurrentPlayer) {
-      return;
-    }
-    if(data.player) {
-      this.player?.applyUpdates(data.player);
-    }
-    if(data.character) {
-      this.character?.applyUpdates(data.character);
-    }
-    if(data.teleportable) {
-      this.teleportable?.applyUpdates(data.teleportable);
-    }
-    if(data.body) {
-      this.ownBody?.applyUpdates(data.body);
-    }
   }
 }

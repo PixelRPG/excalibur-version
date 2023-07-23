@@ -1,7 +1,6 @@
 import { Class, Color, GameEvent } from 'excalibur';
-import { subscribe, snapshot } from 'valtio';
 import { PrpgEngine } from './engine';
-import { GameState } from './types';
+import { GameState, GameUpdates } from './types';
 import { encode, decode } from "@msgpack/msgpack";
 
 export class PrpgGame extends Class {
@@ -38,15 +37,31 @@ export class PrpgGame extends Class {
     }
 
     subscribeToPlayerState() {
-      for (const player of PrpgGame.screens) {
-        const unsubscribe = subscribe(player.updates, () => {
-          const s = decode(encode(snapshot(player.updates))) as GameState;
-          // console.debug(`player ${player.gameOptions.playerNumber} updates changed, sync to other players`, s);
-          for (const otherPlayer of PrpgGame.screens) {
-            if (otherPlayer === player) continue;
-            otherPlayer.applyUpdates(s);
+      for (const playerScreen of PrpgGame.screens) {
+
+        // Updates sync
+        playerScreen.on('update', (event) => {
+          const updates = event.target as GameUpdates;
+          // Simulate network serialize and deserialize
+          const s = decode(encode(updates)) as GameUpdates;
+          console.debug(`player ${playerScreen.gameOptions.playerNumber} updates changed, sync to other players`, s);
+          for (const otherPlayerScreen of PrpgGame.screens) {
+            if (otherPlayerScreen === playerScreen) continue;
+            otherPlayerScreen.applyUpdates(s);
           }
         });
+
+        // Full state sync
+        // playerScreen.on('state', (event) => {
+        //   const state = event.target as GameState;
+        //   // Simulate network serialize and deserialize
+        //   const s = decode(encode(state)) as GameState;
+        //   // console.debug(`player ${playerScreen.gameOptions.playerNumber} updates changed, sync to other players`, s);
+        //   for (const otherPlayerScreen of PrpgGame.screens) {
+        //     if (otherPlayerScreen === playerScreen) continue;
+        //     otherPlayerScreen.applyUpdates(s);
+        //   }
+        // });
       }
     }
 

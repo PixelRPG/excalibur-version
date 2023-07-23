@@ -5,6 +5,8 @@ export interface CharacterState {
     direction: Direction;
 }
 
-export interface CharacterArgs extends CharacterState {
+export type CharacterUpdates = Partial<CharacterState>;
+
+export interface CharacterArgs extends CharacterUpdates {
     spriteSheet: AsepriteResource;
 }

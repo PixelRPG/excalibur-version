@@ -11,7 +11,7 @@ import { resources } from '../managers/resource.manager';
 export class PrpgMapSystem extends System<
 PrpgMapComponent, MapScene> {
     public readonly types = [PrpgComponentType.TILED_MAP] as const;
-    public priority = 100;
+    public priority = 900;
     public systemType = SystemType.Update;
     private scene?: MapScene;
     private logger = Logger.getInstance();

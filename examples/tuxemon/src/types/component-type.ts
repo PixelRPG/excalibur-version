@@ -7,4 +7,5 @@ export enum PrpgComponentType {
   SPAWN_POINT = 'prpg.spawn-point',
   FADE_SCREEN = 'prpg.fade',
   BODY = 'prpg.body',
+  MULTIPLAYER_SYNC = 'prpg.multiplayer-sync',
 }

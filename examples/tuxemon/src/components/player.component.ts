@@ -1,27 +1,46 @@
 import { Component } from 'excalibur';
-import { PrpgComponentType, MultiplayerSyncable, PlayerState } from '../types';
+import { MultiplayerSyncComponent } from '.';
+import { PrpgComponentType, MultiplayerSyncable, PlayerState, PlayerUpdates, SyncDirection } from '../types';
 
-import { proxy } from 'valtio';
-
-export class PrpgPlayerComponent extends Component<PrpgComponentType.PLAYER> implements MultiplayerSyncable<PlayerState> {
+export class PrpgPlayerComponent extends Component<PrpgComponentType.PLAYER> implements MultiplayerSyncable<PlayerState, PlayerUpdates> {
   public readonly type = PrpgComponentType.PLAYER;
 
   private _state: PlayerState = {
     playerNumber: -1,
   };
 
+  private _updates: PlayerUpdates = {};
+
   constructor(protected initialState: PlayerState, public isCurrentPlayer: boolean) {
     super();
-    this._state = this.initState(initialState);
+    this.initState(initialState);
   }
 
   initState(initialState: Partial<PlayerState>): PlayerState {
     this._state = {...this._state, ...initialState};
     console.debug(`PrpgPlayerComponent initState:`, this._state);
-    return proxy(this._state);
+    return this._state;
   }
 
-  get updates() {
+  public get syncDirection() {
+    return this.owner?.get(MultiplayerSyncComponent)?.syncDirection || SyncDirection.NONE;
+  }
+
+  public resetUpdates(): void {
+    if(this.dirty) {
+      this._updates = {};
+    }
+  }
+
+  get dirty() {
+    return Object.keys(this._updates).length > 0;
+  }
+
+  get state(): Readonly<PlayerState> {
+    return this._state;
+  }
+
+  get updates(): Readonly<Partial<PlayerState>> {
     return this._state;
   }
 
@@ -29,11 +48,12 @@ export class PrpgPlayerComponent extends Component<PrpgComponentType.PLAYER> imp
     return this._state.playerNumber;
   }
 
-  applyUpdates(data: PlayerState) {
-    // Player number not changed after creation
-    // this._state.playerNumber = data.playerNumber;
+  set playerNumber(playerNumber: number) {
+    this._state.playerNumber = playerNumber;
+  }
 
-    // Current player is not serialized, it is set on each client separately
-    // this._state.isCurrentPlayer = data.isCurrentPlayer;
+  applyUpdates(data: PlayerState) {
+    if(Object.keys(data).length === 0) return;
+    this._state = {...this._state, ...data};
   }
 }

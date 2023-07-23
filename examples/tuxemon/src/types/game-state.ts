@@ -1,7 +1,9 @@
-import { MapSceneState } from "./map-scene-state";
+import { SceneState } from "./scene-state";
 
 export interface GameState {
-    maps: {
-        [mapName: string]: MapSceneState;
+    scenes: {
+        [sceneName: string]: SceneState;
     }
 }
+
+export type GameUpdates = Partial<GameState>;

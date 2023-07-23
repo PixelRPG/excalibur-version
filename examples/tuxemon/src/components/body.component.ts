@@ -1,8 +1,8 @@
 import { Component, BodyComponent, Vector } from 'excalibur';
-import { TiledMapResource } from '@excaliburjs/plugin-tiled';
-import { PrpgComponentType, BodyState, MultiplayerSyncable } from '../types';
+import { MultiplayerSyncComponent } from './multiplayer-sync.component';
+import { PrpgComponentType, BodyState, BodyUpdates, MultiplayerSyncable, SyncDirection } from '../types';
 
-import { proxy } from 'valtio';
+const POSITION_THRESHOLD = 1;
 
 /**
  * Body Component, more or less a wrapper of the Excalibur Body Component.
@@ -10,7 +10,7 @@ import { proxy } from 'valtio';
  * Body describes in excalibur all the physical properties pos, vel, acc, rotation, angular velocity for the purpose of
  * of physics simulation.
  */
-export class PrpgBodyComponent extends Component<PrpgComponentType.BODY> implements MultiplayerSyncable<BodyState> {
+export class PrpgBodyComponent extends Component<PrpgComponentType.BODY> implements MultiplayerSyncable<BodyState, BodyUpdates> {
   public readonly type = PrpgComponentType.BODY;
 
   private _state: BodyState = {
@@ -25,6 +25,19 @@ export class PrpgBodyComponent extends Component<PrpgComponentType.BODY> impleme
     },
   };
 
+  private _updates: BodyUpdates = {};
+
+  public resetUpdates(): void {
+    if(this.dirty) {
+      this._updates = {};
+    }
+  }
+
+  public get syncDirection() {
+    const syncDir = this.owner?.get(MultiplayerSyncComponent)?.syncDirection || SyncDirection.NONE;
+    return syncDir;
+  }
+
   /**
    * Get the excalibur body component
    */
@@ -34,63 +47,131 @@ export class PrpgBodyComponent extends Component<PrpgComponentType.BODY> impleme
     return body;
   }
 
-  get updates() {
+  get dirtyPos() {
+    return !!this._updates.pos && Object.keys(this._updates.pos).length > 0
+  }
+
+  get dirtyVel() {
+    return !!this._updates.vel && Object.keys(this._updates.vel).length > 0
+  }
+
+  get dirty() {
+    return !!this._updates && Object.keys(this._updates).length > 0 && (this.dirtyPos || this.dirtyVel)
+  }
+
+  get state(): Readonly<BodyState> {
     return this._state;
   }
 
-  get pos() {
-    return this.original.pos;
+  get updates(): Readonly<BodyUpdates> {
+    return this._updates;
   }
 
-  set pos(pos: Vector) {
-    this.original.pos.x = pos.x;
-    this.original.pos.y = pos.y;
-    this.syncStatePos();
+  public setPos(x: number | undefined, y: number | undefined) {
+    x ||= this.original.pos.x;
+    y ||= this.original.pos.y;
+    if(y !== this.original.pos.y || x !== this.original.pos.x) {
+      // this.original.pos = new Vector(x, y);
+      this.original.pos.x = x;
+      this.original.pos.y = y;
+      this.syncStatePos();
+    }
   }
 
-  get vel() {
-    return this.original.vel;
+  set z(z: number) {
+    console.warn('TODO: set z');
   }
 
-  set vel(vel: Vector) {
-    this.original.vel.x = vel.x;
-    this.original.vel.y = vel.y;
-    this.syncStateVel();
+  setVel(x = 0, y = 0) {
+    if(y !== this.original.vel.y || x !== this.original.vel.x) {
+      this.original.vel.setTo(0, 0);
+      this.original.vel.y = y;
+      this.original.vel.x = x;
+      this.syncStateVel();
+    }
   }
 
-  initState(initialState: Partial<BodyState>): BodyState {
+  initState(initialState: BodyUpdates): BodyState {
     this._state = { ...this._state, ...initialState };
-    this._state = proxy(this._state);
     return this._state;
   }
 
+  syncStatePos(isIncomingUpdate = false) {
+    const x = this.original.pos.x;
+    const y = this.original.pos.y;
+    if(x !== this._state.pos.x || y !== this._state.pos.y) {
 
-  syncStatePos() {
-    this._state.pos ||= {} as BodyState['pos'];
-    if(this.pos) {
+      // // TEST
+      // this._state.pos ||= {} as BodyState['pos'];
+      // this._state.pos.y = y;
+      // this._updates.pos ||= {} as BodyState['pos'];
+      // this._updates.pos.y = y;
+      // return;
 
-      const oldX = this._state.pos.x;
-      const oldY = this._state.pos.y;
+      const oldX = this._state.pos.x || 0;
+      const oldY = this._state.pos.y || 0;
 
       // Only update if the change is significant
-      const diffX = this.pos.x - oldX;
-      if(!oldX || diffX >= 1 || diffX <= -1) {
-        this._state.pos.x = this.pos.x;
+      let diffY = y - oldY;
+      if(diffY < 0) {
+        diffY = -diffY;
       }
 
-      const diffY = this.pos.y - oldY;
-      if(!oldY || diffY >= 1 || diffY <= -1) {
-        this._state.pos.y = this.pos.y;
+
+      let diffX = x - oldX;
+      if(diffX < 0) {
+        diffX = -diffX;
+      }
+
+      if(diffX >= POSITION_THRESHOLD) {
+        this._state.pos ||= {} as BodyState['pos'];
+        this._state.pos.x = x;
+        // Do not send updates for incoming updates back
+        if(!isIncomingUpdate) {
+          this._updates.pos ||= {} as BodyState['pos'];
+          this._updates.pos.x = x;
+        }
+      }
+
+      if(diffY >= POSITION_THRESHOLD) {
+        this._state.pos ||= {} as BodyState['pos'];
+        this._state.pos.y = y;
+        // Do not send updates for incoming updates back
+        if(!isIncomingUpdate) {
+          this._updates.pos ||= {} as BodyState['pos'];
+          this._updates.pos.y = y;
+        }
       }
     }
   }
 
-  syncStateVel() {
-    this._state.vel ||= {} as BodyState['vel'];
-    if(this.vel) {
-      this._state.vel.x = this.vel.x;
-      this._state.vel.y = this.vel.y;
+  syncStateVelX(isIncomingUpdate = false) {
+    const x = this.original.vel.x;
+    if(x !== this._state.vel.x) {
+      this._state.vel.x = x;
+      // Do not send updates for incoming updates back
+      if(!isIncomingUpdate) {
+        this._updates.vel ||= {} as BodyState['vel'];
+        this._updates.vel.x = x;
+      }
     }
+  }
+
+  syncStateVelY(isIncomingUpdate = false) {
+    const y = this.original.vel.y;
+    if(y !== this._state.vel.y) {
+      this._state.vel.y = y;
+      // Do not send updates for incoming updates back
+      if(!isIncomingUpdate) {
+        this._updates.vel ||= {} as BodyState['vel'];
+        this._updates.vel.y = y;
+      }
+    }
+  }
+
+  syncStateVel(isIncomingUpdate = false) {
+    this.syncStateVelX(isIncomingUpdate);
+    this.syncStateVelY(isIncomingUpdate);
   }
 
   syncState() {
@@ -99,37 +180,35 @@ export class PrpgBodyComponent extends Component<PrpgComponentType.BODY> impleme
     // TODO this._state.pos.z = this.pos.z;
   }
 
-  applyUpdates(data: Partial<BodyState>) {
+  applyUpdates(data: BodyUpdates) {
     if(!data) {
       return;
     }
 
     if(data.pos) {
-      if(data.pos.x !== undefined) {
-        this.pos.x = data.pos.x;
-        this.original.pos.x = data.pos.x;
+
+      debugger;
+
+      if(data.pos.x !== undefined || data.pos.y !== undefined) {
+        this.setPos(data.pos.x, data.pos.y);
       }
-      if(data.pos.y !== undefined) {
-        this.pos.y = data.pos.y;
-        this.original.pos.y = data.pos.y;
-      }
-      this.syncStatePos() 
+      this.syncStatePos(true)
     }
 
     if(data.vel) {
       if(data.vel.x !== undefined) {
-        this.vel.x = data.vel.x;
+        // this.velX = data.vel.x;
         this.original.vel.x = data.vel.x;
       }
       if(data.vel.y !== undefined) {
-        this.vel.y = data.vel.y;
+        // this.velY = data.vel.y;
         this.original.vel.y = data.vel.y;
       }
-      this.syncStateVel() 
+      this.syncStateVel(true)
     }
   }
 
-  constructor(data: Partial<BodyState> = {}) {
+  constructor(data: BodyUpdates = {}) {
     super();
     this.initState(data);
   }

@@ -291,12 +291,11 @@ PrpgTeleportableComponent> {
         }
 
         if(body) {
-          body.pos.x = spawnPoint.x;
-          body.pos.y = spawnPoint.y;
+          body.setPos(spawnPoint.x, spawnPoint.y);
         }
 
         if(character) {
-          character.updates.direction = spawnPoint.direction;
+          character.direction = spawnPoint.direction;
         }
 
         // TODO also update the z value on other drawable entities
