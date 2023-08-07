@@ -1,7 +1,6 @@
-import { ScreenElement, Color, ActorArgs, CoordPlane } from 'excalibur';
+import { ScreenElement, Color, ActorArgs, CoordPlane, EventEmitter } from 'excalibur';
 import { PrpgFadeScreenComponent } from '../components';
-import { FadeScreen } from '../types';
-import { FadeScreenEvent } from '../events';
+import type { FadeScreen, PrpgScreenEvents } from '../types';
 
 /**
  * 
@@ -10,6 +9,9 @@ import { FadeScreenEvent } from '../events';
  * @emits complete - When the fade animation is complete
  */
 export class PrpgFadeScreenElement extends ScreenElement {
+
+  public declare events: EventEmitter<PrpgScreenEvents>;
+
   constructor(public data: Partial<FadeScreen>, actorArgs: ActorArgs = {}) {
     const defaults: FadeScreen = {
       fadeSpeed: 200,
@@ -42,38 +44,4 @@ export class PrpgFadeScreenElement extends ScreenElement {
   get fadeScreen() {
     return this.get(PrpgFadeScreenComponent)?.data;
   }
-
-  // @ts-ignore
-  public on(eventName: 'complete', handler: (event: FadeScreenEvent) => void) {
-    // @ts-ignore
-    super.on(eventName as string, handler);
-  }
-
-  /**
-   * Alias for `removeEventListener`. If only the eventName is specified
-   * it will remove all handlers registered for that specific event. If the eventName
-   * and the handler instance are specified only that handler will be removed.
-   *
-   * @param eventName  Name of the event to listen for
-   * @param handler    Event handler for the thrown event
-   */
-  public off(eventName: string, handler?: (event: any) => void) {
-    super.off(eventName, handler);
-  }
-
-  public emit(eventName: 'complete', eventObject: FadeScreenEvent) {
-    super.emit(eventName, eventObject);
-  }
-
-  /**
-   * Once listens to an event one time, then unsubscribes from that event
-   *
-   * @param eventName The name of the event to subscribe to once
-   * @param handler   The handler of the event that will be auto unsubscribed
-   */
-  // @ts-ignore
-  public once(eventName: 'complete', handler: (event: any) => void) {
-    super.once(eventName, handler);
-  }
-
 }

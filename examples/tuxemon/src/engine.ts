@@ -1,7 +1,7 @@
 import {
     Engine as ExcaliburEngine, EngineOptions, DisplayMode, Input, Color, Logger, Scene, Loader,
     Timer, TileMap, Actor, Entity, LogLevel, ScreenElement, GamepadConnectEvent, GamepadDisconnectEvent,
-    GamepadButtonEvent, GamepadAxisEvent, GameEvent
+    GamepadButtonEvent, GamepadAxisEvent, GameEvent, EventEmitter
 } from 'excalibur';
 
 import { syncable } from './utilities';
@@ -9,7 +9,7 @@ import { syncable } from './utilities';
 // Scenes
 import { MapScene } from './scenes/map.scene';
 
-import { GameOptions, MultiplayerSyncable, GameState, GameUpdates, MultiplayerSyncableScene, SyncDirection } from './types';
+import { GameOptions, MultiplayerSyncable, GameState, GameUpdates, MultiplayerSyncableScene, SyncDirection, PrpgEngineEvents } from './types';
 import { resources } from './managers/index';
 
 export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<GameState, GameUpdates> {
@@ -23,6 +23,11 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<G
     private _updates: GameUpdates = {
         scenes: {},
     }
+
+    /**
+     * Listen to and emit events on the Engine
+     */
+    public declare events: EventEmitter<PrpgEngineEvents>;
 
     public get syncDirection() {
         return SyncDirection.BOTH;

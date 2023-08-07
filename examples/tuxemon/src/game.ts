@@ -1,14 +1,13 @@
-import { Class, Color, GameEvent } from 'excalibur';
+import { Color, GameEvent } from 'excalibur';
 import { PrpgEngine } from './engine';
 import { GameState, GameUpdates } from './types';
 import { encode, decode } from "@msgpack/msgpack";
 
-export class PrpgGame extends Class {
+export class PrpgGame {
     /** One instance per player in splitscreen */
     static screens: PrpgEngine[] = [];
 
     constructor(public players = 2) {
-      super();
       this.setPlayersHTMLClass();
     }
 
@@ -40,7 +39,7 @@ export class PrpgGame extends Class {
       for (const playerScreen of PrpgGame.screens) {
 
         // Updates sync
-        playerScreen.on('update', (event) => {
+        playerScreen.events.on('update', (event) => {
           const updates = event.target as GameUpdates;
           // Simulate network serialize and deserialize
           const s = decode(encode(updates)) as GameUpdates;

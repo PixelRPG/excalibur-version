@@ -29,7 +29,7 @@
   "devDependencies": {
     "@pixelrpg/esbuild": "workspace:^",
     "barreler": "^0.0.5",
-    "esbuild": "^0.18.16",
+    "esbuild": "^0.18.19",
     "rimraf": "^5.0.1",
     "typescript": "^5.1.6"
   }

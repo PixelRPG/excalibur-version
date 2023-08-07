@@ -1,4 +1,4 @@
-import { System, SystemType, Logger, Entity, Query, Direction, BodyComponent } from 'excalibur';
+import { System, SystemType, Logger, Entity, Query, Direction, ScreenElement } from 'excalibur';
 import { TiledObject } from '@excaliburjs/plugin-tiled/src';
 import { PrpgTeleportableComponent, PrpgTeleportComponent, PrpgFadeScreenComponent, PrpgSpawnPointComponent, PrpgCharacterComponent, PrpgPlayerComponent, PrpgBodyComponent } from '../components';
 import { newSpawnPointEntity } from '../entities';
@@ -46,7 +46,8 @@ PrpgTeleportableComponent> {
       const teleportEntities = this.teleportQuery.getEntities();
       // this.logger.debug('[${this.gameOptions.playerNumber}] Teleport entities', teleportEntities);
       for (const entity of teleportEntities) {
-        entity.on('precollision', (event: {target: Entity, other: Entity}) => {
+        // @ts-ignore TODO: fix type in excalibur
+        entity.events.on('precollision', (event: {target: Entity, other: Entity}) => {
 
           const teleportable = event.other.get(PrpgTeleportableComponent);
 
