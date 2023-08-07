@@ -6,9 +6,7 @@ export interface TeleportableState {
     /** Is `true` if the entity is currently teleporting */
     isTeleporting: boolean;
     /** The target spawn point of the current teleport if any */
-    teleportTo?: SpawnPointState;
-    /** The name of the scene the entity is currently in */
-    currentSceneName?: string;
+    teleportTo?: SpawnPointState | null;
 }
 
 export type TeleportableUpdates = Partial<TeleportableState>;

@@ -11,7 +11,6 @@ export class PrpgTeleportableComponent extends Component<PrpgComponentType.TELEP
   private _state: TeleportableState = {
     isTeleporting: false,
     teleportTo: undefined,
-    currentSceneName: '',
   };
 
   private _updates: TeleportableUpdates = {};
@@ -53,24 +52,10 @@ export class PrpgTeleportableComponent extends Component<PrpgComponentType.TELEP
     return this._state.teleportTo;
   }
 
-  set teleportTo(value: SpawnPointState | undefined) {
+  set teleportTo(value: SpawnPointState | undefined | null) {
     if(value !== this._state.teleportTo) {
       this._state.teleportTo = value;
       this._updates.teleportTo = value;
-    }
-  }
-
-  /**
-   * It can be useful to know what scene the entity is currently if the entity is teleportable.
-   */
-  get currentSceneName() {
-    return this._state.currentSceneName;
-  }
-
-  set currentSceneName(value: string | undefined) {
-    if(value !== this._state.currentSceneName) {
-      this._state.currentSceneName = value;
-      this._updates.currentSceneName = value;
     }
   }
 

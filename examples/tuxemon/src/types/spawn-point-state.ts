@@ -16,4 +16,12 @@ export interface SpawnPointState {
     entityName: string;
     /** The map scene name this spawn point is on */
     sceneName: string;
+    /** The name of the scene the entity came from */
+    from: {
+        x: number;
+        y: number;
+        z: number;
+        /** The map scene name this spawn point is on */
+        sceneName: string;
+    }
 }

@@ -4,10 +4,12 @@ import {
   Logger,
   Component,
   Entity,
+  Scene
 } from 'excalibur';
 import { MapScene } from '../scenes/map.scene';
-import { syncable } from '../utilities';
-import { PrpgComponentType, GameOptions, MultiplayerSyncable, SceneState, SceneUpdates, SyncDirection } from '../types';
+import { syncable, findEntityByNameFromScene, findEntityByNameInScenes } from '../utilities';
+import { PrpgPlayerActor } from '../actors/player.actor';
+import { PrpgComponentType, GameOptions, MultiplayerSyncable, SceneState, SceneUpdates, SyncDirection, MultiplayerSyncableScene } from '../types';
 
 export class PrpgMultiplayerSystem extends System implements MultiplayerSyncable<SceneState, SceneUpdates>  {
   public readonly types = [PrpgComponentType.FADE_SCREEN] as const;
@@ -121,14 +123,38 @@ export class PrpgMultiplayerSystem extends System implements MultiplayerSyncable
   public applyUpdates(updates: Readonly<SceneUpdates>) {
     for (const entityName in updates.entities) {
       const entityUpdateData = updates.entities[entityName];
-      if(!entityUpdateData) {
+      if(entityUpdateData === undefined) {
         continue;
       }
-      const entityToUpdate = this.scene?.getEntityByName(entityName);
+
+
+      let entityToUpdate = this.scene?.getEntityByName(entityName);
+
+      // Find entity in  it doesn't exist
       if(!entityToUpdate) {
-        this.logger.error(`[${this.gameOptions.playerNumber}] Entity ${entityName} not found in map ${this.scene?.name}`);
+
+        // Ignore if target scene is not the this scene, already teleported?
+        if(entityUpdateData['prpg.teleportable']?.teleportTo && entityUpdateData['prpg.teleportable']?.teleportTo?.sceneName !== this.scene?.name) {
+          continue;
+        }
+
+        if(!this.scene?.engine?.scenes) {
+          this.logger.error(`[${this.gameOptions.playerNumber}] No scenes found in engine!`);
+          continue;
+        }
+
+        entityToUpdate = findEntityByNameInScenes(this.scene?.engine?.scenes, entityName);
+
+        if(entityToUpdate) {
+          this.scene.transfer(entityToUpdate);
+        }
+      }
+
+      if(!entityToUpdate) {
+        this.logger.error(`[${this.gameOptions.playerNumber}] Entity ${entityName} not found in map ${this.scene?.name}, updates: `, updates);
         continue;
       }
+
       for (const componentType in entityUpdateData) {
         const componentUpdateData = entityUpdateData[componentType];
         if(!componentUpdateData) {

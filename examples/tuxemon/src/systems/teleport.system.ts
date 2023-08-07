@@ -68,15 +68,26 @@ PrpgTeleportableComponent> {
     public prepareTeleport(target: SpawnPointState) {
       const teleportableEntity = this.scene?.getEntityByName(target.entityName);
 
+      if (!this.scene) {
+        this.logger.error(`[${this.gameOptions.playerNumber}] Current scene not found!`);
+        return;
+      }
+
       if(!teleportableEntity) {
         this.logger.error(`[${this.gameOptions.playerNumber}] Entity ${target.entityName} on scene ${this.scene?.name} not found!`);
         return;
       }
 
       const teleportable = teleportableEntity.get(PrpgTeleportableComponent);
+      const body = teleportableEntity.get(PrpgBodyComponent);
 
       if(!teleportable) {
         this.logger.error(`[${this.gameOptions.playerNumber}] Entity ${teleportableEntity.id} is not teleportable`);
+        return;
+      }
+
+      if(!body) {
+        this.logger.error(`[${this.gameOptions.playerNumber}] Entity ${teleportableEntity.id} has no body`);
         return;
       }
 
@@ -103,6 +114,12 @@ PrpgTeleportableComponent> {
         direction: target.direction,
         entityName: target.entityName,
         sceneName: target.sceneName,
+        from: {
+          sceneName: this.scene.name,
+          x: body.original.pos.x,
+          y: body.original.pos.y,
+          z: body.z,
+        },
       });
 
       teleportable.teleportTo = spawnPointEntity.get(PrpgSpawnPointComponent)?.data;
@@ -132,7 +149,7 @@ PrpgTeleportableComponent> {
         // If no fade screen is used, teleport the entity immediately
         this.teleport(teleportable.teleportTo);
         teleportable.isTeleporting = false;
-        teleportable.teleportTo = undefined;
+        teleportable.teleportTo = null;
       }
     }
 
@@ -185,8 +202,6 @@ PrpgTeleportableComponent> {
         targetMapScene.transfer(teleportableEntity);
       }
 
-      teleportable.currentSceneName = targetMapScene.name;
-
       // If the engine should follow the entity, change the scene
       if(teleportable?.followTeleport) {
         this.scene?.engine.goToScene(targetMapScene.name);
@@ -198,14 +213,25 @@ PrpgTeleportableComponent> {
     private onTeleportCollision(teleportEntity: Entity, teleportableEntity: Entity) {
       const teleport = teleportEntity.get(PrpgTeleportComponent);
       const teleportable = teleportableEntity.get(PrpgTeleportableComponent);
+      const body = teleportableEntity.get(PrpgBodyComponent);
+
+      if (!this.scene) {
+        this.logger.error(`[${this.gameOptions.playerNumber}] Current scene not found!`);
+        return;
+      }
   
       if (!teleport) {
         this.logger.warn(`[${this.gameOptions.playerNumber}] Teleport component for targetEntity not found!`);
         return;
       }
 
-      if (!teleportable) {
-        this.logger.warn(`[${this.gameOptions.playerNumber}] Entry is not teleportable!`);
+      if(!teleportable) {
+        this.logger.error(`[${this.gameOptions.playerNumber}] Entity ${teleportableEntity.id} is not teleportable`);
+        return;
+      }
+
+      if(!body) {
+        this.logger.error(`[${this.gameOptions.playerNumber}] Entity ${teleportableEntity.id} has no body`);
         return;
       }
 
@@ -249,6 +275,12 @@ PrpgTeleportableComponent> {
         direction,
         entityName: teleportableEntity.name,
         sceneName: mapScene.name,
+        from: {
+          sceneName: this.scene.name,
+          x: body.original.pos.x,
+          y: body.original.pos.y,
+          z: body.z,
+        },
       });      
     }
 
@@ -299,10 +331,6 @@ PrpgTeleportableComponent> {
           character.direction = spawnPoint.direction;
         }
 
-        if(teleportable) {
-          teleportable.currentSceneName = spawnPoint.sceneName;
-        }
-
         // TODO also update the z value on other drawable entities
         if (typeof (targetEntity as PrpgPlayerActor).z === 'number') {
           (targetEntity as PrpgPlayerActor).z = spawnPoint.z;
@@ -351,7 +379,7 @@ PrpgTeleportableComponent> {
             // If the fade screen is complete or removed, the teleport is finished
             if (teleportable?.isTeleporting) {
               teleportable.isTeleporting = false;
-              teleportable.teleportTo = undefined;
+              teleportable.teleportTo = null;
             }
           }
         }

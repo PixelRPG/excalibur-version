@@ -1,6 +1,7 @@
 import { Component, BodyComponent, Vector } from 'excalibur';
 import { MultiplayerSyncComponent } from './multiplayer-sync.component';
 import { PrpgComponentType, BodyState, BodyUpdates, MultiplayerSyncable, SyncDirection } from '../types';
+import { PrpgCharacterComponent } from './character.component';
 
 const POSITION_THRESHOLD = 1;
 
@@ -102,6 +103,10 @@ export class PrpgBodyComponent extends Component<PrpgComponentType.BODY> impleme
     console.warn('TODO: set z');
   }
 
+  get z() {
+    return 0; // TODO
+  }
+
   setVel(x = 0, y = 0) {
     if(y !== this.original.vel.y || x !== this.original.vel.x) {
       this.original.vel.setTo(0, 0);
@@ -145,20 +150,18 @@ export class PrpgBodyComponent extends Component<PrpgComponentType.BODY> impleme
       if(diffX >= POSITION_THRESHOLD) {
         this._state.pos ||= {} as BodyState['pos'];
         this._state.pos.x = x;
-        if(sendUpdates) {
-          this._updates.pos ||= {} as BodyState['pos'];
-          this._updates.pos.x = x;
-        }
       }
 
       // Only update if the change is significant
       if(diffY >= POSITION_THRESHOLD) {
         this._state.pos ||= {} as BodyState['pos'];
         this._state.pos.y = y;
-        if(sendUpdates) {
-          this._updates.pos ||= {} as BodyState['pos'];
-          this._updates.pos.y = y;
-        }
+      }
+
+      if(sendUpdates && (diffX >= POSITION_THRESHOLD || diffY >= POSITION_THRESHOLD)) {
+        this._updates.pos ||= {} as BodyState['pos'];
+        this._updates.pos.x = x;
+        this._updates.pos.y = y;
       }
     }
   }

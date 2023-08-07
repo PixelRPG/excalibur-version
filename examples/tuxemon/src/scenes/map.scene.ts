@@ -4,6 +4,7 @@ import { PrpgCharacterSystem, PrpgBodySystem, PrpgPlayerSystem, PrpgTeleportSyst
 import { newMapEntity } from '../entities';
 import { PrpgPlayerActor } from '../actors';
 import { PrpgMapComponent, PrpgPlayerComponent } from '../components';
+import { findEntityByNameFromScene } from '../utilities';
 
 import { PrpgComponentType, PlayerActorState, MultiplayerSyncableScene } from '../types';
 import type { GameOptions } from '../types';
@@ -71,7 +72,7 @@ export class MapScene extends Scene implements MultiplayerSyncableScene {
   }
 
   public getEntityByName(name: string) {
-    return this.entities.find(entity => entity.name === name);
+    return findEntityByNameFromScene(this, name);
   }
 
   public getMap() {

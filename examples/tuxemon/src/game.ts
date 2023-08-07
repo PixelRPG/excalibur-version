@@ -51,7 +51,7 @@ export class PrpgGame {
         });
 
         // Full state sync
-        // playerScreen.on('state', (event) => {
+        // playerScreen.events.on('state', (event) => {
         //   const state = event.target as GameState;
         //   // Simulate network serialize and deserialize
         //   const s = decode(encode(state)) as GameState;
