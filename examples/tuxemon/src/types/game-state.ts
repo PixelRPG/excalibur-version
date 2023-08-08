@@ -2,7 +2,7 @@ import { SceneState } from "./scene-state";
 
 export interface GameState {
     scenes: {
-        [sceneName: string]: SceneState;
+        [sceneName: string]: SceneState | null;
     }
 }
 

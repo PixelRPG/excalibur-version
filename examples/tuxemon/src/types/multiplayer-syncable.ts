@@ -1,11 +1,11 @@
-import { SyncDirection } from ".";
+import { MultiplayerSyncDirection } from ".";
 
 /**
  * Interface for classes that support deserialization of data for network exchange in a multiplayer scenario.
  */
 export interface MultiplayerSyncable<S = any, U = Partial<S>> {
 
-    get syncDirection(): SyncDirection;
+    get syncDirection(): MultiplayerSyncDirection;
 
     get dirty(): boolean;
 

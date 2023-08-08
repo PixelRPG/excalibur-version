@@ -1,4 +1,4 @@
-export enum SyncDirection {
+export enum MultiplayerSyncDirection {
     /** Send updates to other players */
     OUT = 'OUT',
     /** Receive updates from other players */

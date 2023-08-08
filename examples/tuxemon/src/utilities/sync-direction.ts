@@ -1,5 +1,5 @@
-import { SyncDirection } from '../types';
+import { MultiplayerSyncDirection } from '../types';
 
-export const syncable = (has = SyncDirection.NONE, check = SyncDirection.NONE) => {
-    return has !== SyncDirection.NONE && (has === SyncDirection.BOTH || check === SyncDirection.BOTH || has === check);
+export const syncable = (has = MultiplayerSyncDirection.NONE, check = MultiplayerSyncDirection.NONE) => {
+    return has !== MultiplayerSyncDirection.NONE && (has === MultiplayerSyncDirection.BOTH || check === MultiplayerSyncDirection.BOTH || has === check);
 }

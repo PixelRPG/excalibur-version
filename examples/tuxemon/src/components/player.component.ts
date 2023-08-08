@@ -1,6 +1,6 @@
 import { Component } from 'excalibur';
 import { MultiplayerSyncComponent } from '.';
-import { PrpgComponentType, MultiplayerSyncable, PlayerState, PlayerUpdates, SyncDirection } from '../types';
+import { PrpgComponentType, MultiplayerSyncable, PlayerState, PlayerUpdates, MultiplayerSyncDirection } from '../types';
 
 export class PrpgPlayerComponent extends Component<PrpgComponentType.PLAYER> implements MultiplayerSyncable<PlayerState, PlayerUpdates> {
   public readonly type = PrpgComponentType.PLAYER;
@@ -23,7 +23,7 @@ export class PrpgPlayerComponent extends Component<PrpgComponentType.PLAYER> imp
   }
 
   public get syncDirection() {
-    return this.owner?.get(MultiplayerSyncComponent)?.syncDirection || SyncDirection.NONE;
+    return this.owner?.get(MultiplayerSyncComponent)?.syncDirection || MultiplayerSyncDirection.NONE;
   }
 
   public resetUpdates(): void {

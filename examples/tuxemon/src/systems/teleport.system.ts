@@ -5,9 +5,9 @@ import { newSpawnPointEntity } from '../entities';
 import { PrpgPlayerActor } from '../actors';
 import { PrpgFadeScreenElement } from '../screen-elements';
 import { MapScene } from '../scenes/map.scene';
-import { PrpgComponentType, SpawnPointType, GameOptions, SpawnPointState, TeleportAnimation } from '../types';
+import { PrpgComponentType, SpawnPointType, GameOptions, SpawnPointState, TeleportAnimation, MultiplayerMessageType } from '../types';
 import { stringToDirection } from '../utilities/direction';
-
+import { PrpgEngine } from '../engine'
 export class PrpgTeleportSystem extends System<
 PrpgTeleportableComponent> {
     public readonly types = [PrpgComponentType.TELEPORTABLE] as const;
@@ -190,6 +190,28 @@ PrpgTeleportableComponent> {
 
       this.setPositionBySpawnPoint(spawnPoint);
 
+      if(!(this.scene?.engine instanceof PrpgEngine)) {
+        throw new Error('Engine is not an instance of PrpgEngine');
+      }
+
+      this.scene?.engine.sendMultiplayerAskForFullStateMessage({
+        type: MultiplayerMessageType.ASK_FOR_FULL_STATE,
+        from: teleportableEntity.name,
+        to: 'all',
+        data: undefined,
+      });
+
+      this.scene?.engine.sendMultiplayerTeleportMessage({
+        type: MultiplayerMessageType.TELEPORT,
+        from: teleportableEntity.name,
+        to: 'all',
+        data:  {
+          from: {
+            sceneName: this.scene.name,
+          },
+          to: spawnPoint,
+        },
+      })
 
       // TODO: Load assets for target spawnPoint here
 

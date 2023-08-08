@@ -9,7 +9,7 @@ import {
 import { MapScene } from '../scenes/map.scene';
 import { syncable, findEntityByNameFromScene, findEntityByNameInScenes, findEntityByNameInMapScenes } from '../utilities';
 import { PrpgPlayerActor } from '../actors/player.actor';
-import { PrpgComponentType, GameOptions, MultiplayerSyncable, SceneState, SceneUpdates, SyncDirection, MultiplayerSyncableScene } from '../types';
+import { PrpgComponentType, GameOptions, MultiplayerSyncable, SceneState, SceneUpdates, MultiplayerSyncDirection, MultiplayerSyncableScene } from '../types';
 
 export class PrpgMultiplayerSystem extends System implements MultiplayerSyncable<SceneState, SceneUpdates>  {
   public readonly types = [PrpgComponentType.FADE_SCREEN] as const;
@@ -29,7 +29,7 @@ export class PrpgMultiplayerSystem extends System implements MultiplayerSyncable
   };
 
   public get syncDirection() {
-    return SyncDirection.BOTH;
+    return MultiplayerSyncDirection.BOTH;
   }
 
   get dirty() {
@@ -68,7 +68,7 @@ export class PrpgMultiplayerSystem extends System implements MultiplayerSyncable
     for (const entity of entities) {
       const components = entity.getComponents() as (Component & Partial<MultiplayerSyncable>)[]
       for (const component of components) {
-        const sync = syncable(component.syncDirection, SyncDirection.OUT)
+        const sync = syncable(component.syncDirection, MultiplayerSyncDirection.OUT)
         if(sync && component.dirty) {
           this._updates.entities[entity.name] ||= {};
           this._updates.entities[entity.name][component.type] = component.updates;
@@ -84,7 +84,7 @@ export class PrpgMultiplayerSystem extends System implements MultiplayerSyncable
     for (const entity of entities) {
       const components = entity.getComponents() as (Component & Partial<MultiplayerSyncable>)[]
       for (const component of components) {
-        const sync = syncable(component.syncDirection, SyncDirection.OUT)
+        const sync = syncable(component.syncDirection, MultiplayerSyncDirection.OUT)
         if(sync) {
           this._state.entities[entity.name] ||= {};
           this._state.entities[entity.name][component.type] = component.state;
@@ -166,11 +166,16 @@ export class PrpgMultiplayerSystem extends System implements MultiplayerSyncable
           this.logger.error(`[${this.gameOptions.playerNumber}] Component ${componentType} not found in entity ${entityName} in map ${this.scene?.name}`);
           continue;
         }
-        if(!syncable(componentToUpdate.syncDirection, SyncDirection.IN)) {
+        if(!syncable(componentToUpdate.syncDirection, MultiplayerSyncDirection.IN)) {
           this.logger.error(`[${this.gameOptions.playerNumber}] Component ${componentType} in entity ${entityName} in map ${this.scene?.name} is not syncable`);
           continue;
         }
 
+        if(typeof componentToUpdate.applyUpdates !== 'function') {
+          // this.logger.error(`[${this.gameOptions.playerNumber}] Component ${componentType} in entity ${entityName} in map ${this.scene?.name} is not syncable`);
+          // not syncable
+          continue;
+        }
         componentToUpdate.applyUpdates(componentUpdateData);
       }
     }

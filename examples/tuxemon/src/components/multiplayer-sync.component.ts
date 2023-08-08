@@ -1,5 +1,5 @@
 import { Component } from 'excalibur';
-import { PrpgComponentType, SyncDirection } from '../types';
+import { PrpgComponentType, MultiplayerSyncDirection } from '../types';
 
 /**
  * Used to get an entity the ability to sync with other clients.
@@ -8,7 +8,7 @@ import { PrpgComponentType, SyncDirection } from '../types';
 export class MultiplayerSyncComponent extends Component<PrpgComponentType.MULTIPLAYER_SYNC> {
   public readonly type = PrpgComponentType.MULTIPLAYER_SYNC;
 
-  constructor(public syncDirection = SyncDirection.BOTH) {
+  constructor(public syncDirection = MultiplayerSyncDirection.BOTH) {
     super();
   }
 }

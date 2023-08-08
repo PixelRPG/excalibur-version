@@ -1,6 +1,6 @@
 import { Actor, ActorArgs, vec, CollisionType, Logger, Engine, MotionComponent , BodyComponent} from 'excalibur';
 import { PrpgCharacterComponent, PrpgPlayerComponent, PrpgTeleportableComponent, PrpgBodyComponent, MultiplayerSyncComponent } from '../components';
-import { PlayerState, PlayerActorState, GameOptions, MultiplayerSyncable, PlayerActorArgs, PlayerActorUpdates, TeleportableState, SyncDirection, TeleportAnimation } from '../types';
+import { PlayerState, PlayerActorState, GameOptions, MultiplayerSyncable, PlayerActorArgs, PlayerActorUpdates, TeleportableState, MultiplayerSyncDirection, TeleportAnimation } from '../types';
 
 const DEFAULT_ACTOR_STATE: Partial<ActorArgs> = {
   width: 12,
@@ -39,7 +39,7 @@ export class PrpgPlayerActor extends Actor {
 
     super({...DEFAULT_ACTOR_STATE, ...actor});
      
-    this.addComponent(new MultiplayerSyncComponent(isCurrentPlayer ? SyncDirection.OUT : SyncDirection.IN));
+    this.addComponent(new MultiplayerSyncComponent(isCurrentPlayer ? MultiplayerSyncDirection.OUT : MultiplayerSyncDirection.IN));
     this.addComponent(new PrpgBodyComponent(initialState.body))
     this.addComponent(new PrpgCharacterComponent(initialState.character));
     this.addComponent(new PrpgPlayerComponent(initialState.player, isCurrentPlayer));

@@ -1,6 +1,6 @@
 import { Component } from 'excalibur';
 import { MultiplayerSyncComponent } from '.';
-import { PrpgComponentType, MultiplayerSyncable, TeleportableState, SpawnPointState, TeleportableArgs, SyncDirection, TeleportableUpdates, TeleportAnimation } from '../types';
+import { PrpgComponentType, MultiplayerSyncable, TeleportableState, SpawnPointState, TeleportableArgs, MultiplayerSyncDirection, TeleportableUpdates, TeleportAnimation } from '../types';
 
 /**
  * Used to get an entity the ability to teleport to a different map
@@ -16,7 +16,7 @@ export class PrpgTeleportableComponent extends Component<PrpgComponentType.TELEP
   private _updates: TeleportableUpdates = {};
 
   public get syncDirection() {
-    return this.owner?.get(MultiplayerSyncComponent)?.syncDirection || SyncDirection.NONE;
+    return this.owner?.get(MultiplayerSyncComponent)?.syncDirection || MultiplayerSyncDirection.NONE;
   }
 
   public resetUpdates(): void {

@@ -1,7 +1,7 @@
 import {
-    Engine as ExcaliburEngine, EngineOptions, DisplayMode, Input, Color, Logger, Scene, Loader,
+    Engine as ExcaliburEngine, EngineOptions, DisplayMode, Color, Logger, Scene, Loader,
     Timer, TileMap, Actor, Entity, LogLevel, ScreenElement, GamepadConnectEvent, GamepadDisconnectEvent,
-    GamepadButtonEvent, GamepadAxisEvent, GameEvent, EventEmitter, PointerScope
+    GamepadButtonEvent, GamepadAxisEvent, EventEmitter, PointerScope
 } from 'excalibur';
 
 import { syncable } from './utilities';
@@ -9,8 +9,9 @@ import { syncable } from './utilities';
 // Scenes
 import { MapScene } from './scenes/map.scene';
 
-import { GameOptions, MultiplayerSyncable, GameState, GameUpdates, MultiplayerSyncableScene, SyncDirection, PrpgEngineEvents } from './types';
+import { GameOptions, MultiplayerSyncable, GameState, GameUpdates, MultiplayerSyncableScene, MultiplayerSyncDirection, PrpgEngineEvents, MultiplayerMessageInfo, TeleportMessage } from './types';
 import { resources } from './managers/index';
+import { GameStateFullEvent, GameStateUpdateEvent, GameMessageEvent } from './events/index';
 
 export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<GameState, GameUpdates> {
 
@@ -30,7 +31,7 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<G
     public declare events: EventEmitter<PrpgEngineEvents>;
 
     public get syncDirection() {
-        return SyncDirection.BOTH;
+        return MultiplayerSyncDirection.BOTH;
     }
 
     private resetUpdatesScenes() {
@@ -44,6 +45,9 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<G
         return scenes
     }
 
+    /**
+     * Clear updates to collect new ones
+     */
     public resetUpdates(): void {
         this.resetUpdatesScenes();
         this._updates.scenes = {};
@@ -90,7 +94,7 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<G
     collectStates() {
         for (const name in this.scenes) {
             const scene = this.scenes[name] as Scene & MultiplayerSyncableScene;
-            const sync = syncable(scene.multiplayerSystem?.syncDirection, SyncDirection.OUT)
+            const sync = syncable(scene.multiplayerSystem?.syncDirection, MultiplayerSyncDirection.OUT)
             if(sync && scene.multiplayerSystem) {
                 if(!this._state.scenes[name]) {
                     this._state.scenes[name] = scene.multiplayerSystem.state;
@@ -105,7 +109,7 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<G
     collectUpdates() {
         for (const name in this.scenes) {
             const scene = this.scenes[name] as Scene & MultiplayerSyncableScene;
-            const sync = syncable(scene.multiplayerSystem?.syncDirection, SyncDirection.OUT);
+            const sync = syncable(scene.multiplayerSystem?.syncDirection, MultiplayerSyncDirection.OUT);
             if(sync && scene.multiplayerSystem?.dirty) {
                 this._updates.scenes ||= {};
                 if(!this._updates.scenes[name]) {
@@ -258,32 +262,72 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<G
         await super.start(loader);
     }
 
+    /**
+     * Send state updates to the other players
+     */
+    public sendMultiplayerUpdate() {
+        this.collectUpdates();
+        if(this.dirty) {
+            const updatesEvent = new GameStateUpdateEvent(this.updates)
+            this.events.emit('multiplayer:update', updatesEvent);
+            this.resetUpdates();
+        }
+    }
+
+    /**
+     * Send full state to the other players
+     */
+    public sendMultiplayerFullState() {
+        this.collectStates();
+        {
+            const stateEvent = new GameStateFullEvent(this.state)
+            this.events.emit('multiplayer:state', stateEvent);
+        }
+    }
+
+    /**
+     * Send a message to the other players, e.g. to ask for a full state on a teleport
+     * @param info
+     */
+    public sendMultiplayerMessage<I = any>(info: MultiplayerMessageInfo<I>) {
+        const messsageEvent = new GameMessageEvent<I>(info)
+        this.events.emit('multiplayer:message', messsageEvent);
+    }
+
+    /**
+     * Send a message to the other players, e.g. to ask for a full state on a teleport
+     * @param info
+     */
+    public sendMultiplayerAskForFullStateMessage(info: MultiplayerMessageInfo<undefined>) {
+        const messsageEvent = new GameMessageEvent<undefined>(info)
+        this.events.emit('multiplayer:message:ask-for-full-state', messsageEvent);
+        console.debug('sendMultiplayerAskForFullStateMessage', info);
+    }
+
+    /**
+     * Notify the other players that we teleported
+     * @param info 
+     */
+    public sendMultiplayerTeleportMessage(info: MultiplayerMessageInfo<TeleportMessage>) {
+        const messsageEvent = new GameMessageEvent(info);
+        this.events.emit('multiplayer:message:teleport', messsageEvent);
+        console.debug('sendMultiplayerTeleportMessage', info);
+    }
+
     override onPostUpdate(engine: PrpgEngine, delta: number) {
         super.onPostUpdate(engine, delta);
 
-        this.collectUpdates();
-        if(this.dirty) {
-            const updatesEvent = new GameEvent<Readonly<GameUpdates>>()
-            updatesEvent.target = this.updates;
-            this.emit('update', updatesEvent);
-            this.resetUpdates();
-        }
+        this.sendMultiplayerUpdate();
 
-        this.collectStates();
-        {
-            const stateEvent = new GameEvent<Readonly<GameState>>()
-            stateEvent.target = this.state;
-            this.emit('state', stateEvent);
-        }
-
-
+        // TODO: Only send full state if needed, e.g. if another player asks for it
+        // this.sendMultiplayerFullState();
     }
 
-    applySceneUpdates(scenes: GameState['scenes']) {
+   protected applySceneUpdates(scenes: GameState['scenes']) {
         for (const name in scenes) {
             const updatedScene = scenes[name];
             const myScene = this.scenes[name] as Scene & MultiplayerSyncableScene;
-            if(updatedScene && myScene.multiplayerSystem && syncable(myScene.multiplayerSystem?.syncDirection, SyncDirection.IN)) {
+            if(updatedScene && myScene.multiplayerSystem && syncable(myScene.multiplayerSystem?.syncDirection, MultiplayerSyncDirection.IN)) {
                 myScene.multiplayerSystem.applyUpdates(updatedScene);
             } else if(!myScene) {
                 this.logger.warn(`Scene ${name} is not syncable!`);
@@ -291,7 +335,19 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<G
         }
     }
 
-    applyUpdates(data: Partial<GameState>) {
+    public onTeleportMessage(message: MultiplayerMessageInfo<TeleportMessage>) {
+        console.debug('onTeleportMessage', message);
+    }
+
+    public onAskForFullStateMessage(message: MultiplayerMessageInfo<undefined>) {
+        console.debug('onAskForFullStateMessage', message);
+    }
+
+    /**
+     * Receive updates from the other players
+     * @param data 
+     */
+    public applyUpdates(data: Partial<GameState>) {
         if(data.scenes) {
             this.applySceneUpdates(data.scenes);
         }
