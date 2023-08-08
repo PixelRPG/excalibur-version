@@ -3,6 +3,7 @@ import { PrpgEngine } from './engine';
 import { GameState, GameUpdates } from './types';
 import { GameStateFullEvent, GameStateUpdateEvent, GameMessageEvent } from './events/index';
 import { encode, decode } from "@msgpack/msgpack";
+import { extractPlayerNumber } from './utilities';
 
 /** The (multiplayer) Game */
 export class PrpgGame {
@@ -41,7 +42,7 @@ export class PrpgGame {
       const state = event.state;
       // Simulate network serialize and deserialize
       const s = decode(encode(state)) as GameState;
-      // console.debug(`player ${playerScreen.gameOptions.playerNumber} updates changed, sync to other players`, s);
+      console.debug(`player ${playerScreen.gameOptions.playerNumber} received full state`, s);
       for (const otherPlayerScreen of PrpgGame.screens) {
         if (otherPlayerScreen === playerScreen) continue;
         otherPlayerScreen.applyUpdates(s);
@@ -53,7 +54,7 @@ export class PrpgGame {
       console.debug("decode updates", updates);
       // Simulate network serialize and deserialize
       const s = decode(encode(updates)) as GameUpdates;
-      console.debug(`player ${playerScreen.gameOptions.playerNumber} updates changed, sync to other players`, s);
+      console.debug(`player ${playerScreen.gameOptions.playerNumber} received update changes`, s);
       for (const otherPlayerScreen of PrpgGame.screens) {
         if (otherPlayerScreen === playerScreen) continue;
         otherPlayerScreen.applyUpdates(s);
@@ -68,7 +69,7 @@ export class PrpgGame {
      */
     private onMultiplayerMessageEvent(playerScreen: PrpgEngine, event: GameMessageEvent) {
       const message = event.info;
-      console.debug(`player ${playerScreen.gameOptions.playerNumber} received message from other player`, message);
+      console.debug(`player ${playerScreen.gameOptions.playerNumber} received message from ${message.from} to ${message.to || 'all'} player`, message);
     }
 
     /**
@@ -78,7 +79,7 @@ export class PrpgGame {
      */
     private onMultiplayerTeleportMessageEvent(playerScreen: PrpgEngine, event: GameMessageEvent) {
       const message = event.info;
-      console.debug(`player ${playerScreen.gameOptions.playerNumber} received teleport message from other player`, message);
+      console.debug(`player ${playerScreen.gameOptions.playerNumber} received teleport message from ${message.from} to ${message.to || 'all'} player`, message);
     }
 
     /**
@@ -88,7 +89,11 @@ export class PrpgGame {
      */
     private onMultiplayerAskForFullStateMessageEvent(playerScreen: PrpgEngine, event: GameMessageEvent) {
       const message = event.info;
-      console.debug(`player ${playerScreen.gameOptions.playerNumber} received ask-for-full-state message from other player`, message);
+      const fromPlayerNumber = extractPlayerNumber(message.from);
+      console.debug(`player ${playerScreen.gameOptions.playerNumber} received ask-for-full-state message from ${message.from} to ${message.to || 'all'} player`, message);
+      if(playerScreen.gameOptions.playerNumber !== fromPlayerNumber) {
+        playerScreen.sendMultiplayerFullState();
+      }
     }
 
     private subscribePlayer(playerScreen: PrpgEngine) {

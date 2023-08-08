@@ -318,9 +318,6 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<G
         super.onPostUpdate(engine, delta);
 
         this.sendMultiplayerUpdate();
-
-        // TODO: Only send full state if needed, e.g. if another player asks for it
-        // this.sendMultiplayerFullState();
     }
 
    protected applySceneUpdates(scenes: GameState['scenes']) {
