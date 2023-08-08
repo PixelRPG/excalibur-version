@@ -42,8 +42,17 @@ export class MapScene extends Scene implements MultiplayerSyncableScene {
    * @paramGet map scene by name 
    * @returns 
    */
+  public static getInstance(gameOptions: GameOptions, name: string) {
+    return MapScene._instances[gameOptions.playerNumber][name];
+  }
+
+  /**
+   * 
+   * @paramGet map scene by name 
+   * @returns 
+   */
   public getInstance(name: string) {
-    return MapScene._instances[this.gameOptions.playerNumber][name];
+    return MapScene.getInstance(this.gameOptions, name);
   }
 
   constructor(private readonly gameOptions: GameOptions, public readonly name: string, private readonly map: TiledMapResource) {

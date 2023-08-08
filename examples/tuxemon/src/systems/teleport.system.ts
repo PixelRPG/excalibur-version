@@ -106,7 +106,7 @@ PrpgTeleportableComponent> {
         return;
       }
 
-      const spawnPointEntity = newSpawnPointEntity({
+      const spawnPointData: SpawnPointState = {
         type: SpawnPointType.TELEPORT,
         x: target.x,
         y: target.y,
@@ -120,12 +120,13 @@ PrpgTeleportableComponent> {
           y: body.original.pos.y,
           z: body.z,
         },
-      });
+      };
 
-      teleportable.teleportTo = spawnPointEntity.get(PrpgSpawnPointComponent)?.data;
+      teleportable.teleportTo = spawnPointData;
 
       // Add spawn point as the teleport target. After this spawn point has been executed, it will be removed again
-      targetMapScene.add(spawnPointEntity);
+      // const spawnPointEntity = newSpawnPointEntity(spawnPointData);
+      // targetMapScene.add(spawnPointEntity);
 
       // Add fade screen to current and target map
       if(teleportable.animation === TeleportAnimation.FadeScreen) {
@@ -187,13 +188,16 @@ PrpgTeleportableComponent> {
 
       this.logger.info(`[${this.gameOptions.playerNumber}] Teleport entity ${teleportableEntity.name} to ${spawnPoint.sceneName} at ${spawnPoint.x}, ${spawnPoint.y}, ${spawnPoint.z}`);
 
+      this.setPositionBySpawnPoint(spawnPoint);
+
+
+      // TODO: Load assets for target spawnPoint here
+
       // Use the fade screen to run the garbage collector if available
       const gc = (window as any).gc || (window as any).opera?.collect || (window as any).CollectGarbage;
       if(gc) {
         gc();
       }
-
-      // TODO: Load assets for target spawnPoint here
 
       // Teleport entity to new map
       if(teleportableEntity.get(PrpgPlayerComponent)) {
@@ -299,49 +303,55 @@ PrpgTeleportableComponent> {
           continue;
         }
 
+        this.setPositionBySpawnPoint(spawnPoint);
+
         const mapScene = this.scene?.getInstance(spawnPoint.sceneName);
         if (!mapScene) {
           this.logger.error(`[${this.gameOptions.playerNumber}] Scene ${spawnPoint.sceneName} for spawn point not found!`);
-          continue;
-        }
-
-
-        /** Entity which should be moved */
-        const targetEntity = this.scene?.getEntityByName(spawnPoint.entityName);
-        if (!targetEntity) {
-          if(this.gameOptions.playerNumber === 1) this.logger.warn(`[${this.gameOptions.playerNumber}] Entity ${spawnPoint.entityName} on scene ${this.scene?.name} for spawn point not found!`);
-          // spawnPoint.mapScene.remove(spawnPointEntity);
-          continue;
-        }
-        this.logger.debug(`[${this.gameOptions.playerNumber}] Entity ${spawnPoint.entityName} on scene ${this.scene?.name} for spawn point found :)`);
-
-        const body = targetEntity.get(PrpgBodyComponent);
-        const character = targetEntity.get(PrpgCharacterComponent);
-        const teleportable = targetEntity.get(PrpgTeleportableComponent);     
-
-        if (!body) {
-          this.logger.warn(`[${this.gameOptions.playerNumber}] BodyComponent for entity not found, only entities with a body have a position`);
-        }
-
-        if(body) {
-          body.setPos(spawnPoint.x, spawnPoint.y, true);
-        }
-
-        if(character) {
-          character.direction = spawnPoint.direction;
-        }
-
-        // TODO also update the z value on other drawable entities
-        if (typeof (targetEntity as PrpgPlayerActor).z === 'number') {
-          (targetEntity as PrpgPlayerActor).z = spawnPoint.z;
-        } else {
-          this.logger.warn('Can\'t set z-index of span point, because it is not a PrpgPlayerActor!');
+          return;
         }
 
         // Remove the spawn point entity after it has been executed
         mapScene.remove(spawnPointEntity);
       }
     }
+
+    setPositionBySpawnPoint(spawnPoint: SpawnPointState) {
+
+      /** Entity which should be moved */
+      const targetEntity = this.scene?.getEntityByName(spawnPoint.entityName);
+      if (!targetEntity) {
+        if(this.gameOptions.playerNumber === 1) this.logger.warn(`[${this.gameOptions.playerNumber}] Entity ${spawnPoint.entityName} on scene ${this.scene?.name} for spawn point not found!`);
+        // spawnPoint.mapScene.remove(spawnPointEntity);
+        return;
+      }
+      this.logger.debug(`[${this.gameOptions.playerNumber}] Entity ${spawnPoint.entityName} on scene ${this.scene?.name} for spawn point found :)`);
+
+      const body = targetEntity.get(PrpgBodyComponent);
+      const character = targetEntity.get(PrpgCharacterComponent);
+      // const teleportable = targetEntity.get(PrpgTeleportableComponent);     
+
+      if (!body) {
+        this.logger.warn(`[${this.gameOptions.playerNumber}] BodyComponent for entity not found, only entities with a body have a position`);
+      }
+
+      if(body) {
+        body.setPos(spawnPoint.x, spawnPoint.y, true);
+      }
+
+      if(character) {
+        character.direction = spawnPoint.direction;
+      }
+
+      // TODO also update the z value on other drawable entities
+      if (typeof (targetEntity as PrpgPlayerActor).z === 'number') {
+        (targetEntity as PrpgPlayerActor).z = spawnPoint.z;
+      } else {
+        this.logger.warn('Can\'t set z-index of span point, because it is not a PrpgPlayerActor!');
+      }
+
+    }
+
 
     public updateTeleportables(teleportableEntities: Entity[]) {
       // const teleportEntities = this.teleportQuery?.getEntities()

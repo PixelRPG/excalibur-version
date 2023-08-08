@@ -7,7 +7,7 @@ import {
   Scene
 } from 'excalibur';
 import { MapScene } from '../scenes/map.scene';
-import { syncable, findEntityByNameFromScene, findEntityByNameInScenes } from '../utilities';
+import { syncable, findEntityByNameFromScene, findEntityByNameInScenes, findEntityByNameInMapScenes } from '../utilities';
 import { PrpgPlayerActor } from '../actors/player.actor';
 import { PrpgComponentType, GameOptions, MultiplayerSyncable, SceneState, SceneUpdates, SyncDirection, MultiplayerSyncableScene } from '../types';
 
@@ -143,10 +143,11 @@ export class PrpgMultiplayerSystem extends System implements MultiplayerSyncable
           continue;
         }
 
-        entityToUpdate = findEntityByNameInScenes(this.scene?.engine?.scenes, entityName);
+        entityToUpdate = findEntityByNameInMapScenes(this.gameOptions, this.scene?.name, entityName);
+        // entityToUpdate = findEntityByNameInScenes(this.scene?.engine?.scenes, entityName);
 
         if(entityToUpdate) {
-          this.scene.transfer(entityToUpdate);
+          this.scene.transfer(entityToUpdate);          
         }
       }
 
@@ -157,7 +158,7 @@ export class PrpgMultiplayerSystem extends System implements MultiplayerSyncable
 
       for (const componentType in entityUpdateData) {
         const componentUpdateData = entityUpdateData[componentType];
-        if(!componentUpdateData) {
+        if(componentUpdateData === undefined) {
           continue;
         }
         const componentToUpdate = entityToUpdate.get(componentType) as Component<string> & MultiplayerSyncable | null;

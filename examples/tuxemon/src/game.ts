@@ -50,6 +50,7 @@ export class PrpgGame {
           }
         });
 
+        // TODO: Do not sync full state every time, only when needed, e.g. on teleport
         // Full state sync
         // playerScreen.events.on('state', (event) => {
         //   const state = event.target as GameState;

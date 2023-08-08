@@ -1,7 +1,7 @@
 import {
     Engine as ExcaliburEngine, EngineOptions, DisplayMode, Input, Color, Logger, Scene, Loader,
     Timer, TileMap, Actor, Entity, LogLevel, ScreenElement, GamepadConnectEvent, GamepadDisconnectEvent,
-    GamepadButtonEvent, GamepadAxisEvent, GameEvent, EventEmitter
+    GamepadButtonEvent, GamepadAxisEvent, GameEvent, EventEmitter, PointerScope
 } from 'excalibur';
 
 import { syncable } from './utilities';
@@ -66,7 +66,7 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<G
         const defaults = {
             displayMode: DisplayMode.FillContainer, // TODO: Contribute a new option to ignore aspect ratio / resolution
             canvasElementId,
-            pointerScope: Input.PointerScope.Canvas,
+            pointerScope: PointerScope.Canvas,
             width: document.getElementById(canvasElementId)?.clientWidth || 800,
             height: document.getElementById(canvasElementId)?.clientHeight || 600,
             antialiasing: false,
