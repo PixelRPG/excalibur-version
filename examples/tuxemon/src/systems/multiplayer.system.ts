@@ -7,7 +7,7 @@ import {
   Scene
 } from 'excalibur';
 import { MapScene } from '../scenes/map.scene';
-import { syncable, findEntityByNameFromScene, findEntityByNameInScenes, findEntityByNameInMapScenes } from '../utilities';
+import { syncable, findEntityByNameInMapScenes } from '../utilities';
 import { PrpgPlayerActor } from '../actors/player.actor';
 import { PrpgComponentType, GameOptions, MultiplayerSyncable, SceneState, SceneUpdates, MultiplayerSyncDirection, MultiplayerSyncableScene } from '../types';
 
@@ -124,35 +124,36 @@ export class PrpgMultiplayerSystem extends System implements MultiplayerSyncable
     for (const entityName in updates.entities) {
       const entityUpdateData = updates.entities[entityName];
       if(entityUpdateData === undefined) {
+        this.logger.error(`[applyUpdates][${this.gameOptions.playerNumber}] Entity ${entityName} is undefined update data: `, updates);
         continue;
       }
 
 
       let entityToUpdate = this.scene?.getEntityByName(entityName);
 
-      // Find entity in  it doesn't exist
+      // If entity doesn't exist in scene, try to find it in other scenes
+      // if(!entityToUpdate) {
+
+      //   // Ignore if target scene is not the current scene, already teleported?
+      //   if(entityUpdateData['prpg.teleportable']?.teleportTo && entityUpdateData['prpg.teleportable']?.teleportTo?.sceneName !== this.scene?.name) {
+      //     continue;
+      //   }
+
+      //   if(!this.scene?.engine?.scenes) {
+      //     this.logger.error(`[applyUpdates][${this.gameOptions.playerNumber}] No scenes found in engine!`);
+      //     continue;
+      //   }
+
+      //   entityToUpdate = findEntityByNameInMapScenes(this.gameOptions, entityName);
+
+      //   if(entityToUpdate) {
+      //     this.logger.warn(`[applyUpdates][${this.gameOptions.playerNumber}] Entity ${entityName} not found in map ${this.scene?.name}, found in other map, transferring...`);
+      //     this.scene.transfer(entityToUpdate);          
+      //   }
+      // }
+
       if(!entityToUpdate) {
-
-        // Ignore if target scene is not the this scene, already teleported?
-        if(entityUpdateData['prpg.teleportable']?.teleportTo && entityUpdateData['prpg.teleportable']?.teleportTo?.sceneName !== this.scene?.name) {
-          continue;
-        }
-
-        if(!this.scene?.engine?.scenes) {
-          this.logger.error(`[${this.gameOptions.playerNumber}] No scenes found in engine!`);
-          continue;
-        }
-
-        entityToUpdate = findEntityByNameInMapScenes(this.gameOptions, this.scene?.name, entityName);
-        // entityToUpdate = findEntityByNameInScenes(this.scene?.engine?.scenes, entityName);
-
-        if(entityToUpdate) {
-          this.scene.transfer(entityToUpdate);          
-        }
-      }
-
-      if(!entityToUpdate) {
-        this.logger.error(`[${this.gameOptions.playerNumber}] Entity ${entityName} not found in map ${this.scene?.name}, updates: `, updates);
+        this.logger.error(`[applyUpdates][${this.gameOptions.playerNumber}] Entity ${entityName} not found in map ${this.scene?.name}, updates: `, updates);
         continue;
       }
 
@@ -163,11 +164,11 @@ export class PrpgMultiplayerSystem extends System implements MultiplayerSyncable
         }
         const componentToUpdate = entityToUpdate.get(componentType) as Component<string> & MultiplayerSyncable | null;
         if(!componentToUpdate) {
-          this.logger.error(`[${this.gameOptions.playerNumber}] Component ${componentType} not found in entity ${entityName} in map ${this.scene?.name}`);
+          this.logger.error(`[applyUpdates][${this.gameOptions.playerNumber}] Component ${componentType} not found in entity ${entityName} in map ${this.scene?.name}`);
           continue;
         }
         if(!syncable(componentToUpdate.syncDirection, MultiplayerSyncDirection.IN)) {
-          this.logger.error(`[${this.gameOptions.playerNumber}] Component ${componentType} in entity ${entityName} in map ${this.scene?.name} is not syncable`);
+          this.logger.error(`[applyUpdates][${this.gameOptions.playerNumber}] Component ${componentType} in entity ${entityName} in map ${this.scene?.name} is not syncable`);
           continue;
         }
 

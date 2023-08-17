@@ -221,6 +221,12 @@ PrpgTeleportableComponent> {
         },
       })
 
+      // If the engine should follow the entity, change the scene
+      if(teleportable?.followTeleport) {
+        this.scene?.engine.goToScene(targetMapScene.name);
+        return
+      }
+
       this.scene?.engine.emitMultiplayerAskForFullStateMessage({
         type: MultiplayerMessageType.ASK_FOR_FULL_STATE,
         from: teleportableEntity.name,
@@ -228,11 +234,6 @@ PrpgTeleportableComponent> {
         data: undefined,
       });
 
-      // If the engine should follow the entity, change the scene
-      if(teleportable?.followTeleport) {
-        this.scene?.engine.goToScene(targetMapScene.name);
-        return
-      }
       
     }
 
@@ -273,7 +274,7 @@ PrpgTeleportableComponent> {
         return;
       }
 
-      const tiledObjectGroups = tiledMap.map.data.getExcaliburObjects();
+      const tiledObjectGroups = tiledMap.map.data.getObjects();
       if (!tiledObjectGroups?.length) {
         this.logger.warn(`[${this.gameOptions.playerNumber}] Map has no objects!`);
         return;

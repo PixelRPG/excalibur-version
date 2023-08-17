@@ -7,6 +7,7 @@ import { GameStateFullEvent, GameStateUpdateEvent, GameMessageEvent } from './ev
 import { encode, decode } from "@msgpack/msgpack";
 import { extractPlayerNumber } from './utilities';
 import { PrpgBodyComponent, PrpgPlayerComponent } from './components';
+import { findEntityByNameInMapScenes } from './utilities';
 
 /** The (multiplayer) Game */
 export class PrpgGame {
@@ -101,6 +102,7 @@ export class PrpgGame {
       const fromScene = playerScreen.getMapScene(teleportsFromMapName);
       const teleportTo = message.data.to;
       const toScene = playerScreen.getMapScene(teleportTo.sceneName);
+      const teleportEntityName = message.data.to.entityName;
 
       if(!toScene) {
         console.error(`[onMultiplayerTeleportMessageEvent][${playerScreen.gameOptions.playerNumber}] No target scene found with name ${teleportTo.sceneName}`);
@@ -111,24 +113,24 @@ export class PrpgGame {
         console.warn(`[onMultiplayerTeleportMessageEvent][${playerScreen.gameOptions.playerNumber}] No source scene found with name ${teleportsFromMapName}`);
       }
 
-      const entry = fromScene?.getEntityByName(message.from) || toScene?.getEntityByName(message.from);
+      const entry = fromScene?.getEntityByName(message.data.to.entityName) || findEntityByNameInMapScenes(playerScreen.gameOptions, teleportEntityName);
 
       if(!entry) {
-        console.error(`[onMultiplayerTeleportMessageEvent][${playerScreen.gameOptions.playerNumber}] No player found with name ${message.from}`);
+        console.error(`[onMultiplayerTeleportMessageEvent][${playerScreen.gameOptions.playerNumber}] No entity found with name ${teleportEntityName}`);
         return;
       }
 
-      const body = entry.get<PrpgBodyComponent>(PrpgComponentType.BODY);
       const player = entry.get<PrpgPlayerComponent>(PrpgComponentType.PLAYER);
-
-      if(body) {
-        body.setPos(teleportTo.x, teleportTo.y);
-      }
+      const body = entry.get<PrpgBodyComponent>(PrpgComponentType.BODY);
 
       if(player) {
         toScene.transferPlayer(entry as PrpgPlayerActor);
       } else {
         toScene.transfer(entry);
+      }
+
+      if(body) {
+        body.setPos(teleportTo.x, teleportTo.y);
       }
 
       console.debug(`[onMultiplayerTeleportMessageEvent][${playerScreen.gameOptions.playerNumber}] transferred`)

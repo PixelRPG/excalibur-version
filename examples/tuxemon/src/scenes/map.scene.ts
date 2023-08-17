@@ -33,6 +33,14 @@ export class MapScene extends Scene implements MultiplayerSyncableScene {
    * Get all map scenes for a player
    * @returns 
    */
+  public static instances(gameOptions: GameOptions) {
+    return MapScene._instances[gameOptions.playerNumber];
+  }
+
+  /**
+   * Get all map scenes for a player
+   * @returns 
+   */
   public instances() {
     return MapScene._instances[this.gameOptions.playerNumber];
   }
