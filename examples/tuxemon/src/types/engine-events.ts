@@ -13,5 +13,5 @@ export type PrpgEngineEvents = {
     /** Ask the other players for the full state */
     'multiplayer:message:ask-for-full-state': GameMessageEvent<MultiplayerMessageInfo<undefined>>;
     /** Notify the other players about your teleport */
-    'multiplayer:message:teleport': GameMessageEvent<MultiplayerMessageInfo<TeleportMessage>>;
+    'multiplayer:message:teleport': GameMessageEvent<TeleportMessage>;
 } & EngineEvents;

@@ -2091,7 +2091,7 @@ __metadata:
     "@types/pako": 2.0.0
     "@types/webpack-env": 1.18.1
     acorn: 8.10.0
-    excalibur: 0.27.0
+    excalibur: ~0.28.1
     excalibur-jasmine: 0.2.0
     jasmine: 3.99.0
     karma: 6.4.2
@@ -2106,7 +2106,7 @@ __metadata:
     webpack-cli: 5.1.4
     webpack-dev-server: 4.15.1
   peerDependencies:
-    excalibur: 0.27.0
+    excalibur: ~0.28.1
   languageName: unknown
   linkType: soft
 

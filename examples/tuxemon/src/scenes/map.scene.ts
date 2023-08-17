@@ -166,6 +166,11 @@ export class MapScene extends Scene implements MultiplayerSyncableScene {
     this?.emit('entityremoved', { target: player } as any);
   }
 
+  /**
+   * @deprecated ?
+   * @param player 
+   * @param excludeMapName 
+   */
   removePlayerFromOtherMapScenes(player: PrpgPlayerActor, excludeMapName: string) {
     const allMapScenes = this.instances();
     for (const name in allMapScenes) {

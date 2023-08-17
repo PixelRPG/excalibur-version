@@ -1,9 +1,12 @@
 import { Color, GameEvent } from 'excalibur';
 import { PrpgEngine } from './engine';
-import { GameState, GameUpdates } from './types';
+import { PrpgPlayerActor } from './actors/player.actor';
+import { PrpgComponentType, GameOptions } from './types';
+import { GameState, GameUpdates, MultiplayerMessageInfo, TeleportMessage } from './types';
 import { GameStateFullEvent, GameStateUpdateEvent, GameMessageEvent } from './events/index';
 import { encode, decode } from "@msgpack/msgpack";
 import { extractPlayerNumber } from './utilities';
+import { PrpgBodyComponent, PrpgPlayerComponent } from './components';
 
 /** The (multiplayer) Game */
 export class PrpgGame {
@@ -42,9 +45,9 @@ export class PrpgGame {
       const state = event.state;
       // Simulate network serialize and deserialize
       const s = decode(encode(state)) as GameState;
-      console.debug(`player ${playerScreen.gameOptions.playerNumber} received full state`, s);
       for (const otherPlayerScreen of PrpgGame.screens) {
         if (otherPlayerScreen === playerScreen) continue;
+        console.debug(`player ${otherPlayerScreen.gameOptions.playerNumber} received full state`, s);
         otherPlayerScreen.applyUpdates(s);
       }
     }
@@ -54,13 +57,24 @@ export class PrpgGame {
       console.debug("decode updates", updates);
       // Simulate network serialize and deserialize
       const s = decode(encode(updates)) as GameUpdates;
-      console.debug(`player ${playerScreen.gameOptions.playerNumber} received update changes`, s);
       for (const otherPlayerScreen of PrpgGame.screens) {
         if (otherPlayerScreen === playerScreen) continue;
+        console.debug(`player ${otherPlayerScreen.gameOptions.playerNumber} received update changes`, s);
         otherPlayerScreen.applyUpdates(s);
       }
     }
 
+    private multiplayerMessageIsForPlayerScreen(playerScreen: PrpgEngine, event: GameMessageEvent) {
+      const message = event.info;
+      const fromPlayerNumber = extractPlayerNumber(message.from);
+
+      // Ignore if it's from myself
+      if(playerScreen.gameOptions.playerNumber === fromPlayerNumber) {
+        return false
+      }
+
+      return message.to === 'all' || message.to === `player-` + playerScreen.gameOptions.playerNumber.toString();
+    }
 
     /**
      * On a message from another player
@@ -69,6 +83,7 @@ export class PrpgGame {
      */
     private onMultiplayerMessageEvent(playerScreen: PrpgEngine, event: GameMessageEvent) {
       const message = event.info;
+
       console.debug(`player ${playerScreen.gameOptions.playerNumber} received message from ${message.from} to ${message.to || 'all'} player`, message);
     }
 
@@ -77,9 +92,49 @@ export class PrpgGame {
      * @param playerScreen 
      * @param event 
      */
-    private onMultiplayerTeleportMessageEvent(playerScreen: PrpgEngine, event: GameMessageEvent) {
+    private onMultiplayerTeleportMessageEvent(playerScreen: PrpgEngine, event: GameMessageEvent<TeleportMessage>) {
       const message = event.info;
-      console.debug(`player ${playerScreen.gameOptions.playerNumber} received teleport message from ${message.from} to ${message.to || 'all'} player`, message);
+
+      console.debug(`[onMultiplayerTeleportMessageEvent] player ${playerScreen.gameOptions.playerNumber} received teleport message from ${message.from} to ${message.to || 'all'} player`, message);
+
+      const teleportsFromMapName = message.data.from.sceneName;
+      const fromScene = playerScreen.getMapScene(teleportsFromMapName);
+      const teleportTo = message.data.to;
+      const toScene = playerScreen.getMapScene(teleportTo.sceneName);
+
+      if(!toScene) {
+        console.error(`[onMultiplayerTeleportMessageEvent][${playerScreen.gameOptions.playerNumber}] No target scene found with name ${teleportTo.sceneName}`);
+        return;
+      }
+
+      if(!fromScene) {
+        console.warn(`[onMultiplayerTeleportMessageEvent][${playerScreen.gameOptions.playerNumber}] No source scene found with name ${teleportsFromMapName}`);
+      }
+
+      const entry = fromScene?.getEntityByName(message.from) || toScene?.getEntityByName(message.from);
+
+      if(!entry) {
+        console.error(`[onMultiplayerTeleportMessageEvent][${playerScreen.gameOptions.playerNumber}] No player found with name ${message.from}`);
+        return;
+      }
+
+      const body = entry.get<PrpgBodyComponent>(PrpgComponentType.BODY);
+      const player = entry.get<PrpgPlayerComponent>(PrpgComponentType.PLAYER);
+
+      if(body) {
+        body.setPos(teleportTo.x, teleportTo.y);
+      }
+
+      if(player) {
+        toScene.transferPlayer(entry as PrpgPlayerActor);
+      } else {
+        toScene.transfer(entry);
+      }
+
+      console.debug(`[onMultiplayerTeleportMessageEvent][${playerScreen.gameOptions.playerNumber}] transferred`)
+
+      return;
+      
     }
 
     /**
@@ -89,11 +144,35 @@ export class PrpgGame {
      */
     private onMultiplayerAskForFullStateMessageEvent(playerScreen: PrpgEngine, event: GameMessageEvent) {
       const message = event.info;
-      const fromPlayerNumber = extractPlayerNumber(message.from);
       console.debug(`player ${playerScreen.gameOptions.playerNumber} received ask-for-full-state message from ${message.from} to ${message.to || 'all'} player`, message);
-      if(playerScreen.gameOptions.playerNumber !== fromPlayerNumber) {
-        playerScreen.sendMultiplayerFullState();
+      
+      playerScreen.emitMultiplayerFullState();
+    }
+
+    private sendMultiplayerMessage(eventName: string, event: GameMessageEvent) {
+      // Send message to split screens
+      for (const playerScreen of PrpgGame.screens) {
+        if(!this.multiplayerMessageIsForPlayerScreen(playerScreen, event)) {
+          continue
+        }
+
+        switch (eventName) {
+          case 'multiplayer:message':
+            this.onMultiplayerMessageEvent(playerScreen, event)
+            break;
+          case 'multiplayer:message:teleport':
+            this.onMultiplayerTeleportMessageEvent(playerScreen, event)
+            break;
+          case 'multiplayer:message:ask-for-full-state':
+            this.onMultiplayerAskForFullStateMessageEvent(playerScreen, event)
+            break;
+          default:
+            console.error('Unknown event name', eventName)
+            break;
+        }
       }
+
+      // TODO: Send message to other players over network
     }
 
     private subscribePlayer(playerScreen: PrpgEngine) {
@@ -104,13 +183,13 @@ export class PrpgGame {
       playerScreen.events.on('multiplayer:state', this.onMultiplayerStateEvent.bind(this, playerScreen));
 
       // A message comes from another player
-      playerScreen.events.on('multiplayer:message', this.onMultiplayerMessageEvent.bind(this, playerScreen));
+      playerScreen.events.on('multiplayer:message', this.sendMultiplayerMessage.bind(this, 'multiplayer:message'));
 
       // A teleport message comes from another player
-      playerScreen.events.on('multiplayer:message:teleport', this.onMultiplayerTeleportMessageEvent.bind(this, playerScreen));
+      playerScreen.events.on('multiplayer:message:teleport', this.sendMultiplayerMessage.bind(this, 'multiplayer:message:teleport'));
 
       // A teleport message comes from another player
-      playerScreen.events.on('multiplayer:message:ask-for-full-state', this.onMultiplayerAskForFullStateMessageEvent.bind(this, playerScreen));
+      playerScreen.events.on('multiplayer:message:ask-for-full-state', this.sendMultiplayerMessage.bind(this, 'multiplayer:message:ask-for-full-state'));
 
     }
 

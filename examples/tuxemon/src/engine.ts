@@ -215,7 +215,22 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<G
         }
 
         return resources.maps;
-    }   
+    }
+
+    public getScene(mapName: string) {
+        return this.scenes[mapName] as Scene | undefined;
+    }
+
+    public getMapScene(mapName: string) {
+        const mapScene = this.getScene(mapName);
+        if(!mapScene) {
+            return undefined;
+        }
+        if(mapScene instanceof MapScene) {
+            return mapScene;
+        }
+        throw new Error(`Scene ${mapName} is not a MapScene`);
+    }
 
     /**
      * Starts the internal game loop for Excalibur after loading
@@ -263,9 +278,9 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<G
     }
 
     /**
-     * Send state updates to the other players
+     * Emit state updates
      */
-    public sendMultiplayerUpdate() {
+    public emitMultiplayerUpdate() {
         this.collectUpdates();
         if(this.dirty) {
             const updatesEvent = new GameStateUpdateEvent(this.updates)
@@ -275,9 +290,9 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<G
     }
 
     /**
-     * Send full state to the other players
+     * Emit full state
      */
-    public sendMultiplayerFullState() {
+    public emitMultiplayerFullState() {
         this.collectStates();
         {
             const stateEvent = new GameStateFullEvent(this.state)
@@ -286,38 +301,38 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<G
     }
 
     /**
-     * Send a message to the other players, e.g. to ask for a full state on a teleport
+     * Emit a message to the other players, e.g. to ask for a full state on a teleport
      * @param info
      */
-    public sendMultiplayerMessage<I = any>(info: MultiplayerMessageInfo<I>) {
+    public emitMultiplayerMessage<I = any>(info: MultiplayerMessageInfo<I>) {
         const messsageEvent = new GameMessageEvent<I>(info)
         this.events.emit('multiplayer:message', messsageEvent);
     }
 
     /**
-     * Send a message to the other players, e.g. to ask for a full state on a teleport
+     * Emit a message to the other players, e.g. to ask for a full state on a teleport
      * @param info
      */
-    public sendMultiplayerAskForFullStateMessage(info: MultiplayerMessageInfo<undefined>) {
+    public emitMultiplayerAskForFullStateMessage(info: MultiplayerMessageInfo<undefined>) {
         const messsageEvent = new GameMessageEvent<undefined>(info)
         this.events.emit('multiplayer:message:ask-for-full-state', messsageEvent);
-        console.debug('sendMultiplayerAskForFullStateMessage', info);
+        console.debug('emitMultiplayerAskForFullStateMessage', info);
     }
 
     /**
-     * Notify the other players that we teleported
+     * 
      * @param info 
      */
-    public sendMultiplayerTeleportMessage(info: MultiplayerMessageInfo<TeleportMessage>) {
+    public emitMultiplayerTeleportMessage(info: MultiplayerMessageInfo<TeleportMessage>) {
         const messsageEvent = new GameMessageEvent(info);
         this.events.emit('multiplayer:message:teleport', messsageEvent);
-        console.debug('sendMultiplayerTeleportMessage', info);
+        console.debug('emitMultiplayerTeleportMessage', info);
     }
 
     override onPostUpdate(engine: PrpgEngine, delta: number) {
         super.onPostUpdate(engine, delta);
 
-        this.sendMultiplayerUpdate();
+        this.emitMultiplayerUpdate();
     }
 
    protected applySceneUpdates(scenes: GameState['scenes']) {

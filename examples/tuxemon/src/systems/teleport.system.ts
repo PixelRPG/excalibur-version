@@ -194,25 +194,6 @@ PrpgTeleportableComponent> {
         throw new Error('Engine is not an instance of PrpgEngine');
       }
 
-      this.scene?.engine.sendMultiplayerAskForFullStateMessage({
-        type: MultiplayerMessageType.ASK_FOR_FULL_STATE,
-        from: teleportableEntity.name,
-        to: 'all',
-        data: undefined,
-      });
-
-      this.scene?.engine.sendMultiplayerTeleportMessage({
-        type: MultiplayerMessageType.TELEPORT,
-        from: teleportableEntity.name,
-        to: 'all',
-        data:  {
-          from: {
-            sceneName: this.scene.name,
-          },
-          to: spawnPoint,
-        },
-      })
-
       // TODO: Load assets for target spawnPoint here
 
       // Use the fade screen to run the garbage collector if available
@@ -227,6 +208,25 @@ PrpgTeleportableComponent> {
       } else {
         targetMapScene.transfer(teleportableEntity);
       }
+
+      this.scene?.engine.emitMultiplayerTeleportMessage({
+        type: MultiplayerMessageType.TELEPORT,
+        from: teleportableEntity.name,
+        to: 'all',
+        data:  {
+          from: {
+            sceneName: this.scene.name,
+          },
+          to: spawnPoint,
+        },
+      })
+
+      this.scene?.engine.emitMultiplayerAskForFullStateMessage({
+        type: MultiplayerMessageType.ASK_FOR_FULL_STATE,
+        from: teleportableEntity.name,
+        to: 'all',
+        data: undefined,
+      });
 
       // If the engine should follow the entity, change the scene
       if(teleportable?.followTeleport) {
