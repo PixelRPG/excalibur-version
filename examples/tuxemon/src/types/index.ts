@@ -20,6 +20,7 @@ export { MultiplayerSyncableScene } from './multiplayer-syncable-scene';
 export { PlayerActorArgs, PlayerActorState, PlayerActorUpdates } from './player-actor-state';
 export { PlayerState, PlayerUpdates } from './player-state';
 export { SceneState, SceneUpdates } from './scene-state';
+export { SceneStateEntity } from './scene-state-entity';
 export { PrpgScreenEvents } from './screen-events';
 export { SpawnPointState } from './spawn-point-state';
 export { SpawnPointType } from './spawn-point-type';

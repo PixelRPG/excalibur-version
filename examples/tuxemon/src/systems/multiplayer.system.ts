@@ -9,7 +9,7 @@ import {
 import { MapScene } from '../scenes/map.scene';
 import { syncable, findEntityByNameInMapScenes } from '../utilities';
 import { PrpgPlayerActor } from '../actors/player.actor';
-import { PrpgComponentType, GameOptions, MultiplayerSyncable, SceneState, SceneUpdates, MultiplayerSyncDirection, MultiplayerSyncableScene } from '../types';
+import { PrpgComponentType, GameOptions, MultiplayerSyncable, SceneState, SceneUpdates, MultiplayerSyncDirection, MultiplayerSyncableScene, SceneStateEntity } from '../types';
 
 export class PrpgMultiplayerSystem extends System implements MultiplayerSyncable<SceneState, SceneUpdates>  {
   public readonly types = [PrpgComponentType.FADE_SCREEN] as const;
@@ -58,7 +58,10 @@ export class PrpgMultiplayerSystem extends System implements MultiplayerSyncable
     super.initialize?.(scene);
     this.scene = scene;
     this.initState({ entities: {}});
-    this.scene.multiplayerSystem = this;
+    if( this.scene.multiplayerSystem !== this) {
+      throw new Error(`[PrpgMultiplayerSystem] Scene multiplayerSystem is not this system!`);
+    }
+   
   }
 
   private collectUpdates() {
@@ -120,7 +123,34 @@ export class PrpgMultiplayerSystem extends System implements MultiplayerSyncable
     this._updates.entities = {};
   }
 
+  private findAndTransferUpdatedEntity(entityUpdateData: SceneStateEntity, entityName: string) {
+    // Ignore if target scene is not the current scene, already teleported?
+    if(entityUpdateData['prpg.teleportable']?.teleportTo && entityUpdateData['prpg.teleportable']?.teleportTo?.sceneName !== this.scene?.name) {
+      return
+    }
+
+    if(!this.scene?.engine?.scenes) {
+      this.logger.error(`[applyUpdates][${this.gameOptions.playerNumber}] No scenes found in engine!`);
+      return;
+    }
+
+    const entityToUpdate = findEntityByNameInMapScenes(this.gameOptions, entityName);
+
+    if(entityToUpdate) {
+      this.logger.warn(`[applyUpdates][${this.gameOptions.playerNumber}] Entity ${entityName} not found in map ${this.scene?.name}, found in other map, transferring...`);
+      this.scene.transfer(entityToUpdate);          
+    }
+
+    return entityToUpdate;
+  }
+
   public applyUpdates(updates: Readonly<SceneUpdates>) {
+
+    if(!this.scene?.isCurrentScene()) {
+      this.logger.warn(`[applyUpdates][${this.gameOptions.playerNumber}] Scene ${this.scene?.name} is not current scene`);
+      // return;
+    }
+
     for (const entityName in updates.entities) {
       const entityUpdateData = updates.entities[entityName];
       if(entityUpdateData === undefined) {
@@ -133,23 +163,8 @@ export class PrpgMultiplayerSystem extends System implements MultiplayerSyncable
 
       // If entity doesn't exist in scene, try to find it in other scenes
       // if(!entityToUpdate) {
-
-      //   // Ignore if target scene is not the current scene, already teleported?
-      //   if(entityUpdateData['prpg.teleportable']?.teleportTo && entityUpdateData['prpg.teleportable']?.teleportTo?.sceneName !== this.scene?.name) {
-      //     continue;
-      //   }
-
-      //   if(!this.scene?.engine?.scenes) {
-      //     this.logger.error(`[applyUpdates][${this.gameOptions.playerNumber}] No scenes found in engine!`);
-      //     continue;
-      //   }
-
-      //   entityToUpdate = findEntityByNameInMapScenes(this.gameOptions, entityName);
-
-      //   if(entityToUpdate) {
-      //     this.logger.warn(`[applyUpdates][${this.gameOptions.playerNumber}] Entity ${entityName} not found in map ${this.scene?.name}, found in other map, transferring...`);
-      //     this.scene.transfer(entityToUpdate);          
-      //   }
+      //   this.logger.warn(`[applyUpdates][${this.gameOptions.playerNumber}] Entity ${entityName} not found in map ${this.scene?.name}, try to find it in another scene...`);
+      //   entityToUpdate = this.findAndTransferUpdatedEntity(entityUpdateData, entityName);
       // }
 
       if(!entityToUpdate) {

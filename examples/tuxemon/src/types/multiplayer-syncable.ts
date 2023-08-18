@@ -1,4 +1,4 @@
-import { MultiplayerSyncDirection } from ".";
+import type { MultiplayerSyncDirection } from ".";
 
 /**
  * Interface for classes that support deserialization of data for network exchange in a multiplayer scenario.

@@ -38,7 +38,7 @@ PrpgMapComponent, MapScene> {
      * Init properties defined in tiled map
      */
     private _initProperties(tiledMap: PrpgMapComponent) {
-      const tiledObjectGroups = tiledMap.map.data.getExcaliburObjects();
+      const tiledObjectGroups = tiledMap.map.data.getObjects();
       if (tiledObjectGroups.length > 0) {
         
         for (const tiledObjectGroup of tiledObjectGroups) {

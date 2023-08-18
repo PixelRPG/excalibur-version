@@ -88,10 +88,10 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<G
             }
         }
         super({...defaults, ...engineOptions});
-        this._state = this.initState(initialState);
+        this._state = this.initState (initialState);
     }
 
-    collectStates() {
+    private collectStates() {
         for (const name in this.scenes) {
             const scene = this.scenes[name] as Scene & MultiplayerSyncableScene;
             const sync = syncable(scene.multiplayerSystem?.syncDirection, MultiplayerSyncDirection.OUT)
@@ -106,7 +106,7 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<G
         }
     }
 
-    collectUpdates() {
+    private collectUpdates() {
         for (const name in this.scenes) {
             const scene = this.scenes[name] as Scene & MultiplayerSyncableScene;
             const sync = syncable(scene.multiplayerSystem?.syncDirection, MultiplayerSyncDirection.OUT);
@@ -122,7 +122,7 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<G
         }
     }
 
-    getStatesScenes() {
+    private getStatesScenes() {
         const scenes: GameState['scenes'] = {};
         for (const name in this.scenes) {
             const scene = this.scenes[name] as Scene & MultiplayerSyncableScene;
@@ -133,7 +133,20 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<G
         return scenes
     }
 
-    getUpdatesScenes() {
+    private initMapScenes() {
+        for (const name in this.scenes) {
+            const scene = this.scenes[name] as MapScene;
+            scene._initialize(this);
+        }
+    }
+
+    private initState(initialState: GameUpdates = {}): GameState {
+        this._state = {...this._state, ...initialState};
+        this._state.scenes = this.getStatesScenes()
+        return this._state;
+    }
+
+    public getUpdatesScenes() {
         const scenes: GameUpdates['scenes'] = {};
         for (const name in this.scenes) {
             const scene = this.scenes[name] as Scene & MultiplayerSyncableScene;
@@ -142,12 +155,6 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<G
             }
         }
         return scenes
-    }
-
-    initState(initialState: GameUpdates = {}): GameState {
-        this._state = {...this._state, ...initialState};
-        this._state.scenes = this.getStatesScenes()
-        return this._state;
     }
 
     /**
@@ -210,7 +217,8 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<G
         const mapNames = Object.keys(resources.maps);
         for (const mapName of mapNames) {
           if (resources.maps[mapName]) {
-            this.addScene(mapName, new MapScene(this.gameOptions, mapName, resources.maps[mapName]));
+            const scene = new MapScene(this.gameOptions, mapName, resources.maps[mapName]);
+            this.addScene(mapName, scene);
           }
         }
 
@@ -275,6 +283,9 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<G
         loader.backgroundColor = Color.Black.toString();
 
         await super.start(loader);
+
+        // Initialize the scene by hand, we need this to initialize the multiplayer system
+        this.initMapScenes();
     }
 
     /**
@@ -301,7 +312,7 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<G
     }
 
     /**
-     * Emit a message to the other players, e.g. to ask for a full state on a teleport
+     * Emit a message to the other players
      * @param info
      */
     public emitMultiplayerMessage<I = any>(info: MultiplayerMessageInfo<I>) {
@@ -310,7 +321,7 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<G
     }
 
     /**
-     * Emit a message to the other players, e.g. to ask for a full state on a teleport
+     * Emit a "ask other player for full state" message
      * @param info
      */
     public emitMultiplayerAskForFullStateMessage(info: MultiplayerMessageInfo<undefined>) {
@@ -337,11 +348,17 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<G
 
    protected applySceneUpdates(scenes: GameState['scenes']) {
         for (const name in scenes) {
-            const updatedScene = scenes[name];
-            const myScene = this.scenes[name] as Scene & MultiplayerSyncableScene;
-            if(updatedScene && myScene.multiplayerSystem && syncable(myScene.multiplayerSystem?.syncDirection, MultiplayerSyncDirection.IN)) {
-                myScene.multiplayerSystem.applyUpdates(updatedScene);
-            } else if(!myScene) {
+            const sceneUpdates = scenes[name];
+            const myScene = this.scenes[name] as MapScene;
+
+            if(!sceneUpdates) {
+                this.logger.warn(`[applyUpdates][${this.gameOptions.playerNumber}] Scene ${name} has no updates, ignoring`);
+                continue;
+            }
+
+            if(myScene.multiplayerSystem && syncable(myScene.multiplayerSystem.syncDirection, MultiplayerSyncDirection.IN)) {
+                myScene.multiplayerSystem.applyUpdates(sceneUpdates);
+            } else {
                 this.logger.warn(`Scene ${name} is not syncable!`);
             }
         }

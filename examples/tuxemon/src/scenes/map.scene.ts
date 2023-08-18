@@ -85,7 +85,9 @@ export class MapScene extends Scene implements MultiplayerSyncableScene {
     this.world.add(new PrpgCharacterSystem());
     this.world.add(new PrpgPlayerSystem(this.gameOptions));
     this.world.add(new PrpgTeleportSystem(this.gameOptions));
-    this.world.add(new PrpgMultiplayerSystem(this.gameOptions));
+  
+    this.multiplayerSystem = new PrpgMultiplayerSystem(this.gameOptions);
+    this.world.add(this.multiplayerSystem);
   }
 
   public getEntityByName(name: string) {
