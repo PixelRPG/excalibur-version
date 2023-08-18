@@ -20,7 +20,7 @@
   "author": "Pascal Garber <pascal@artandcode.studio>",
   "license": "GPL-3.0-or-later",
   "dependencies": {
-    "@excaliburjs/dev-tools": "^0.27.1",
+    "@excaliburjs/dev-tools": "^0.28.0",
     "@excaliburjs/plugin-aseprite": "workspace:^",
     "@excaliburjs/plugin-tiled": "workspace:^",
     "@msgpack/msgpack": "^3.0.0-beta2",
@@ -29,7 +29,7 @@
   "devDependencies": {
     "@pixelrpg/esbuild": "workspace:^",
     "barreler": "^0.0.5",
-    "esbuild": "^0.18.19",
+    "esbuild": "^0.19.2",
     "rimraf": "^5.0.1",
     "typescript": "^5.1.6"
   }
