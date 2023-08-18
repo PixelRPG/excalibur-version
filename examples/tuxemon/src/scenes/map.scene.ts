@@ -6,7 +6,7 @@ import { PrpgPlayerActor } from '../actors';
 import { PrpgMapComponent, PrpgPlayerComponent } from '../components';
 import { findEntityByNameFromScene } from '../utilities';
 
-import { PrpgComponentType, PlayerActorState, MultiplayerSyncableScene } from '../types';
+import { PrpgComponentType, MultiplayerSyncableScene } from '../types';
 import type { GameOptions } from '../types';
 
 
@@ -88,6 +88,15 @@ export class MapScene extends Scene implements MultiplayerSyncableScene {
   
     this.multiplayerSystem = new PrpgMultiplayerSystem(this.gameOptions);
     this.world.add(this.multiplayerSystem);
+  }
+
+  public onActivate() {
+    const playerSystem = this.world.systemManager.get(PrpgPlayerSystem);
+    if(!playerSystem) {
+      throw new Error(`Player system not found!`);
+    }
+
+    playerSystem.initCameraForPlayer();
   }
 
   public getEntityByName(name: string) {

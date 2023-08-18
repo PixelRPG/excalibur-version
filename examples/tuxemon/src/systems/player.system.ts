@@ -42,7 +42,7 @@ export class PrpgPlayerSystem extends System<
   private scene?: MapScene;
   private logger = Logger.getInstance();
 
-  constructor(readonly options: GameOptions) {
+  constructor(readonly gameOptions: GameOptions) {
     super();
   }
 
@@ -85,7 +85,7 @@ export class PrpgPlayerSystem extends System<
       return;
     }
 
-    if(player.playerNumber === this.options.playerNumber) {
+    if(player.playerNumber === this.gameOptions.playerNumber) {
       this.scene?.camera.strategy.lockToActor(entity);
     }    
   }
@@ -96,7 +96,7 @@ export class PrpgPlayerSystem extends System<
       this.logger.error('PlayerComponent for player input not found!');
       return;
     }
-    if (player.playerNumber !== this.options.playerNumber) {
+    if (player.playerNumber !== this.gameOptions.playerNumber) {
       // Ignore input for other players
       return;
     }
@@ -143,7 +143,7 @@ export class PrpgPlayerSystem extends System<
       this.scene.engine.toggleDebug();
     }
 
-    if(this.options.playerNumber === 1) {
+    if(this.gameOptions.playerNumber === 1) {
       if (
         keyboard.isHeld(Keys.Right) ||
         pad1.isButtonHeld(Buttons.DpadRight)
@@ -178,7 +178,7 @@ export class PrpgPlayerSystem extends System<
       }
     }
 
-    if(this.options.playerNumber === 2) {
+    if(this.gameOptions.playerNumber === 2) {
       if (
         keyboard.isHeld(Keys.D) ||
         pad2.isButtonHeld(Buttons.DpadRight)
@@ -215,7 +215,7 @@ export class PrpgPlayerSystem extends System<
     }
 
 
-    if(this.options.playerNumber === 3) {
+    if(this.gameOptions.playerNumber === 3) {
       if (
         keyboard.isHeld(Keys.Numpad3) ||
         pad3.isButtonHeld(Buttons.DpadRight)
@@ -254,8 +254,11 @@ export class PrpgPlayerSystem extends System<
     body.setVel(velX, velY);
   }
 
-  public initialize(scene: MapScene) {
-    this.scene = scene;
+  public initCameraForPlayer() {
+    if(!this.scene) {
+      this.logger.error('Current scene not found!');
+      return;
+    }
 
     const playerQuery =
       this.scene.world.queryManager.createQuery<PrpgPlayerComponent>([
@@ -268,6 +271,10 @@ export class PrpgPlayerSystem extends System<
     }
 
     this._limitCameraBoundsToMap();
+  }
+
+  public initialize(scene: MapScene) {
+    this.scene = scene;
   }
 
   public update(entities: PrpgPlayerActor[], delta: number) {
