@@ -1,0 +1,10 @@
+
+{
+    "charset": " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ¡¢£¤¥¦§¨ª«¬¯°±²³´µ¶·¸¹º»¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ",
+    "caseInsensitive": true,
+    "spacing": 0,
+    "rows": 10,
+    "columns": 19,
+    "spriteWidth": 5,
+    "spriteHeight": 10
+}

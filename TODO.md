@@ -1,8 +1,16 @@
 # TODO
+
+## General
+ * Make use of `game.screen.applyResolutionAndViewport()`?
+ * Implement a blueprint to create different entities with components
 ## Multiplayer
- * Sync created / removed Entities
- * Transmit the full state entire component on relevant events.
  * Implement a consistent randomizer across all players, for example, using a shared game state (e.g., game time calculated based on the start time of the first player or a game ID).
+
+## Menu
+* Implement a MenuRenderSystem and make use of the MenuComponent and MenuItemComponent
+* Make use of the blueprint to load a menu from json
+* Make use of the ark sprite font(s)
+* Control the menu with the ControllableComponent and the InputSystem
 
 Examples:
 
@@ -20,9 +28,9 @@ class Randomizer {
     }
 }
 
-// Instanziieren Sie den Zufallszahlengenerator mit der aktuellen Zeit als Seed
+// Instantiate the random number generator with the current time as the seed
 const randomizer = new Randomizer();
 
-// Generieren Sie eine Zufallszahl
+// Generate a random number
 const randomNumber = randomizer.next();
 ```
