@@ -1,22 +1,22 @@
-import { CharacterState, CharacterUpdates, CharacterArgs, PlayerState, PlayerUpdates, BodyState, BodyUpdates, TeleportableState, TeleportableUpdates } from '.';
+import { CharacterComponentState, CharacterComponentUpdates, CharacterComponentArgs, PlayerComponentState, PlayerComponentUpdates, BodyComponentState, BodyComponentUpdates, TeleportableComponentState, TeleportableComponentUpdates } from '.';
 
 export interface PlayerActorState {
-    player?: PlayerState;
-    character?: CharacterState;
-    body?: BodyState;
-    teleportable?: TeleportableState;
+    player?: PlayerComponentState;
+    character?: CharacterComponentState;
+    body?: BodyComponentState;
+    teleportable?: TeleportableComponentState;
     name: string
 }
 
 export interface PlayerActorUpdates {
     // player?: PlayerUpdates;
-    character?: CharacterUpdates;
-    body?: BodyUpdates;
-    teleportable?: TeleportableUpdates;
+    character?: CharacterComponentUpdates;
+    body?: BodyComponentUpdates;
+    teleportable?: TeleportableComponentUpdates;
     name?: string
 }
 
 export interface PlayerActorArgs extends PlayerActorUpdates {
-    player?: PlayerState;
-    character: CharacterArgs;
+    player?: PlayerComponentState;
+    character: CharacterComponentArgs;
 }

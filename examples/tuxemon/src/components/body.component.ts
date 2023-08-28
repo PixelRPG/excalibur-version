@@ -1,7 +1,6 @@
-import { Component, BodyComponent, Vector } from 'excalibur';
-import { MultiplayerSyncComponent } from './multiplayer-sync.component';
-import { PrpgComponentType, BodyState, BodyUpdates, MultiplayerSyncable, MultiplayerSyncDirection } from '../types';
-import { PrpgCharacterComponent } from './character.component';
+import { BodyComponent } from 'excalibur';
+import { PrpgBaseComponent, MultiplayerSyncComponent } from '.';
+import { PrpgComponentType, BodyComponentState, BodyComponentUpdates, MultiplayerSyncable, MultiplayerSyncDirection } from '../types';
 
 const POSITION_THRESHOLD = 1;
 
@@ -11,22 +10,22 @@ const POSITION_THRESHOLD = 1;
  * Body describes in excalibur all the physical properties pos, vel, acc, rotation, angular velocity for the purpose of
  * of physics simulation.
  */
-export class PrpgBodyComponent extends Component<PrpgComponentType.BODY> implements MultiplayerSyncable<BodyState, BodyUpdates> {
+export class PrpgBodyComponent extends PrpgBaseComponent<PrpgComponentType.BODY, BodyComponentState> implements MultiplayerSyncable<BodyComponentState, BodyComponentUpdates> {
   public readonly type = PrpgComponentType.BODY;
 
-  private _state: BodyState = {
+  protected _state: BodyComponentState = {
     pos: {
       x: 0,
       y: 0,
     },
-    z: 0, // TODO
+    z: 0,
     vel: {
       x: 0,
       y: 0,
     },
   };
 
-  private _updates: BodyUpdates = {};
+  protected _updates: BodyComponentUpdates = {};
 
   public resetUpdates(): void {
     if(this.dirty) {
@@ -35,7 +34,7 @@ export class PrpgBodyComponent extends Component<PrpgComponentType.BODY> impleme
   }
 
   public get syncDirection() {
-    const syncDir = this.owner?.get(MultiplayerSyncComponent)?.syncDirection || MultiplayerSyncDirection.NONE;
+    const syncDir = this.owner?.get(MultiplayerSyncComponent)?.state.syncDirection || MultiplayerSyncDirection.NONE;
     return syncDir;
   }
 
@@ -60,16 +59,16 @@ export class PrpgBodyComponent extends Component<PrpgComponentType.BODY> impleme
     return !!this._updates && Object.keys(this._updates).length > 0 && (this.dirtyPos || this.dirtyVel)
   }
 
-  get state(): Readonly<BodyState> {
+  get state(): Readonly<BodyComponentState> {
     return this._state;
   }
 
-  get updates(): Readonly<BodyUpdates> {
+  get updates(): Readonly<BodyComponentUpdates> {
     return this._updates;
   }
 
-  constructor(data: BodyUpdates = {}) {
-    super();
+  constructor(data: BodyComponentUpdates = {}) {
+    super(data);
     this.initState(data);
   }
 
@@ -100,11 +99,16 @@ export class PrpgBodyComponent extends Component<PrpgComponentType.BODY> impleme
   }
 
   set z(z: number) {
-    console.warn('TODO: set z', z);
+    if(z === this.z) {
+      return;
+    }
+    this._state.z = z;
+    this._updates.z = z;
+    this.original.transform.z = z;
   }
 
   get z() {
-    return 0; // TODO
+    return this.original.transform.z;
   }
 
   setVel(x = 0, y = 0) {
@@ -119,7 +123,7 @@ export class PrpgBodyComponent extends Component<PrpgComponentType.BODY> impleme
     }
   }
 
-  initState(initialState: BodyUpdates): BodyState {
+  initState(initialState: BodyComponentUpdates): BodyComponentState {
     this._state = { ...this._state, ...initialState };
     return this._state;
   }
@@ -135,7 +139,7 @@ export class PrpgBodyComponent extends Component<PrpgComponentType.BODY> impleme
     let hasChanged = false;
 
     if(z !== this._state.z) {
-      this._state ||= {} as BodyState;
+      this._state ||= {} as BodyComponentState;
       this._state.z = z;
       hasChanged = true;
     }
@@ -157,21 +161,21 @@ export class PrpgBodyComponent extends Component<PrpgComponentType.BODY> impleme
 
       // Only update if the change is significant
       if(diffX >= POSITION_THRESHOLD) {
-        this._state.pos ||= {} as BodyState['pos'];
+        this._state.pos ||= {} as BodyComponentState['pos'];
         this._state.pos.x = x;
         hasChanged = true;
       }
 
       // Only update if the change is significant
       if(diffY >= POSITION_THRESHOLD) {
-        this._state.pos ||= {} as BodyState['pos'];
+        this._state.pos ||= {} as BodyComponentState['pos'];
         this._state.pos.y = y;
         hasChanged = true;
       }
     }
 
     if(hasChanged && sendUpdates) {
-      this._updates.pos ||= {} as BodyState['pos'];
+      this._updates.pos ||= {} as BodyComponentState['pos'];
       this._updates.pos.x = x;
       this._updates.pos.y = y;
       this._updates.z = z;
@@ -199,7 +203,7 @@ export class PrpgBodyComponent extends Component<PrpgComponentType.BODY> impleme
 
     // Do not send updates for incoming updates back
     if(hasChanged && sendUpdates) {
-      this._updates.vel ||= {} as BodyState['vel'];
+      this._updates.vel ||= {} as BodyComponentState['vel'];
       this._updates.vel.x = x;
       this._updates.vel.y = y;
     }
@@ -215,7 +219,7 @@ export class PrpgBodyComponent extends Component<PrpgComponentType.BODY> impleme
     // TODO this._state.pos.z = this.pos.z;
   }
 
-  public applyUpdates(data: BodyUpdates) {
+  public applyUpdates(data: BodyComponentUpdates) {
     if(!data) {
       return;
     }
@@ -238,8 +242,9 @@ export class PrpgBodyComponent extends Component<PrpgComponentType.BODY> impleme
       }
       this.syncStateVel(false)
     }
+
+    if(data.z !== undefined) {
+      this.original.transform.z = data.z;
+    }
   }
 }
-
-
-

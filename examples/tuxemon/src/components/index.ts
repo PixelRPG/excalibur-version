@@ -1,3 +1,4 @@
+export { PrpgBaseComponent } from './_base.component';
 export { PrpgActionComponent } from './action.component';
 export { PrpgBodyComponent } from './body.component';
 export { PrpgCharacterComponent } from './character.component';

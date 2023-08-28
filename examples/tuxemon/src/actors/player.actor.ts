@@ -1,6 +1,6 @@
 import { Actor, ActorArgs, vec, CollisionType, Logger } from 'excalibur';
 import { PrpgCharacterComponent, PrpgPlayerComponent, PrpgTeleportableComponent, PrpgBodyComponent, MultiplayerSyncComponent, PrpgControllableComponent } from '../components';
-import { PlayerState, PlayerActorState, GameOptions, MultiplayerSyncable, PlayerActorArgs, PlayerActorUpdates, TeleportableState, MultiplayerSyncDirection, TeleportAnimation } from '../types';
+import { PlayerComponentState, GameOptions, PlayerActorArgs, TeleportableComponentState, MultiplayerSyncDirection, TeleportAnimation } from '../types';
 
 const DEFAULT_ACTOR_STATE: Partial<ActorArgs> = {
   width: 12,
@@ -9,7 +9,6 @@ const DEFAULT_ACTOR_STATE: Partial<ActorArgs> = {
   collisionType: CollisionType.Active
 };
 
-// TODO remove MultiplayerSyncable
 export class PrpgPlayerActor extends Actor {
 
   get player() {
@@ -29,20 +28,25 @@ export class PrpgPlayerActor extends Actor {
   }
 
   private constructor(private readonly gameOptions: GameOptions, actor: ActorArgs, initialState: PlayerActorArgs) {
-    initialState.player ||= {} as PlayerState;
+    initialState.player ||= {} as PlayerComponentState;
     initialState.player.playerNumber ||= gameOptions.playerNumber;
     const isCurrentPlayer = gameOptions.playerNumber === initialState.player.playerNumber;
     // If this is the current player, follow the teleportable
-    initialState.teleportable ||= {} as TeleportableState;
+    initialState.teleportable ||= {} as TeleportableComponentState;
     initialState.name ||= actor.name || `player-${initialState.player.playerNumber}`;
     actor.name ||= initialState.name;
 
     super({...DEFAULT_ACTOR_STATE, ...actor});
      
-    this.addComponent(new MultiplayerSyncComponent(isCurrentPlayer ? MultiplayerSyncDirection.OUT : MultiplayerSyncDirection.IN));
+    this.addComponent(new MultiplayerSyncComponent({
+      syncDirection: isCurrentPlayer ? MultiplayerSyncDirection.OUT : MultiplayerSyncDirection.IN,
+    }));
     this.addComponent(new PrpgBodyComponent(initialState.body))
     this.addComponent(new PrpgCharacterComponent(initialState.character));
-    this.addComponent(new PrpgPlayerComponent(initialState.player, isCurrentPlayer));
+    this.addComponent(new PrpgPlayerComponent({
+      playerNumber: initialState.player?.playerNumber,
+      isCurrentPlayer
+    }));
 
     this.addComponent(new PrpgTeleportableComponent({
       ...initialState.teleportable,

@@ -1,9 +1,9 @@
-import type { BodyUpdates, CharacterUpdates, PlayerUpdates, TeleportableUpdates } from '.';
+import type { BodyComponentUpdates, CharacterComponentUpdates, PlayerComponentUpdates, TeleportableComponentUpdates } from '.';
 
 export interface SceneStateEntity {
-    "prpg.body"?: BodyUpdates;
-    "prpg.character"?: CharacterUpdates;
-    "prpg.player"?: PlayerUpdates;
-    "prpg.teleportable"?: TeleportableUpdates;
+    "prpg.body"?: BodyComponentUpdates;
+    "prpg.character"?: CharacterComponentUpdates;
+    "prpg.player"?: PlayerComponentUpdates;
+    "prpg.teleportable"?: TeleportableComponentUpdates;
     [componentType: string]: any;
 }

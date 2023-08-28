@@ -16,6 +16,9 @@ const DEFAULT_ARGS: Partial<Teleport> = {
 export class PrpgTeleportActor extends Actor {
   constructor(props: Teleport) {
     super({...DEFAULT_ARGS, ...props});
-    this.addComponent(new PrpgTeleportComponent(props.mapName, props.spawnName));
+    this.addComponent(new PrpgTeleportComponent({
+      mapName: props.mapName,
+      spawnName: props.spawnName,
+    }));
   }
 }

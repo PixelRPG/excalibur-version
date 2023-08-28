@@ -1,8 +1,8 @@
-import type { SpawnPointState } from './index';
+import type { SpawnPointComponentState } from './index';
 
 export interface TeleportMessage {
     from: {
         sceneName: string;
     }
-    to: SpawnPointState;
+    to: SpawnPointComponentState;
 }

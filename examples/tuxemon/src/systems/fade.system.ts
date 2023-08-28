@@ -6,7 +6,7 @@ import {
 import { PrpgFadeScreenComponent } from '../components';
 import { PrpgFadeScreenElement } from '../screen-elements';
 import { MapScene } from '../scenes/map.scene';
-import { FadeScreen, PrpgComponentType } from '../types';
+import { FadeScreenComponentState, PrpgComponentType } from '../types';
 import { FadeScreenEvent } from '../events';
 
 export class PrpgFadeSystem extends System<PrpgFadeScreenComponent> {
@@ -25,7 +25,7 @@ export class PrpgFadeSystem extends System<PrpgFadeScreenComponent> {
     this.scene = scene;
   }
 
-  setFadeScreenComplete(fadeScreen: FadeScreen, fadeScreenElement: PrpgFadeScreenElement) {
+  setFadeScreenComplete(fadeScreen: FadeScreenComponentState, fadeScreenElement: PrpgFadeScreenElement) {
     if(fadeScreen.isOutro) {
       fadeScreenElement.graphics.opacity = 0;
     } else {

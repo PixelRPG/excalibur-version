@@ -1,6 +1,6 @@
 import type { Color } from "excalibur";
 
-export interface FadeScreen {
+export interface FadeScreenComponentState {
     /** Fade speed in ms */
     fadeSpeed: number;
     color: Color;

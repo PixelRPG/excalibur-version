@@ -1,13 +1,15 @@
-import { Component } from 'excalibur';
-import { PrpgComponentType } from '../types';
+import { PrpgBaseComponent } from '.';
+import { PrpgComponentType, ActionComponentState } from '../types';
 
 /**
  * A action component for entities that can call an action, e.g. if selected together with a selectable component.
  */
-export class PrpgActionComponent extends Component<PrpgComponentType.ACTION> {
+export class PrpgActionComponent extends PrpgBaseComponent<PrpgComponentType.ACTION, ActionComponentState> {
   public readonly type = PrpgComponentType.ACTION;
+  protected _state: ActionComponentState;
 
-  constructor(public actionName: string) {
-    super();
+  constructor(public data: ActionComponentState) {
+    super(data);
+    this._state = data;
   }
 }

@@ -1,19 +1,19 @@
 import { Component } from 'excalibur';
 import type { AsepriteResource } from '@excaliburjs/plugin-aseprite';
-import { PrpgBodyComponent, MultiplayerSyncComponent } from '.';
-import { PrpgComponentType, MultiplayerSyncable, CharacterState, CharacterUpdates, CharacterArgs, Direction, MultiplayerSyncDirection } from '../types';
+import { PrpgBaseComponent, PrpgBodyComponent, MultiplayerSyncComponent } from '.';
+import { PrpgComponentType, MultiplayerSyncable, CharacterComponentState, CharacterComponentUpdates, CharacterComponentArgs, Direction, MultiplayerSyncDirection } from '../types';
 
-export class PrpgCharacterComponent extends Component<PrpgComponentType.CHARACTER> implements MultiplayerSyncable<CharacterState, CharacterUpdates> {
+export class PrpgCharacterComponent extends PrpgBaseComponent<PrpgComponentType.CHARACTER, CharacterComponentState> implements MultiplayerSyncable<CharacterComponentState, CharacterComponentUpdates> {
   public readonly type = PrpgComponentType.CHARACTER;
 
-  private _state: CharacterState = {
+  protected _state: CharacterComponentState = {
     direction: Direction.DOWN,
   };
 
-  private _updates: CharacterUpdates = {};
+  protected _updates: CharacterComponentUpdates = {};
 
   public get syncDirection() {
-    return this.owner?.get(MultiplayerSyncComponent)?.syncDirection || MultiplayerSyncDirection.NONE;
+    return this.owner?.get(MultiplayerSyncComponent)?.state.syncDirection || MultiplayerSyncDirection.NONE;
   }
 
   public resetUpdates(): void {
@@ -26,11 +26,11 @@ export class PrpgCharacterComponent extends Component<PrpgComponentType.CHARACTE
     return Object.keys(this._updates).length > 0;
   }
 
-  get state(): Readonly<CharacterState> {
+  get state(): Readonly<CharacterComponentState> {
     return this._state;
   }
 
-  get updates(): Readonly<CharacterUpdates> {
+  get updates(): Readonly<CharacterComponentUpdates> {
     return this._updates;
   }
 
@@ -47,22 +47,22 @@ export class PrpgCharacterComponent extends Component<PrpgComponentType.CHARACTE
     }
   }
 
-  constructor(data: CharacterArgs) {
-    super();
+  constructor(data: CharacterComponentArgs) {
+    super(data);
     this.spriteSheet = data.spriteSheet;
   
-    const initialState: CharacterState = { direction: data.direction || Direction.DOWN};
+    const initialState: CharacterComponentState = { direction: data.direction || Direction.DOWN};
     this.initState(initialState);
   }
 
   dependencies = [PrpgBodyComponent]
 
-  initState(initialState: CharacterUpdates): CharacterState {
+  initState(initialState: CharacterComponentUpdates): CharacterComponentState {
     this._state = { ...this._state, ...initialState };
     return this._state;
   }
 
-  applyUpdates(data: CharacterState) {
+  applyUpdates(data: CharacterComponentState) {
     if(data.direction !== undefined) {
       this.direction = data.direction;
     }

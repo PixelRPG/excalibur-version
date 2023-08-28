@@ -1,22 +1,22 @@
-import { Component } from 'excalibur';
+import { PrpgBaseComponent } from '.'
 import { MultiplayerSyncComponent } from '.';
-import { PrpgComponentType, MultiplayerSyncable, TeleportableState, SpawnPointState, TeleportableArgs, MultiplayerSyncDirection, TeleportableUpdates, TeleportAnimation } from '../types';
+import { PrpgComponentType, MultiplayerSyncable, TeleportableComponentState, SpawnPointComponentState, TeleportableComponentArgs, MultiplayerSyncDirection, TeleportableComponentUpdates, TeleportAnimation } from '../types';
 
 /**
  * Used to get an entity the ability to teleport to a different map
  */
-export class PrpgTeleportableComponent extends Component<PrpgComponentType.TELEPORTABLE> implements MultiplayerSyncable<TeleportableState, TeleportableUpdates> {
+export class PrpgTeleportableComponent extends PrpgBaseComponent<PrpgComponentType.TELEPORTABLE, TeleportableComponentState> implements MultiplayerSyncable<TeleportableComponentState, TeleportableComponentUpdates> {
   public readonly type = PrpgComponentType.TELEPORTABLE;
 
-  private _state: TeleportableState = {
+  protected _state: TeleportableComponentState = {
     isTeleporting: false,
     teleportTo: undefined,
   };
 
-  private _updates: TeleportableUpdates = {};
+  protected _updates: TeleportableComponentUpdates = {};
 
   public get syncDirection() {
-    return this.owner?.get(MultiplayerSyncComponent)?.syncDirection || MultiplayerSyncDirection.NONE;
+    return this.owner?.get(MultiplayerSyncComponent)?.state.syncDirection || MultiplayerSyncDirection.NONE;
   }
 
   public resetUpdates(): void {
@@ -29,11 +29,11 @@ export class PrpgTeleportableComponent extends Component<PrpgComponentType.TELEP
     return Object.keys(this._updates).length > 0;
   }
 
-  get state(): Readonly<TeleportableState> {
+  get state(): Readonly<TeleportableComponentState> {
     return this._state;
   }
 
-  get updates(): Readonly<TeleportableUpdates> {
+  get updates(): Readonly<TeleportableComponentUpdates> {
     return this._updates;
   }
 
@@ -52,7 +52,7 @@ export class PrpgTeleportableComponent extends Component<PrpgComponentType.TELEP
     return this._state.teleportTo;
   }
 
-  set teleportTo(value: SpawnPointState | undefined | null) {
+  set teleportTo(value: SpawnPointComponentState | undefined | null) {
     if(value !== this._state.teleportTo) {
       this._state.teleportTo = value;
       this._updates.teleportTo = value;
@@ -63,15 +63,15 @@ export class PrpgTeleportableComponent extends Component<PrpgComponentType.TELEP
 
   public animation: TeleportAnimation;
 
-  constructor(initialState: TeleportableArgs = {}) {
-    super();
-    this.followTeleport = initialState.followTeleport || false;
-    this.animation = initialState.animation || TeleportAnimation.NONE;
-    this.initState(initialState);
+  constructor(data: TeleportableComponentArgs = {}) {
+    super(data);
+    this.followTeleport = data.followTeleport || false;
+    this.animation = data.animation || TeleportAnimation.NONE;
+    this.initState(data);
   }
 
-  initState(_initialState: TeleportableArgs): TeleportableState {
-    const initialState = {..._initialState};
+  initState(data: TeleportableComponentArgs): TeleportableComponentState {
+    const initialState = {...data};
     delete initialState.followTeleport;
     delete initialState.animation;
   
@@ -81,7 +81,7 @@ export class PrpgTeleportableComponent extends Component<PrpgComponentType.TELEP
     return this._state;
   }
 
-  applyUpdates(data: Readonly<TeleportableUpdates>) {
+  applyUpdates(data: Readonly<TeleportableComponentUpdates>) {
     
     this._state.isTeleporting = data.isTeleporting || false;
     // Ignore follow teleport, it is set on each client separately

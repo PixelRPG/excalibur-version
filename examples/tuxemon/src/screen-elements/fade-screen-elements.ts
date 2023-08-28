@@ -1,6 +1,6 @@
 import { ScreenElement, Color, ActorArgs, CoordPlane, EventEmitter } from 'excalibur';
 import { PrpgFadeScreenComponent } from '../components';
-import type { FadeScreen, PrpgScreenEvents } from '../types';
+import type { FadeScreenComponentState, PrpgScreenEvents } from '../types';
 
 /**
  * 
@@ -12,8 +12,8 @@ export class PrpgFadeScreenElement extends ScreenElement {
 
   public declare events: EventEmitter<PrpgScreenEvents>;
 
-  constructor(public data: Partial<FadeScreen>, actorArgs: ActorArgs = {}) {
-    const defaults: FadeScreen = {
+  constructor(public data: Partial<FadeScreenComponentState>, actorArgs: ActorArgs = {}) {
+    const defaults: FadeScreenComponentState = {
       fadeSpeed: 200,
       color: Color.Black,
       isOutro: false,
@@ -30,7 +30,7 @@ export class PrpgFadeScreenElement extends ScreenElement {
       coordPlane: CoordPlane.Screen,
     };
     super({...actorArgs, ...actorDefaults, ...data });
-    this.addComponent(new PrpgFadeScreenComponent(data as FadeScreen));
+    this.addComponent(new PrpgFadeScreenComponent(data as FadeScreenComponentState));
   
     if(this.data.isOutro) {
       // Outro starts with a black screen and fades to transparent

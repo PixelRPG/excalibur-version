@@ -5,7 +5,7 @@ import { newSpawnPointEntity } from '../entities';
 import { PrpgPlayerActor } from '../actors';
 import { PrpgFadeScreenElement } from '../screen-elements';
 import { MapScene } from '../scenes/map.scene';
-import { PrpgComponentType, SpawnPointType, GameOptions, SpawnPointState, TeleportAnimation, MultiplayerMessageType } from '../types';
+import { PrpgComponentType, SpawnPointType, GameOptions, SpawnPointComponentState, TeleportAnimation, MultiplayerMessageType } from '../types';
 import { stringToDirection } from '../utilities/direction';
 import { PrpgEngine } from '../engine'
 export class PrpgTeleportSystem extends System<
@@ -65,7 +65,7 @@ PrpgTeleportableComponent> {
      * Prepare teleport an entity to a new map.
      * Adds fade screen elements to the current and target map and adds a spawn point to the target map.
      */
-    public prepareTeleport(target: SpawnPointState) {
+    public prepareTeleport(target: SpawnPointComponentState) {
       const teleportableEntity = this.scene?.getEntityByName(target.entityName);
 
       if (!this.scene) {
@@ -106,7 +106,7 @@ PrpgTeleportableComponent> {
         return;
       }
 
-      const spawnPointData: SpawnPointState = {
+      const spawnPointData: SpawnPointComponentState = {
         type: SpawnPointType.TELEPORT,
         x: target.x,
         y: target.y,
@@ -159,7 +159,7 @@ PrpgTeleportableComponent> {
      * If the entity is the current player, the scene will be changed to the target map.
      * Note: This method should be called after {@link PrpgTeleportSystem.prepareTeleport}
      **/
-    public teleport(spawnPoint: SpawnPointState) {
+    public teleport(spawnPoint: SpawnPointComponentState) {
       const teleportableEntity = this.scene?.getEntityByName(spawnPoint.entityName);
 
       if(!teleportableEntity) {
@@ -262,32 +262,32 @@ PrpgTeleportableComponent> {
         return;
       }
 
-      const mapScene = this.scene?.getInstance(teleport.mapName);
+      const mapScene = this.scene?.getInstance(teleport.state.mapName);
       if (!mapScene) {
-        this.logger.warn('Teleport target map not found!', teleport.mapName);
+        this.logger.warn('Teleport target map not found!', teleport.state.mapName);
         return;
       }
 
       const tiledMap = mapScene.getMap();
       if (!tiledMap) {
-        this.logger.warn(`[${this.gameOptions.playerNumber}] Teleport target map "${teleport.mapName}" not found!`);
+        this.logger.warn(`[${this.gameOptions.playerNumber}] Teleport target map "${teleport.state.mapName}" not found!`);
         return;
       }
 
-      const tiledObjectGroups = tiledMap.map.data.getObjects();
+      const tiledObjectGroups = tiledMap.state.map.data.getObjects();
       if (!tiledObjectGroups?.length) {
         this.logger.warn(`[${this.gameOptions.playerNumber}] Map has no objects!`);
         return;
       }
       let spawn: TiledObject | undefined;
       for (const tiledObjectGroup of tiledObjectGroups) {
-        spawn = tiledObjectGroup.getObjectByName(teleport.spawnName);
+        spawn = tiledObjectGroup.getObjectByName(teleport.state.spawnName);
         if (spawn) {
           break;
         }
       }
       if (!spawn) {
-        this.logger.warn(`[${this.gameOptions.playerNumber}] Teleport target spawn point "${teleport.spawnName}" not found!`);
+        this.logger.warn(`[${this.gameOptions.playerNumber}] Teleport target spawn point "${teleport.state.spawnName}" not found!`);
         return;
       }
       const z = spawn.getProperty<number>('zindex')?.value || 0;
@@ -339,7 +339,7 @@ PrpgTeleportableComponent> {
       }
     }
 
-    setPositionBySpawnPoint(spawnPoint: SpawnPointState) {
+    setPositionBySpawnPoint(spawnPoint: SpawnPointComponentState) {
 
       /** Entity which should be moved */
       const targetEntity = this.scene?.getEntityByName(spawnPoint.entityName);

@@ -10,7 +10,7 @@ import { resources } from '../managers/resource.manager';
 
 export class PrpgMapSystem extends System<
 PrpgMapComponent, MapScene> {
-    public readonly types = [PrpgComponentType.TILED_MAP] as const;
+    public readonly types = [PrpgComponentType.MAP] as const;
     public priority = 900;
     public systemType = SystemType.Update;
     private scene?: MapScene;
@@ -30,7 +30,7 @@ PrpgMapComponent, MapScene> {
         this.logger.warn('No tiled map found!');
         return;
       }
-      tiledMap.map.addTiledMapToScene(this.scene);
+      tiledMap.state.map.addTiledMapToScene(this.scene);
       this._initProperties(tiledMap);
     }
 
@@ -38,11 +38,11 @@ PrpgMapComponent, MapScene> {
      * Init properties defined in tiled map
      */
     private _initProperties(tiledMap: PrpgMapComponent) {
-      const tiledObjectGroups = tiledMap.map.data.getObjects();
+      const tiledObjectGroups = tiledMap.state.map.data.getObjects();
       if (tiledObjectGroups.length > 0) {
         
         for (const tiledObjectGroup of tiledObjectGroups) {
-          console.debug(tiledMap.name, tiledObjectGroup);
+          console.debug(tiledMap.state.name, tiledObjectGroup);
           this._initPolyLines(tiledObjectGroup);
           this._initPolygons(tiledObjectGroup);
           this._initTeleports(tiledObjectGroup);

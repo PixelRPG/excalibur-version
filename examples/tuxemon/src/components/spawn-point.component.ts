@@ -1,17 +1,17 @@
-import { Component } from 'excalibur';
-import { PrpgComponentType, SpawnPointState, SpawnPointType, Direction } from '../types';
+import { PrpgBaseComponent } from '.'
+import { PrpgComponentType, SpawnPointComponentState, SpawnPointType, Direction } from '../types';
 
-export class PrpgSpawnPointComponent extends Component<PrpgComponentType.SPAWN_POINT> {
+export class PrpgSpawnPointComponent extends PrpgBaseComponent<PrpgComponentType.SPAWN_POINT, SpawnPointComponentState> {
   public readonly type = PrpgComponentType.SPAWN_POINT;
 
-  data: SpawnPointState;
+  data: SpawnPointComponentState;
 
   constructor(
-    data: Partial<SpawnPointState> & Pick<SpawnPointState, 'sceneName' | 'entityName'>
+    data: Partial<SpawnPointComponentState> & Pick<SpawnPointComponentState, 'sceneName' | 'entityName'>
   ) {
-    super();
+    super(data);
 
-    const defaults: Partial<SpawnPointState> = {
+    const defaults: Partial<SpawnPointComponentState> = {
       type: SpawnPointType.TELEPORT,
       x: 0,
       y: 0,
@@ -19,7 +19,7 @@ export class PrpgSpawnPointComponent extends Component<PrpgComponentType.SPAWN_P
       direction: Direction.DOWN
     };
 
-    this.data = { ...defaults, ...data } as SpawnPointState;
+    this.data = { ...defaults, ...data } as SpawnPointComponentState;
 
   }
 }

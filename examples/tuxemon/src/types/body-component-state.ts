@@ -1,4 +1,4 @@
-export interface BodyState {
+export interface BodyComponentState {
     /** position */
     pos: {
         /** x position on the map */
@@ -19,4 +19,4 @@ export interface BodyState {
     };
 }
 
-export type BodyUpdates = Partial<BodyState>;
+export type BodyComponentUpdates = Partial<BodyComponentState>;

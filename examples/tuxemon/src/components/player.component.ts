@@ -1,29 +1,35 @@
-import { Component } from 'excalibur';
+import { PrpgBaseComponent } from '.'
 import { MultiplayerSyncComponent } from '.';
-import { PrpgComponentType, MultiplayerSyncable, PlayerState, PlayerUpdates, MultiplayerSyncDirection } from '../types';
+import { PrpgComponentType, MultiplayerSyncable, PlayerComponentState, PlayerComponentArgs, PlayerComponentUpdates, MultiplayerSyncDirection } from '../types';
 
-export class PrpgPlayerComponent extends Component<PrpgComponentType.PLAYER> implements MultiplayerSyncable<PlayerState, PlayerUpdates> {
+export class PrpgPlayerComponent extends PrpgBaseComponent<PrpgComponentType.PLAYER, PlayerComponentState> implements MultiplayerSyncable<PlayerComponentState, PlayerComponentUpdates> {
   public readonly type = PrpgComponentType.PLAYER;
 
-  private _state: PlayerState = {
+  public isCurrentPlayer = false;
+
+  protected _state: PlayerComponentState = {
     playerNumber: -1,
   };
 
-  private _updates: PlayerUpdates = {};
+  protected _updates: PlayerComponentUpdates = {};
 
-  constructor(protected initialState: PlayerState, public isCurrentPlayer: boolean) {
-    super();
-    this.initState(initialState);
+  constructor(data: PlayerComponentArgs) {
+    const state = {
+      playerNumber: data.playerNumber,
+    }
+    super(state);
+    this.isCurrentPlayer = data.isCurrentPlayer;
+    this.initState(state);
   }
 
-  initState(initialState: Partial<PlayerState>): PlayerState {
+  initState(initialState: Partial<PlayerComponentState>): PlayerComponentState {
     this._state = {...this._state, ...initialState};
     console.debug(`PrpgPlayerComponent initState:`, this._state);
     return this._state;
   }
 
   public get syncDirection() {
-    return this.owner?.get(MultiplayerSyncComponent)?.syncDirection || MultiplayerSyncDirection.NONE;
+    return this.owner?.get(MultiplayerSyncComponent)?.state.syncDirection || MultiplayerSyncDirection.NONE;
   }
 
   public resetUpdates(): void {
@@ -36,11 +42,11 @@ export class PrpgPlayerComponent extends Component<PrpgComponentType.PLAYER> imp
     return Object.keys(this._updates).length > 0;
   }
 
-  get state(): Readonly<PlayerState> {
+  get state(): Readonly<PlayerComponentState> {
     return this._state;
   }
 
-  get updates(): Readonly<Partial<PlayerState>> {
+  get updates(): Readonly<Partial<PlayerComponentState>> {
     return this._state;
   }
 
@@ -52,7 +58,7 @@ export class PrpgPlayerComponent extends Component<PrpgComponentType.PLAYER> imp
     this._state.playerNumber = playerNumber;
   }
 
-  applyUpdates(data: PlayerState) {
+  applyUpdates(data: PlayerComponentState) {
     if(Object.keys(data).length === 0) return;
     this._state = {...this._state, ...data};
   }

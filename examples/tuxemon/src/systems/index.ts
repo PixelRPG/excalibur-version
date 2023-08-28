@@ -1,3 +1,4 @@
+export { BlueprintSystem } from './blueprint.system';
 export { PrpgBodySystem } from './body.system';
 export { PrpgCharacterSystem } from './character.system';
 export { PrpgFadeSystem } from './fade.system';

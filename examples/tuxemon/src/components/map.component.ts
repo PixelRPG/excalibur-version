@@ -1,15 +1,15 @@
-import { Component } from 'excalibur';
+import { PrpgBaseComponent } from '.'
 import { TiledMapResource } from '@excaliburjs/plugin-tiled';
-import { PrpgComponentType } from '../types';
+import { PrpgComponentType, MapComponentState } from '../types';
 
 /**
  * A tiled map component
  */
-export class PrpgMapComponent extends Component<PrpgComponentType.TILED_MAP> {
-  public readonly type = PrpgComponentType.TILED_MAP;
+export class PrpgMapComponent extends PrpgBaseComponent<PrpgComponentType.MAP, MapComponentState> {
+  public readonly type = PrpgComponentType.MAP;
 
-  constructor(public map: TiledMapResource, public name: string, public hasStartPoint = false) {
-    super();
+  constructor(data: Partial<MapComponentState> = { hasStartPoint: false }) {
+    super(data);
   }
 }
 

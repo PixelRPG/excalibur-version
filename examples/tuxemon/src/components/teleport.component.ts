@@ -1,14 +1,14 @@
-import { Component } from 'excalibur';
-import { PrpgComponentType } from '../types';
+import { PrpgBaseComponent } from '.'
+import { PrpgComponentType, TeleportComponentState } from '../types';
 
 /**
  * Used to teleport the player to a different map, can pe placed on a map
  */
-export class PrpgTeleportComponent extends Component<PrpgComponentType.TELEPORT> {
+export class PrpgTeleportComponent extends PrpgBaseComponent<PrpgComponentType.TELEPORT, TeleportComponentState> {
   public readonly type = PrpgComponentType.TELEPORT;
 
-  constructor(public mapName: string, public spawnName: string) {
-    super();
+  constructor(data: TeleportComponentState) {
+    super(data);
   }
 }
 

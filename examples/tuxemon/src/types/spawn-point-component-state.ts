@@ -1,8 +1,7 @@
 import type { Direction } from "./direction";
-import type { MapScene } from "../scenes/map.scene";
 import type { SpawnPointType } from "./spawn-point-type";
 
-export interface SpawnPointState {
+export interface SpawnPointComponentState {
     type: SpawnPointType;
     /** x position on the map */
     x: number;

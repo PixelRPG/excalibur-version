@@ -1,12 +1,6 @@
 import type { ActorArgs } from 'excalibur';
+import type { TeleportComponentState } from '.';
 
-export interface Teleport extends Partial<ActorArgs> {
-  /**
-   * Map to teleport to
-   */
-  mapName: string;
-  /**
-   * Destination coordinates of a teleporter
-   */
-  spawnName: string;
+export interface Teleport extends Partial<ActorArgs>, TeleportComponentState {
+  //
 }

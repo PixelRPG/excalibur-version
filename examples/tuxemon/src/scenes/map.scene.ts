@@ -66,7 +66,7 @@ export class MapScene extends Scene implements MultiplayerSyncableScene {
   constructor(private readonly gameOptions: GameOptions, public readonly name: string, private readonly map: TiledMapResource) {
     super();
     this.add(newMapEntity(map, name));
-    this.mapQuery = this.world.queryManager.createQuery([PrpgComponentType.TILED_MAP]);
+    this.mapQuery = this.world.queryManager.createQuery([PrpgComponentType.MAP]);
     this.playerQuery = this.world.queryManager.createQuery<PrpgPlayerComponent>([PrpgComponentType.PLAYER]);
     this.name = name;
 
