@@ -1,11 +1,10 @@
-import { PrpgBaseComponent } from '.'
-import { MultiplayerSyncComponent } from '.';
+import { PrpgBaseComponent, MultiplayerSyncComponent } from '.'
 import { PrpgComponentType, MultiplayerSyncable, TeleportableComponentState, SpawnPointComponentState, TeleportableComponentArgs, MultiplayerSyncDirection, TeleportableComponentUpdates, TeleportAnimation } from '../types';
 
 /**
  * Used to get an entity the ability to teleport to a different map
  */
-export class PrpgTeleportableComponent extends PrpgBaseComponent<PrpgComponentType.TELEPORTABLE, TeleportableComponentState> implements MultiplayerSyncable<TeleportableComponentState, TeleportableComponentUpdates> {
+export class PrpgTeleportableComponent extends PrpgBaseComponent<PrpgComponentType.TELEPORTABLE, TeleportableComponentState, TeleportableComponentArgs> implements MultiplayerSyncable<TeleportableComponentState, TeleportableComponentUpdates> {
   public readonly type = PrpgComponentType.TELEPORTABLE;
 
   protected _state: TeleportableComponentState = {

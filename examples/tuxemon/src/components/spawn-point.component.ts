@@ -1,13 +1,13 @@
 import { PrpgBaseComponent } from '.'
-import { PrpgComponentType, SpawnPointComponentState, SpawnPointType, Direction } from '../types';
+import { PrpgComponentType, SpawnPointComponentState, SpawnPointComponentArgs, SpawnPointType, Direction } from '../types';
 
-export class PrpgSpawnPointComponent extends PrpgBaseComponent<PrpgComponentType.SPAWN_POINT, SpawnPointComponentState> {
+export class PrpgSpawnPointComponent extends PrpgBaseComponent<PrpgComponentType.SPAWN_POINT, SpawnPointComponentState, SpawnPointComponentArgs> {
   public readonly type = PrpgComponentType.SPAWN_POINT;
 
-  data: SpawnPointComponentState;
+  protected _state: SpawnPointComponentState;
 
   constructor(
-    data: Partial<SpawnPointComponentState> & Pick<SpawnPointComponentState, 'sceneName' | 'entityName'>
+    data: SpawnPointComponentArgs
   ) {
     super(data);
 
@@ -19,7 +19,7 @@ export class PrpgSpawnPointComponent extends PrpgBaseComponent<PrpgComponentType
       direction: Direction.DOWN
     };
 
-    this.data = { ...defaults, ...data } as SpawnPointComponentState;
+    this._state = { ...defaults, ...data } as SpawnPointComponentState;
 
   }
 }

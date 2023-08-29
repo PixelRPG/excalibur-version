@@ -1,5 +1,5 @@
-import type { Direction } from "./direction";
-import type { SpawnPointType } from "./spawn-point-type";
+import type { Direction } from "../direction";
+import type { SpawnPointType } from "../spawn-point-type";
 
 export interface SpawnPointComponentState {
     type: SpawnPointType;
@@ -24,3 +24,5 @@ export interface SpawnPointComponentState {
         sceneName: string;
     }
 }
+
+export type SpawnPointComponentArgs = Partial<SpawnPointComponentState> & Pick<SpawnPointComponentState, 'sceneName' | 'entityName'>

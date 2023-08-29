@@ -7,3 +7,5 @@ export interface GameState {
 }
 
 export type GameUpdates = Partial<GameState>;
+
+export type GameArgs = GameUpdates;

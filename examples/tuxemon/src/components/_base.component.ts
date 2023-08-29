@@ -1,19 +1,19 @@
 import { Component } from 'excalibur';
-import { PrpgComponentType } from "../types/component-type";
+import { PrpgComponentType } from "../types";
 
-export abstract class PrpgBaseComponent<T extends PrpgComponentType, S> extends Component<T> {
-    readonly abstract type: T;
-    protected _state: S;
+export abstract class PrpgBaseComponent<TYPE extends PrpgComponentType, STATE, ARGS extends Partial<STATE> = STATE> extends Component<TYPE> {
+    readonly abstract type: TYPE;
+    protected abstract _state: STATE;
 
     /**
      * Contains the full state of the component.
      */
-    get state(): Readonly<S> {
+    get state(): Readonly<STATE> {
         return this._state;
     }
 
-    constructor(data: Partial<S>) {
+    constructor(data: ARGS) {
         super();
-        this._state = data as S;
+        // this._state = data as unknown as STATE; // TODO?
     }
 }

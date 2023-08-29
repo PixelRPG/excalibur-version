@@ -62,7 +62,7 @@ export class BlueprintSystem {
         }
     }
 
-    static createComponents(components: Blueprint['entities']['components']) {
+    static createComponents(components: Blueprint['entityName']) {
         let componentInstances: Component[] = [];
         for (let componentName in components) {
             // @ts-ignore
@@ -76,7 +76,7 @@ export class BlueprintSystem {
     static createEntitiesFromBlueprint(blueprint: Blueprint): Entity[] {
         const entities: Entity[] = [];
         for (let entityName in blueprint.entities) {
-            const data = blueprint.entities[entityName];
+            const data = blueprint[entityName];
             const components = this.createComponents(data);
             const entity = new Entity(components, entityName);
             entities.push(entity);

@@ -1,9 +1,7 @@
+import { PrpgComponentType } from '.';
 export type Blueprint = {
-    entities: {
-        [entityName: string]: {
-            components: {
-                [componentName: string]: any;
-            };
-        };
-    }
+    [entityName: string]: {
+        [K in PrpgComponentType]?: any
+
+    };
 };

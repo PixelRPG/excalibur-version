@@ -3,7 +3,7 @@ import type { AsepriteResource } from '@excaliburjs/plugin-aseprite';
 import { PrpgBaseComponent, PrpgBodyComponent, MultiplayerSyncComponent } from '.';
 import { PrpgComponentType, MultiplayerSyncable, CharacterComponentState, CharacterComponentUpdates, CharacterComponentArgs, Direction, MultiplayerSyncDirection } from '../types';
 
-export class PrpgCharacterComponent extends PrpgBaseComponent<PrpgComponentType.CHARACTER, CharacterComponentState> implements MultiplayerSyncable<CharacterComponentState, CharacterComponentUpdates> {
+export class PrpgCharacterComponent extends PrpgBaseComponent<PrpgComponentType.CHARACTER, CharacterComponentState, CharacterComponentArgs> implements MultiplayerSyncable<CharacterComponentState, CharacterComponentUpdates> {
   public readonly type = PrpgComponentType.CHARACTER;
 
   protected _state: CharacterComponentState = {

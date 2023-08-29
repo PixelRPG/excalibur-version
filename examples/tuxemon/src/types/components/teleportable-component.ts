@@ -1,4 +1,5 @@
-import type { SpawnPointComponentState, TeleportAnimation } from '.';
+import type { SpawnPointComponentState,  } from '.';
+import type { TeleportAnimation } from '../teleport-animation';
 
 export interface TeleportableComponentState {
     /** Is `true` if the entity is currently teleporting */

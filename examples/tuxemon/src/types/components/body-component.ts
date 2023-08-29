@@ -20,3 +20,5 @@ export interface BodyComponentState {
 }
 
 export type BodyComponentUpdates = Partial<BodyComponentState>;
+
+export type BodyComponentArgs = Partial<BodyComponentState>;

@@ -1,6 +1,6 @@
 import { BodyComponent } from 'excalibur';
 import { PrpgBaseComponent, MultiplayerSyncComponent } from '.';
-import { PrpgComponentType, BodyComponentState, BodyComponentUpdates, MultiplayerSyncable, MultiplayerSyncDirection } from '../types';
+import { PrpgComponentType, BodyComponentState, BodyComponentUpdates, BodyComponentArgs, MultiplayerSyncable, MultiplayerSyncDirection } from '../types';
 
 const POSITION_THRESHOLD = 1;
 
@@ -10,7 +10,7 @@ const POSITION_THRESHOLD = 1;
  * Body describes in excalibur all the physical properties pos, vel, acc, rotation, angular velocity for the purpose of
  * of physics simulation.
  */
-export class PrpgBodyComponent extends PrpgBaseComponent<PrpgComponentType.BODY, BodyComponentState> implements MultiplayerSyncable<BodyComponentState, BodyComponentUpdates> {
+export class PrpgBodyComponent extends PrpgBaseComponent<PrpgComponentType.BODY, BodyComponentState, BodyComponentArgs> implements MultiplayerSyncable<BodyComponentState, BodyComponentUpdates> {
   public readonly type = PrpgComponentType.BODY;
 
   protected _state: BodyComponentState = {
@@ -67,7 +67,7 @@ export class PrpgBodyComponent extends PrpgBaseComponent<PrpgComponentType.BODY,
     return this._updates;
   }
 
-  constructor(data: BodyComponentUpdates = {}) {
+  constructor(data: BodyComponentArgs = {}) {
     super(data);
     this.initState(data);
   }

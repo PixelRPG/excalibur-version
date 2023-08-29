@@ -3,3 +3,5 @@ export interface ScreenPositionComponentState {
     y: number;
     z: number;
 }
+
+export type ScreenPositionComponentArgs = Partial<ScreenPositionComponentState>;

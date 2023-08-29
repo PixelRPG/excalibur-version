@@ -10,3 +10,7 @@ export interface FadeScreenComponentState {
     isFading: boolean;
     isComplete: boolean;
 }
+
+export interface FadeScreenComponentArgs extends Partial<FadeScreenComponentState> {
+    //
+}

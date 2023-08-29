@@ -319,18 +319,18 @@ PrpgTeleportableComponent> {
      */
     public updateSpawnPoints(spawnPointEntities: Entity[] = []) {
       for (const spawnPointEntity of spawnPointEntities) {
-        const spawnPoint = spawnPointEntity.get(PrpgSpawnPointComponent)?.data;
+        const spawnPoint = spawnPointEntity.get(PrpgSpawnPointComponent);
 
         if (!spawnPoint) {
           this.logger.error(`[${this.gameOptions.playerNumber}] SpawnPointComponent for spawn point entity not found!`);
           continue;
         }
 
-        this.setPositionBySpawnPoint(spawnPoint);
+        this.setPositionBySpawnPoint(spawnPoint.state);
 
-        const mapScene = this.scene?.getInstance(spawnPoint.sceneName);
+        const mapScene = this.scene?.getInstance(spawnPoint.state.sceneName);
         if (!mapScene) {
-          this.logger.error(`[${this.gameOptions.playerNumber}] Scene ${spawnPoint.sceneName} for spawn point not found!`);
+          this.logger.error(`[${this.gameOptions.playerNumber}] Scene ${spawnPoint.state.sceneName} for spawn point not found!`);
           return;
         }
 
@@ -381,7 +381,7 @@ PrpgTeleportableComponent> {
       const fadeScreenEntities = (this.fadeScreenQuery?.getEntities() || []) as PrpgFadeScreenElement[];
 
       for (const fadeScreenEntity of fadeScreenEntities) {
-        if(!fadeScreenEntity.fadeScreen) {
+        if(!fadeScreenEntity.fadeScreen?.state) {
           continue;
         }
 
@@ -396,7 +396,7 @@ PrpgTeleportableComponent> {
           }
 
           // Fade out is complete, move the player to the new map
-          if (fadeScreen.isComplete && !fadeScreen.isOutro) {
+          if (fadeScreen.state.isComplete && !fadeScreen.state.isOutro) {
             if (teleportable?.isTeleporting) {
               if(!teleportable.teleportTo) {
                 this.logger.error('Teleport target not found!');
@@ -408,7 +408,7 @@ PrpgTeleportableComponent> {
           }
 
           // Teleport is complete
-          if(fadeScreen?.isComplete && fadeScreen?.isOutro) {
+          if(fadeScreen.state.isComplete && fadeScreen.state.isOutro) {
             // If the fade screen is complete or removed, the teleport is finished
             if (teleportable?.isTeleporting) {
               teleportable.isTeleporting = false;

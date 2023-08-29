@@ -2,7 +2,7 @@ import { PrpgBaseComponent } from '.'
 import { MultiplayerSyncComponent } from '.';
 import { PrpgComponentType, MultiplayerSyncable, PlayerComponentState, PlayerComponentArgs, PlayerComponentUpdates, MultiplayerSyncDirection } from '../types';
 
-export class PrpgPlayerComponent extends PrpgBaseComponent<PrpgComponentType.PLAYER, PlayerComponentState> implements MultiplayerSyncable<PlayerComponentState, PlayerComponentUpdates> {
+export class PrpgPlayerComponent extends PrpgBaseComponent<PrpgComponentType.PLAYER, PlayerComponentState, PlayerComponentArgs> implements MultiplayerSyncable<PlayerComponentState, PlayerComponentUpdates> {
   public readonly type = PrpgComponentType.PLAYER;
 
   public isCurrentPlayer = false;
@@ -14,10 +14,10 @@ export class PrpgPlayerComponent extends PrpgBaseComponent<PrpgComponentType.PLA
   protected _updates: PlayerComponentUpdates = {};
 
   constructor(data: PlayerComponentArgs) {
-    const state = {
+    super(data);
+    const state: PlayerComponentState = {
       playerNumber: data.playerNumber,
     }
-    super(state);
     this.isCurrentPlayer = data.isCurrentPlayer;
     this.initState(state);
   }

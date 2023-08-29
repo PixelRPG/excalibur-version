@@ -5,3 +5,5 @@ export interface MapComponentState {
     name: string;
     hasStartPoint: boolean;
 }
+
+export type MapComponentArgs = Partial<MapComponentState> & Pick<MapComponentState, 'map' | 'name'>;

@@ -25,8 +25,8 @@ export class PrpgFadeSystem extends System<PrpgFadeScreenComponent> {
     this.scene = scene;
   }
 
-  setFadeScreenComplete(fadeScreen: FadeScreenComponentState, fadeScreenElement: PrpgFadeScreenElement) {
-    if(fadeScreen.isOutro) {
+  setFadeScreenComplete(fadeScreen: PrpgFadeScreenComponent, fadeScreenElement: PrpgFadeScreenElement) {
+    if(fadeScreen.state.isOutro) {
       fadeScreenElement.graphics.opacity = 0;
     } else {
       fadeScreenElement.graphics.opacity = 1;
@@ -34,29 +34,29 @@ export class PrpgFadeSystem extends System<PrpgFadeScreenComponent> {
 
     fadeScreen.isComplete = true;
     fadeScreen.isFading = false;
-    fadeScreenElement.emit('complete', new FadeScreenEvent(fadeScreenElement, fadeScreen));
+    fadeScreenElement.emit('complete', new FadeScreenEvent(fadeScreenElement, fadeScreen.state));
   }
    
   public update(fadeScreenElements: PrpgFadeScreenElement[], delta: number) {
     for (const fadeScreenElement of fadeScreenElements) {
-      const fadeScreen = fadeScreenElement.get(PrpgFadeScreenComponent)?.data;
+      const fadeScreen = fadeScreenElement.get(PrpgFadeScreenComponent);
       if (!fadeScreen) {
         continue;
       }
 
-      if(fadeScreen.isComplete) {
-        if(fadeScreen.isComplete) {
+      if(fadeScreen.state.isComplete) {
+        if(fadeScreen.state.isComplete) {
           this.scene?.world.remove(fadeScreenElement, false);
         }
         continue;
       }
 
       // WORKAROUND: The fade screen is sometimes not detected as complete
-      if(fadeScreen.isOutro && fadeScreen.isFading && fadeScreenElement.graphics.opacity <= 0) {
+      if(fadeScreen.state.isOutro && fadeScreen.state.isFading && fadeScreenElement.graphics.opacity <= 0) {
         this.setFadeScreenComplete(fadeScreen, fadeScreenElement);
       }
 
-      if(!fadeScreen.isOutro && fadeScreen.isFading && fadeScreenElement.graphics.opacity >= 1) {
+      if(!fadeScreen.state.isOutro && fadeScreen.state.isFading && fadeScreenElement.graphics.opacity >= 1) {
         this.setFadeScreenComplete(fadeScreen, fadeScreenElement);
       }
 
@@ -66,14 +66,14 @@ export class PrpgFadeSystem extends System<PrpgFadeScreenComponent> {
         fadeScreenElement.graphics.graphics[name].height = this.scene?.engine.canvasHeight || 0;
       }
 
-      if(!fadeScreen.isFading) {
-        if(fadeScreen.isOutro) {
-          fadeScreenElement.actions.fade(0, fadeScreen.fadeSpeed).toPromise().then(() => {
+      if(!fadeScreen.state.isFading) {
+        if(fadeScreen.state.isOutro) {
+          fadeScreenElement.actions.fade(0, fadeScreen.state.fadeSpeed).toPromise().then(() => {
             this.setFadeScreenComplete(fadeScreen, fadeScreenElement);
           });
           
         } else {
-          fadeScreenElement.actions.fade(1, fadeScreen.fadeSpeed).toPromise().then(() => {
+          fadeScreenElement.actions.fade(1, fadeScreen.state.fadeSpeed).toPromise().then(() => {
             this.setFadeScreenComplete(fadeScreen, fadeScreenElement);
           });
         }
