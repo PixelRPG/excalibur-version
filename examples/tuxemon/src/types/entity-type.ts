@@ -1,0 +1,1 @@
+export type EntityType = "actor" | "entity" | "screenElement";

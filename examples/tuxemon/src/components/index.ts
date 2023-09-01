@@ -8,7 +8,7 @@ export { PrpgMapComponent } from './map.component';
 export { PrpgMenuItemComponent } from './menu-item.component';
 export { PrpgMenuVisibleComponent } from './menu-visible.component';
 export { PrpgMenuComponent } from './menu.component';
-export { MultiplayerSyncComponent } from './multiplayer-sync.component';
+export { PrpgMultiplayerSyncComponent } from './multiplayer-sync.component';
 export { PrpgPlayerComponent } from './player.component';
 export { PrpgScreenPositionComponent } from './screen-position.component';
 export { PrpgSelectableComponent } from './selectable.component';

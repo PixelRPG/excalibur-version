@@ -7,10 +7,8 @@ export class PrpgSpawnPointComponent extends PrpgBaseComponent<PrpgComponentType
   protected _state: SpawnPointComponentState;
 
   constructor(
-    data: SpawnPointComponentArgs
+    data?: SpawnPointComponentArgs
   ) {
-    super(data);
-
     const defaults: Partial<SpawnPointComponentState> = {
       type: SpawnPointType.TELEPORT,
       x: 0,
@@ -19,8 +17,9 @@ export class PrpgSpawnPointComponent extends PrpgBaseComponent<PrpgComponentType
       direction: Direction.DOWN
     };
 
-    this._state = { ...defaults, ...data } as SpawnPointComponentState;
-
+    const state = { ...defaults, ...data } as SpawnPointComponentState;
+    super(state);
+    this._state = state;
   }
 }
 

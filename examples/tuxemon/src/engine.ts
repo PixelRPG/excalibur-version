@@ -11,7 +11,9 @@ import { MapScene } from './scenes/map.scene';
 
 import { GameOptions, MultiplayerSyncable, GameState, GameUpdates, MultiplayerSyncableScene, MultiplayerSyncDirection, PrpgEngineEvents, MultiplayerMessageInfo, TeleportMessage } from './types';
 import { resources } from './managers/index';
+import { BlueprintService } from './services/index'
 import { GameStateFullEvent, GameStateUpdateEvent, GameMessageEvent } from './events/index';
+import { PrpgMenuComponent } from './components'
 
 export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<GameState, GameUpdates> {
 
@@ -272,7 +274,30 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<G
         });
 
         this.addMapScenes();
-        this.goToScene('player_house_bedroom.tmx');
+        const startMapName = 'player_house_bedroom.tmx'; // TODO: Add and find start map by map property
+        const startMap = this.getMapScene(startMapName);
+        this.goToScene(startMapName); // TODO: Start on title screen
+
+        // TODO: Move this to map scene?
+        const menuEntities = BlueprintService.getInstance().createEntitiesFromBlueprint(resources.blueprints.gameMenu);
+        this.logger.debug('[Main] menuEntities', menuEntities);
+        for (const entityName in menuEntities) {
+            const menuEntity = menuEntities[entityName];
+            if(!menuEntity) {
+                throw new Error(`Entity ${entityName} not found`);
+            }
+            const menuItemEntities = menuEntity.get(PrpgMenuComponent)?.items || {};
+            for (const key in menuItemEntities) {
+                if (Object.prototype.hasOwnProperty.call(menuItemEntities, key)) {
+                    const menuItemEntity = menuItemEntities[key];
+                    if(!menuItemEntity) {
+                        throw new Error(`Entity ${key} not found`);
+                    }
+                    startMap?.add(menuItemEntity);
+                }
+            }
+            startMap?.add(menuEntity);
+        }
 
         this.logger.debug('[Main] pixelRatio', this.pixelRatio);
         this.logger.debug('[Main] isHiDpi', this.isHiDpi);

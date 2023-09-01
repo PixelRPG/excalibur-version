@@ -1,9 +1,10 @@
 export { ActorState } from './actor-state';
-export { Blueprint } from './blueprint';
+export { Blueprint, BlueprintComponentsData } from './blueprint';
 export { CharacterAnimation } from './character-animation';
 export { CharacterComponentArgs, CharacterComponentState, CharacterComponentUpdates } from './character-component-state';
 export { Direction } from './direction';
 export { PrpgEngineEvents } from './engine-events';
+export { EntityType } from './entity-type';
 export { EntityState } from './entry-state';
 export { GameOptions } from './game-options';
 export { GameArgs, GameState, GameUpdates } from './game-state';

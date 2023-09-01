@@ -1,5 +1,5 @@
 import { PrpgBaseComponent } from '.'
-import { MultiplayerSyncComponent } from '.';
+import { PrpgMultiplayerSyncComponent } from '.';
 import { PrpgComponentType, MultiplayerSyncable, PlayerComponentState, PlayerComponentArgs, PlayerComponentUpdates, MultiplayerSyncDirection } from '../types';
 
 export class PrpgPlayerComponent extends PrpgBaseComponent<PrpgComponentType.PLAYER, PlayerComponentState, PlayerComponentArgs> implements MultiplayerSyncable<PlayerComponentState, PlayerComponentUpdates> {
@@ -29,7 +29,7 @@ export class PrpgPlayerComponent extends PrpgBaseComponent<PrpgComponentType.PLA
   }
 
   public get syncDirection() {
-    return this.owner?.get(MultiplayerSyncComponent)?.state.syncDirection || MultiplayerSyncDirection.NONE;
+    return this.owner?.get(PrpgMultiplayerSyncComponent)?.state.syncDirection || MultiplayerSyncDirection.NONE;
   }
 
   public resetUpdates(): void {

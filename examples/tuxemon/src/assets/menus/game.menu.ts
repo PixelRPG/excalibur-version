@@ -1,23 +1,21 @@
 import type { Blueprint } from "../../types"
 
+// TODO generate json schema from this blueprint
 const gameMenu: Blueprint = {
     "gameMenu": {
         "prpg.menu": {
-            "entityNames": {
+            "itemEntityNames": {
                 "exit": {
-                    "prpg.menuItem": {},
-                    "prpg.menuVisible": {},
-                    "prpg.screenPosition": {
-                        "x": 0,
-                        "y": 0,
-                        "z": 0
-                    },
+                    "prpg.screen-position": {},
                     "prpg.text": {
-                        "text": "Exit",
+                        "content": "Exit",
                     },
+                    "prpg.menu-item": {},
                 },
-            }
-        }
+            },
+        },
+        "prpg.controllable": {},
+        "prpg.screen-position": {},
     }
 }
 

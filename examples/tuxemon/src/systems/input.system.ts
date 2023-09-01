@@ -191,7 +191,27 @@ import {
     }
 
     private _handleInputForMenu(entity: Entity) {
-        console.debug('TODO: handle input for menu');
+        if(!this.scene) {
+          this.logger.error('Current scene not found!');
+          return;
+        }
+        
+        const keyboard = this.scene.engine.input.keyboard;
+
+        if(this.gameOptions.playerNumber === 1) {
+
+          if (keyboard.wasPressed(Keys.Escape)) {
+            // Toggle menu visibility
+            const visible = entity.get(PrpgMenuVisibleComponent);
+            console.debug('toggle menu visibility', visible);
+            if(visible) {
+              entity.removeComponent(PrpgComponentType.MENU_VISIBLE);
+            } else {
+              entity.addComponent(new PrpgMenuVisibleComponent());
+            }
+          }
+        }  
+
     }
   
     public initialize(scene: MapScene) {
@@ -202,14 +222,13 @@ import {
       for (const entity of entities) {
         const body = entity.get(PrpgBodyComponent);
         const menu = entity.get(PrpgMenuComponent);
-        const menuVisible = entity.get(PrpgMenuVisibleComponent);
 
         if(body) {
-            this._handleInputForBody(entity);
+          this._handleInputForBody(entity);
         }
 
-        if(menu && menuVisible) {
-            this._handleInputForMenu(entity);
+        if(menu) {
+          this._handleInputForMenu(entity);
         }
       }
     }

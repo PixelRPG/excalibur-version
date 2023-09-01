@@ -9,4 +9,4 @@ export interface TeleportComponentState {
   spawnName: string;
 }
 
-export type TeleportComponentArgs = TeleportComponentState;
+export type TeleportComponentArgs = Partial<TeleportComponentState>;

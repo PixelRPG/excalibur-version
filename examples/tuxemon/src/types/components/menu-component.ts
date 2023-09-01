@@ -1,5 +1,9 @@
+import type { Blueprint, PrpgComponentType } from "../../types"
+
 export interface MenuComponentState {
-    entityNames: string[];
+
 }
 
-export type MenuComponentArgs = MenuComponentState;
+export interface MenuComponentArgs {
+    itemEntityNames: Blueprint
+}

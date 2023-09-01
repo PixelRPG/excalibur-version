@@ -1,7 +1,7 @@
 import { MultiplayerSyncDirection } from '../multiplayer-sync-direction';
 
-export interface MultiplayerSyncComponentState {
+export interface PrpgMultiplayerSyncComponentState {
     syncDirection: MultiplayerSyncDirection;
 }
 
-export type MultiplayerSyncComponentArgs = MultiplayerSyncComponentState;
+export type MultiplayerSyncComponentArgs = PrpgMultiplayerSyncComponentState;

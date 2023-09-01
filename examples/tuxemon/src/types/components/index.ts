@@ -7,7 +7,7 @@ export { MapComponentArgs, MapComponentState } from './map-component';
 export { MenuComponentArgs, MenuComponentState } from './menu-component';
 export { MenuItemComponentArgs, MenuItemComponentState } from './menu-item-component';
 export { MenuVisibleComponentArgs, MenuVisibleComponentState } from './menu-visible-component';
-export { MultiplayerSyncComponentArgs, MultiplayerSyncComponentState } from './multiplayer-sync-component';
+export { MultiplayerSyncComponentArgs, PrpgMultiplayerSyncComponentState } from './multiplayer-sync-component';
 export { PlayerComponentArgs, PlayerComponentState, PlayerComponentUpdates } from './player-component';
 export { ScreenPositionComponentArgs, ScreenPositionComponentState } from './screen-position-component';
 export { SelectableComponentArgs, SelectableComponentState } from './selectable-component';

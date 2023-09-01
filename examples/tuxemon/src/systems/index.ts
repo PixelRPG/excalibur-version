@@ -1,9 +1,9 @@
-export { BlueprintSystem } from './blueprint.system';
 export { PrpgBodySystem } from './body.system';
 export { PrpgCharacterSystem } from './character.system';
 export { PrpgFadeSystem } from './fade.system';
 export { PrpgInputSystem } from './input.system';
 export { PrpgMapSystem } from './map.system';
+export { PrpgMenuRenderSystem } from './menu-render.system';
 export { PrpgMultiplayerSystem } from './multiplayer.system';
 export { PrpgPlayerSystem } from './player.system';
 export { PrpgTeleportSystem } from './teleport.system';

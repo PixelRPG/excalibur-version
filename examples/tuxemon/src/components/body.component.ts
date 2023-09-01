@@ -1,5 +1,5 @@
 import { BodyComponent } from 'excalibur';
-import { PrpgBaseComponent, MultiplayerSyncComponent } from '.';
+import { PrpgBaseComponent, PrpgMultiplayerSyncComponent } from '.';
 import { PrpgComponentType, BodyComponentState, BodyComponentUpdates, BodyComponentArgs, MultiplayerSyncable, MultiplayerSyncDirection } from '../types';
 
 const POSITION_THRESHOLD = 1;
@@ -34,7 +34,7 @@ export class PrpgBodyComponent extends PrpgBaseComponent<PrpgComponentType.BODY,
   }
 
   public get syncDirection() {
-    const syncDir = this.owner?.get(MultiplayerSyncComponent)?.state.syncDirection || MultiplayerSyncDirection.NONE;
+    const syncDir = this.owner?.get(PrpgMultiplayerSyncComponent)?.state.syncDirection || MultiplayerSyncDirection.NONE;
     return syncDir;
   }
 

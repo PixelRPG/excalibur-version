@@ -9,7 +9,7 @@ export class PrpgSelectableComponent extends PrpgBaseComponent<PrpgComponentType
 
   protected _state: SelectableComponentState;
 
-  constructor(data: SelectableComponentArgs) {
+  constructor(data: SelectableComponentArgs = {}) {
     super(data);
     this._state = {
       selected: data.selected || false,

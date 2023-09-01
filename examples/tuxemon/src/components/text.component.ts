@@ -9,11 +9,11 @@ export class PrpgTextComponent extends PrpgBaseComponent<PrpgComponentType.TEXT,
 
   protected _state: TextComponentState;
 
-  constructor(data: TextComponentArgs) {
-    super(data);
+  constructor(data: TextComponentArgs = {}) {
     const state: TextComponentState = {
       content: data.content || '',
-    }
+    };
+    super(state);
     this._state = state;
   }
 }

@@ -2,6 +2,8 @@ import '../typings';
 import { Loadable } from 'excalibur';
 import { TiledMapResource, TiledMap } from '@excaliburjs/plugin-tiled';
 import { AsepriteResource } from '@excaliburjs/plugin-aseprite';
+import { Blueprint } from '../types';
+import gameMenu from '../assets/menus/game.menu' // TODO use json
 
 // Sprites
 const scientistPath = './assets/sprites/scientist/scientist.json';
@@ -17,6 +19,10 @@ interface Sprites {
 interface Maps {
   [key: string]: TiledMapResource;
 }
+
+interface Blueprints {
+  [key: string]: Blueprint;
+}
 class ResourceManager {
 
   private static instance?: ResourceManager;
@@ -29,6 +35,10 @@ class ResourceManager {
     'player_house_bedroom.tmx': new TiledMapResource(playerHouseBedroomPath),
     'player_house_downstairs.tmx': new TiledMapResource(playerHouseDownstairsPath),
     'taba_town.tmx': new TiledMapResource(tabaTownPath)
+  }
+
+  public blueprints: Blueprints = {
+    'gameMenu': gameMenu
   }
 
   private constructor() {

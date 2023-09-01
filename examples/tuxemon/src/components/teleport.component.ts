@@ -9,9 +9,13 @@ export class PrpgTeleportComponent extends PrpgBaseComponent<PrpgComponentType.T
 
   protected _state: TeleportComponentState
 
-  constructor(data: TeleportComponentArgs) {
-    super(data);
-    this._state = data;
+  constructor(data: TeleportComponentArgs = {}) {
+    const state = {
+      mapName: data.mapName || '',
+      spawnName: data.spawnName || '',
+    };
+    super(state);
+    this._state = state;
   }
 }
 

@@ -1,5 +1,4 @@
 import { PrpgBaseComponent } from '.'
-import { PrpgSelectableComponent, PrpgScreenPositionComponent } from '.'
 import { PrpgComponentType, MenuItemComponentState, MenuItemComponentArgs } from '../types';
 
 /**
@@ -9,8 +8,6 @@ export class PrpgMenuItemComponent extends PrpgBaseComponent<PrpgComponentType.M
   public readonly type = PrpgComponentType.MENU_ITEM;
 
   protected _state: MenuItemComponentState;
-
-  dependencies = [PrpgSelectableComponent, PrpgScreenPositionComponent];
 
   constructor(data: MenuItemComponentArgs = {}) {
     super(data);

@@ -1,4 +1,4 @@
-import { PrpgBaseComponent, MultiplayerSyncComponent } from '.'
+import { PrpgBaseComponent, PrpgMultiplayerSyncComponent } from '.'
 import { PrpgComponentType, MultiplayerSyncable, TeleportableComponentState, SpawnPointComponentState, TeleportableComponentArgs, MultiplayerSyncDirection, TeleportableComponentUpdates, TeleportAnimation } from '../types';
 
 /**
@@ -15,7 +15,7 @@ export class PrpgTeleportableComponent extends PrpgBaseComponent<PrpgComponentTy
   protected _updates: TeleportableComponentUpdates = {};
 
   public get syncDirection() {
-    return this.owner?.get(MultiplayerSyncComponent)?.state.syncDirection || MultiplayerSyncDirection.NONE;
+    return this.owner?.get(PrpgMultiplayerSyncComponent)?.state.syncDirection || MultiplayerSyncDirection.NONE;
   }
 
   public resetUpdates(): void {

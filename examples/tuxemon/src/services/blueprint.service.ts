@@ -1,6 +1,6 @@
-import { Entity, Component } from "excalibur";
+import { Entity, Component, Actor, ScreenElement } from "excalibur";
 import {
-    MultiplayerSyncComponent,
+    PrpgMultiplayerSyncComponent,
     PrpgActionComponent,
     PrpgBodyComponent,
     PrpgCharacterComponent,
@@ -16,14 +16,27 @@ import {
     PrpgSpawnPointComponent,
     PrpgTeleportComponent,
     PrpgTeleportableComponent,
+    PrpgTextComponent,
 } from "../components";
 import { PrpgComponentType } from "../types";
 import type { Blueprint } from "../types";
 
 
-export class BlueprintSystem {
+export class BlueprintService {
 
-    static createComponent(componentName: string, componentData: any | undefined = undefined) {
+    static instance: BlueprintService;
+
+    protected constructor() { }
+
+    public static getInstance() {
+        if (!BlueprintService.instance) {
+            BlueprintService.instance = new BlueprintService();
+        }
+        return BlueprintService.instance;
+    }
+
+    protected createComponent(componentName: string, componentData: any | undefined = undefined) {
+        console.debug('createComponent', componentName, componentData);
         switch (componentName) {
             case PrpgComponentType.ACTION:
                 return new PrpgActionComponent(componentData);
@@ -55,14 +68,16 @@ export class BlueprintSystem {
                 return new PrpgTeleportComponent(componentData);
             case PrpgComponentType.TELEPORTABLE:
                 return new PrpgTeleportableComponent(componentData);
+                case PrpgComponentType.TEXT:
+                    return new PrpgTextComponent(componentData);
             case PrpgComponentType.MULTIPLAYER_SYNC:
-                return new MultiplayerSyncComponent(componentData);
+                return new PrpgMultiplayerSyncComponent(componentData);
             default:
                 throw new Error(`Component ${componentName} not found.`);
         }
     }
 
-    static createComponents(components: Blueprint['entityName']) {
+    protected createComponents(components: Blueprint['entityName']) {
         let componentInstances: Component[] = [];
         for (let componentName in components) {
             // @ts-ignore
@@ -73,13 +88,33 @@ export class BlueprintSystem {
     }
 
 
-    static createEntitiesFromBlueprint(blueprint: Blueprint): Entity[] {
-        const entities: Entity[] = [];
-        for (let entityName in blueprint.entities) {
+    public createEntitiesFromBlueprint(blueprint: Blueprint): { [name: string]: Entity | undefined } {
+        const entities: { [name: string]: Entity | undefined } = {};
+        for (let entityName in blueprint) {
             const data = blueprint[entityName];
             const components = this.createComponents(data);
-            const entity = new Entity(components, entityName);
-            entities.push(entity);
+            let entity: Entity;
+            // if SCREEN_POSITION is defined, create a ScreenElement
+            if(data[PrpgComponentType.SCREEN_POSITION]) {
+                entity = new ScreenElement({ name: entityName });
+                for(let component of components) {
+                    entity.addComponent(component)
+                }
+            }
+            // if BODY is defined, create an Actor
+            else if(data[PrpgComponentType.BODY]) {
+                entity = new Actor({ name: entityName });
+                for(let component of components) {
+                    entity.addComponent(component)
+                }
+            }
+            // otherwise, create a generic Entity
+            else {
+                entity = new Entity(components, entityName);
+            }
+
+            entities[entityName] = entity;
+
         }
         return entities;
     }

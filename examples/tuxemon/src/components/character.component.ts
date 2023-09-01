@@ -1,6 +1,6 @@
 import { Component } from 'excalibur';
 import type { AsepriteResource } from '@excaliburjs/plugin-aseprite';
-import { PrpgBaseComponent, PrpgBodyComponent, MultiplayerSyncComponent } from '.';
+import { PrpgBaseComponent, PrpgBodyComponent, PrpgMultiplayerSyncComponent } from '.';
 import { PrpgComponentType, MultiplayerSyncable, CharacterComponentState, CharacterComponentUpdates, CharacterComponentArgs, Direction, MultiplayerSyncDirection } from '../types';
 
 export class PrpgCharacterComponent extends PrpgBaseComponent<PrpgComponentType.CHARACTER, CharacterComponentState, CharacterComponentArgs> implements MultiplayerSyncable<CharacterComponentState, CharacterComponentUpdates> {
@@ -13,7 +13,7 @@ export class PrpgCharacterComponent extends PrpgBaseComponent<PrpgComponentType.
   protected _updates: CharacterComponentUpdates = {};
 
   public get syncDirection() {
-    return this.owner?.get(MultiplayerSyncComponent)?.state.syncDirection || MultiplayerSyncDirection.NONE;
+    return this.owner?.get(PrpgMultiplayerSyncComponent)?.state.syncDirection || MultiplayerSyncDirection.NONE;
   }
 
   public resetUpdates(): void {
