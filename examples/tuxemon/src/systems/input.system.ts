@@ -190,7 +190,22 @@ import {
       body.setVel(velX, velY);
     }
 
+    /**
+     * Toggle menu visibility
+     * @param entity 
+     */
+    private toggleMenu(entity: Entity) {
+      const visible = entity.get(PrpgMenuVisibleComponent);
+      console.debug('toggle menu visibility', visible);
+      if(visible) {
+        entity.removeComponent(PrpgComponentType.MENU_VISIBLE);
+      } else {
+        entity.addComponent(new PrpgMenuVisibleComponent());
+      }
+    }
+
     private _handleInputForMenu(entity: Entity) {
+
         if(!this.scene) {
           this.logger.error('Current scene not found!');
           return;
@@ -199,18 +214,15 @@ import {
         const keyboard = this.scene.engine.input.keyboard;
 
         if(this.gameOptions.playerNumber === 1) {
-
           if (keyboard.wasPressed(Keys.Escape)) {
-            // Toggle menu visibility
-            const visible = entity.get(PrpgMenuVisibleComponent);
-            console.debug('toggle menu visibility', visible);
-            if(visible) {
-              entity.removeComponent(PrpgComponentType.MENU_VISIBLE);
-            } else {
-              entity.addComponent(new PrpgMenuVisibleComponent());
-            }
+            this.toggleMenu(entity);
           }
         }  
+        else if (this.gameOptions.playerNumber === 2) {
+          if (keyboard.wasPressed(Keys.Enter)) {
+            this.toggleMenu(entity);
+          }
+        }
 
     }
   

@@ -79,7 +79,7 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<G
             snapToPixel: false,
             suppressPlayButton: true, // Disable play button, enable to fix audio issue, currently only used for dev
             backgroundColor: Color.Black,
-            maxFps: 40,
+            maxFps: 30,
             configurePerformanceCanvas2DFallback: {
                 allow: true,
                 
@@ -278,8 +278,22 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<G
         const startMap = this.getMapScene(startMapName);
         this.goToScene(startMapName); // TODO: Start on title screen
 
+        this.logger.debug('[Main] pixelRatio', this.pixelRatio);
+        this.logger.debug('[Main] isHiDpi', this.isHiDpi);
+
+        this.logger.defaultLevel = LogLevel.Debug;
+
+
+
+
+        const loader = new Loader([...resources.getSpriteArr(), ...resources.getTilesetArr(), ...resources.getMapArr(), ...resources.getMenusArr()]);
+        loader.backgroundColor = Color.Black.toString();
+
+        await super.start(loader);
+
         // TODO: Move this to map scene?
-        const menuEntities = BlueprintService.getInstance().createEntitiesFromBlueprint(resources.blueprints.gameMenu);
+        console.debug("resources.menus.gameMenu.data", resources.menus.gameMenu.data)
+        const menuEntities = BlueprintService.getInstance().createEntitiesFromBlueprint(resources.menus.gameMenu.data);
         this.logger.debug('[Main] menuEntities', menuEntities);
         for (const entityName in menuEntities) {
             const menuEntity = menuEntities[entityName];
@@ -298,16 +312,6 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<G
             }
             startMap?.add(menuEntity);
         }
-
-        this.logger.debug('[Main] pixelRatio', this.pixelRatio);
-        this.logger.debug('[Main] isHiDpi', this.isHiDpi);
-
-        this.logger.defaultLevel = LogLevel.Debug;
-
-        const loader = new Loader([...resources.getMapArr(), ...resources.getSpriteArr()]);
-        loader.backgroundColor = Color.Black.toString();
-
-        await super.start(loader);
 
         // Initialize the scene by hand, we need this to initialize the multiplayer system
         this.initMapScenes();

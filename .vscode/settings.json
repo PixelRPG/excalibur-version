@@ -19,6 +19,7 @@
     "Syncable",
     "Teleportable",
     "Teleportables",
-    "Teleporting"
+    "Teleporting",
+    "Tileset"
   ]
 }

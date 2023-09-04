@@ -7,6 +7,11 @@
       "outDir": "dist",
       "resolveJsonModule": false,
       // "noImplicitAny": true,
-      "strictNullChecks": true,
-   }
+      "strictNullChecks": true
+   },
+   "exclude": [
+      "node_modules",
+      "dist",
+      "src/assets"
+   ]
 }

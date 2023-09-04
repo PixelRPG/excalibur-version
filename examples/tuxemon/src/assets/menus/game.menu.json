@@ -1,0 +1,17 @@
+{
+    "gameMenu": {
+        "prpg.menu": {
+            "itemEntityNames": {
+                "exit": {
+                    "prpg.screen-position": {},
+                    "prpg.text": {
+                        "content": "Exit"
+                    },
+                    "prpg.menu-item": {}
+                }
+            }
+        },
+        "prpg.controllable": {},
+        "prpg.screen-position": {}
+    }
+}

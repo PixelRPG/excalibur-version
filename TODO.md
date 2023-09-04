@@ -2,7 +2,6 @@
 
 ## General
  * Make use of `game.screen.applyResolutionAndViewport()`?
- * Implement a blueprint to create different entities with components
 ## Multiplayer
  * Implement a consistent randomizer across all players, for example, using a shared game state (e.g., game time calculated based on the start time of the first player or a game ID).
 

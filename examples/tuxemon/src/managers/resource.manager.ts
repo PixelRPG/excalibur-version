@@ -1,27 +1,39 @@
 import '../typings';
-import { Loadable } from 'excalibur';
-import { TiledMapResource, TiledMap } from '@excaliburjs/plugin-tiled';
+import { Loadable, Resource } from 'excalibur';
+import { TiledMapResource, TiledMap, TiledTileset } from '@excaliburjs/plugin-tiled';
 import { AsepriteResource } from '@excaliburjs/plugin-aseprite';
-import { Blueprint } from '../types';
-import gameMenu from '../assets/menus/game.menu' // TODO use json
+import { TiledTilesetResource } from '../resources/tiled-tileset.resource'
+
+import type { Blueprint } from '../types';
 
 // Sprites
 const scientistPath = './assets/sprites/scientist/scientist.json';
+
+// Tilesets
+const menu001Path = './assets/tilesets/menu-001.tsx';
 
 // Maps
 const playerHouseBedroomPath = './assets/maps/player_house_bedroom.tmx';
 const playerHouseDownstairsPath = './assets/maps/player_house_downstairs.tmx';
 const tabaTownPath = './assets/maps/taba_town.tmx';
 
+// Menus
+const gameMenuPath = './assets/menus/game.menu.json';
+
 interface Sprites {
   [key: string]: AsepriteResource;
 }
+
+interface Tilesets {
+  [key: string]: TiledTilesetResource;
+}
+
 interface Maps {
   [key: string]: TiledMapResource;
 }
 
 interface Blueprints {
-  [key: string]: Blueprint;
+  [key: string]: Resource<Blueprint>;
 }
 class ResourceManager {
 
@@ -37,8 +49,12 @@ class ResourceManager {
     'taba_town.tmx': new TiledMapResource(tabaTownPath)
   }
 
-  public blueprints: Blueprints = {
-    'gameMenu': gameMenu
+  public tilesets: Tilesets = {
+    menu001: new TiledTilesetResource(menu001Path, false),
+  }
+
+  public menus: Blueprints = {
+    'gameMenu': new Resource<Blueprint>(gameMenuPath, 'json')
   }
 
   private constructor() {
@@ -58,6 +74,10 @@ class ResourceManager {
     return arr;
   }
 
+  public getTilesetArr() {
+    return this._toArray(this.tilesets);
+  }
+
   public getMapArr() {
     return this._toArray<TiledMap>(this.maps);
   }
@@ -70,9 +90,14 @@ class ResourceManager {
     return this._toArray(this.sprites);
   }
 
+  public getMenusArr() {
+    return this._toArray(this.menus);
+  }
+
   public getSpriteByName(name: string) {
     return this.sprites[name];
   }
+
 }
 
 export const resources = ResourceManager.getSingleton();
