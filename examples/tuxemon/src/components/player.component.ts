@@ -5,6 +5,8 @@ import { PrpgComponentType, MultiplayerSyncable, PlayerComponentState, PlayerCom
 export class PrpgPlayerComponent extends PrpgBaseComponent<PrpgComponentType.PLAYER, PlayerComponentState, PlayerComponentArgs> implements MultiplayerSyncable<PlayerComponentState, PlayerComponentUpdates> {
   public readonly type = PrpgComponentType.PLAYER;
 
+  dependencies = [PrpgMultiplayerSyncComponent];
+
   public isCurrentPlayer = false;
 
   protected _state: PlayerComponentState = {

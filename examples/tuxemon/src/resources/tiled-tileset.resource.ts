@@ -1,6 +1,6 @@
-import { Resource, ImageSource } from 'excalibur';
-import type { Loadable } from 'excalibur';
+import { Resource, ImageSource, SpriteSheet } from 'excalibur';
 import { TiledTileset, RawTiledTileset, parseExternalTsx, parseExternalJson } from '@excaliburjs/plugin-tiled';
+import type { Loadable } from 'excalibur';
 
 export class TiledTilesetResource implements Loadable<TiledTileset | null> {
 
@@ -9,9 +9,11 @@ export class TiledTilesetResource implements Loadable<TiledTileset | null> {
     /**
      * Data associated with a loadable
      */
-    data: TiledTileset | null = null;
+    public data: TiledTileset | null = null;
 
-    image: ImageSource | null = null;
+    public image: ImageSource | null = null;
+
+    public spriteSheet: SpriteSheet | null = null;
 
     get raw() {
         return this._resource.data;
@@ -26,16 +28,30 @@ export class TiledTilesetResource implements Loadable<TiledTileset | null> {
      */
     public async load(): Promise<TiledTileset> {
         let rawTileSet = await this._resource.load();
+
         if (this.isJson) {
             this.data = parseExternalJson(rawTileSet, 0, this.path);
         } else {
             this.data = parseExternalTsx(rawTileSet as unknown as string, 0, this.path);
         }
+
         if(this.data.image) {
             this.image = new ImageSource(this.convertPath(this.path, this.data.image));
             await this.image.load();
+
+            const rows = this.data.tileCount / this.data.columns;
+
+            this.spriteSheet = SpriteSheet.fromImageSource({
+                image: this.image,
+                grid: {
+                    rows: rows,
+                    columns: this.data.columns,
+                    spriteWidth: this.data.tileWidth,
+                    spriteHeight: this.data.tileHeight
+                },
+            });
         }
-        console.debug(`Loaded tileset ${this.data.name} from ${this.path}`, this.data, this.image);
+
         return this.data;
     }
 

@@ -6,6 +6,8 @@ import { PrpgComponentType, MultiplayerSyncable, CharacterComponentState, Charac
 export class PrpgCharacterComponent extends PrpgBaseComponent<PrpgComponentType.CHARACTER, CharacterComponentState, CharacterComponentArgs> implements MultiplayerSyncable<CharacterComponentState, CharacterComponentUpdates> {
   public readonly type = PrpgComponentType.CHARACTER;
 
+  dependencies = [PrpgBodyComponent, PrpgMultiplayerSyncComponent];
+
   protected _state: CharacterComponentState = {
     direction: Direction.DOWN,
   };
@@ -54,8 +56,6 @@ export class PrpgCharacterComponent extends PrpgBaseComponent<PrpgComponentType.
     const initialState: CharacterComponentState = { direction: data.direction || Direction.DOWN};
     this.initState(initialState);
   }
-
-  dependencies = [PrpgBodyComponent]
 
   initState(initialState: CharacterComponentUpdates): CharacterComponentState {
     this._state = { ...this._state, ...initialState };

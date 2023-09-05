@@ -21,19 +21,19 @@ const tabaTownPath = './assets/maps/taba_town.tmx';
 const gameMenuPath = './assets/menus/game.menu.json';
 
 interface Sprites {
-  [key: string]: AsepriteResource;
+  [key: string]: AsepriteResource | undefined;
 }
 
 interface Tilesets {
-  [key: string]: TiledTilesetResource;
+  [key: string]: TiledTilesetResource | undefined;
 }
 
 interface Maps {
-  [key: string]: TiledMapResource;
+  [key: string]: TiledMapResource | undefined;
 }
 
 interface Blueprints {
-  [key: string]: Resource<Blueprint>;
+  [key: string]: Resource<Blueprint> | undefined;
 }
 class ResourceManager {
 
@@ -50,7 +50,7 @@ class ResourceManager {
   }
 
   public tilesets: Tilesets = {
-    menu001: new TiledTilesetResource(menu001Path, false),
+    'menu-001.tsx': new TiledTilesetResource(menu001Path, false),
   }
 
   public menus: Blueprints = {
@@ -69,13 +69,17 @@ class ResourceManager {
     return ResourceManager.instance;
   }
 
-  private _toArray<T = any>(obj: {[key:string]: Loadable<T>}) {
+  protected _toArray<T = any>(obj: {[key:string]: Loadable<T> | undefined}) {
     const arr = Object.keys(obj).map((key) => obj[key]);
-    return arr;
+    return arr as Loadable<T>[];
   }
 
   public getTilesetArr() {
     return this._toArray(this.tilesets);
+  }
+
+  public getTilesetByName(name: string) {
+    return this.tilesets[name];
   }
 
   public getMapArr() {
@@ -90,12 +94,16 @@ class ResourceManager {
     return this._toArray(this.sprites);
   }
 
+  public getSpriteByName(name: string) {
+    return this.sprites[name];
+  }
+
   public getMenusArr() {
     return this._toArray(this.menus);
   }
 
-  public getSpriteByName(name: string) {
-    return this.sprites[name];
+  public getMenuByName(name: string) {
+    return this.menus[name];
   }
 
 }

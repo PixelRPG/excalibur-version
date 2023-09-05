@@ -8,7 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "yarn build:index && yarn build:assets && yarn build:ts",
     "build:ts": "esbuilder --outfile ./dist/main.js",
-    "build:index": "barreler ./src/actors ./src/components ./src/entities ./src/entities ./src/scenes ./src/systems ./src/types ./src/types/components ./src/utilities ./src/managers ./src/screen-elements ./src/events",
+    "build:index": "barreler ./src/actors ./src/components ./src/entities ./src/services ./src/scenes ./src/systems ./src/types ./src/types/components ./src/utilities ./src/managers ./src/screen-elements ./src/events",
     "build:assets": "mkdir -p ./dist && cp -r ./src/assets ./dist && cp ./src/index.html ./dist",
     "build:schema": "ts-json-schema-generator --no-type-check --tsconfig './tsconfig.json' --path './src/**/*.ts' --type 'Blueprint' --out './blueprint.schema.json'",
     "serve:dev": "yarn serve -- --dev",

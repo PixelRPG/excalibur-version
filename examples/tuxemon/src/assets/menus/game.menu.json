@@ -11,6 +11,11 @@
                 }
             }
         },
+        "prpg.tilebox": {
+            "tilesetName": "menu-001.tsx",
+            "rows": 5,
+            "columns": 5
+        },
         "prpg.controllable": {},
         "prpg.screen-position": {}
     }

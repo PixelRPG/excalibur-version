@@ -17,6 +17,7 @@ import {
     TeleportComponentArgs,
     TeleportableComponentArgs,
     TextComponentArgs,
+    TileboxComponentArgs,
 } from '.';
 import { 
 
@@ -40,6 +41,7 @@ export interface BlueprintComponentsData {
     [PrpgComponentType.TELEPORT]?: TeleportComponentArgs;
     [PrpgComponentType.TELEPORTABLE]?: TeleportableComponentArgs;
     [PrpgComponentType.TEXT]?: TextComponentArgs;
+    [PrpgComponentType.TILEBOX]?: TileboxComponentArgs;
 }
 
 export type Blueprint = {

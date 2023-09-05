@@ -16,3 +16,4 @@ export { PrpgSpawnPointComponent } from './spawn-point.component';
 export { PrpgTeleportComponent } from './teleport.component';
 export { PrpgTeleportableComponent } from './teleportable.component';
 export { PrpgTextComponent } from './text.component';
+export { PrpgTileboxComponent } from './tilebox.component';

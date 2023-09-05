@@ -61,7 +61,6 @@ export class PrpgMultiplayerSystem extends System implements MultiplayerSyncable
     if( this.scene.multiplayerSystem !== this) {
       throw new Error(`[PrpgMultiplayerSystem] Scene multiplayerSystem is not this system!`);
     }
-   
   }
 
   private collectUpdates() {

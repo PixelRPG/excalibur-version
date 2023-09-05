@@ -5,6 +5,7 @@ export * from './events';
 export * from './managers';
 export * from './scenes';
 export * from './screen-elements';
+export * from './services';
 export * from './systems';
 export * from './types';
 export * from './utilities';

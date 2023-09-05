@@ -13,7 +13,7 @@ import { GameOptions, MultiplayerSyncable, GameState, GameUpdates, MultiplayerSy
 import { resources } from './managers/index';
 import { BlueprintService } from './services/index'
 import { GameStateFullEvent, GameStateUpdateEvent, GameMessageEvent } from './events/index';
-import { PrpgMenuComponent } from './components'
+import { PrpgMenuComponent, PrpgTileboxComponent } from './components'
 
 export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<GameState, GameUpdates> {
 
@@ -142,6 +142,39 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<G
         }
     }
 
+    private initMenus(scene: Scene = this.currentScene) {
+        const menus = resources.getMenusArr();
+        for (const menu of menus) {
+            if(menu?.data) {
+                const menuEntities = BlueprintService.getInstance().createEntitiesFromBlueprint(menu.data);
+                for (const entityName in menuEntities) {
+                    const menuEntity = menuEntities[entityName];
+                    if(!menuEntity) {
+                        throw new Error(`Entity ${entityName} not found`);
+                    }
+    
+                    const menuItemEntities = menuEntity.get(PrpgMenuComponent)?.items || {};
+                    for (const key in menuItemEntities) {
+                        if (Object.prototype.hasOwnProperty.call(menuItemEntities, key)) {
+                            const menuItemEntity = menuItemEntities[key];
+                            if(!menuItemEntity) {
+                                throw new Error(`Entity ${key} not found`);
+                            }
+                            scene.add(menuItemEntity);
+                        }
+                    }
+    
+                    const tilebox = menuEntity.get(PrpgTileboxComponent);
+                    if(tilebox) {
+                        scene.add(tilebox.tilemap);
+                    }
+                    scene.add(menuEntity);
+                }
+            }
+        }
+
+    }
+
     private initState(initialState: GameUpdates = {}): GameState {
         this._state = {...this._state, ...initialState};
         this._state.scenes = this.getStatesScenes()
@@ -219,7 +252,9 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<G
         const mapNames = Object.keys(resources.maps);
         for (const mapName of mapNames) {
           if (resources.maps[mapName]) {
-            const scene = new MapScene(this.gameOptions, mapName, resources.maps[mapName]);
+            const map = resources.maps[mapName];
+            if(!map) continue;
+            const scene = new MapScene(this.gameOptions, mapName, map);
             this.addScene(mapName, scene);
           }
         }
@@ -276,6 +311,9 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<G
         this.addMapScenes();
         const startMapName = 'player_house_bedroom.tmx'; // TODO: Add and find start map by map property
         const startMap = this.getMapScene(startMapName);
+        if(!startMap) {
+            throw new Error(`Start map ${startMapName} not found`);
+        }
         this.goToScene(startMapName); // TODO: Start on title screen
 
         this.logger.debug('[Main] pixelRatio', this.pixelRatio);
@@ -283,35 +321,13 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<G
 
         this.logger.defaultLevel = LogLevel.Debug;
 
-
-
-
         const loader = new Loader([...resources.getSpriteArr(), ...resources.getTilesetArr(), ...resources.getMapArr(), ...resources.getMenusArr()]);
         loader.backgroundColor = Color.Black.toString();
 
         await super.start(loader);
 
-        // TODO: Move this to map scene?
-        console.debug("resources.menus.gameMenu.data", resources.menus.gameMenu.data)
-        const menuEntities = BlueprintService.getInstance().createEntitiesFromBlueprint(resources.menus.gameMenu.data);
-        this.logger.debug('[Main] menuEntities', menuEntities);
-        for (const entityName in menuEntities) {
-            const menuEntity = menuEntities[entityName];
-            if(!menuEntity) {
-                throw new Error(`Entity ${entityName} not found`);
-            }
-            const menuItemEntities = menuEntity.get(PrpgMenuComponent)?.items || {};
-            for (const key in menuItemEntities) {
-                if (Object.prototype.hasOwnProperty.call(menuItemEntities, key)) {
-                    const menuItemEntity = menuItemEntities[key];
-                    if(!menuItemEntity) {
-                        throw new Error(`Entity ${key} not found`);
-                    }
-                    startMap?.add(menuItemEntity);
-                }
-            }
-            startMap?.add(menuEntity);
-        }
+        // Initialize menus
+        this.initMenus(startMap);
 
         // Initialize the scene by hand, we need this to initialize the multiplayer system
         this.initMapScenes();

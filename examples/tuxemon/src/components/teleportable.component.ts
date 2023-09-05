@@ -7,6 +7,8 @@ import { PrpgComponentType, MultiplayerSyncable, TeleportableComponentState, Spa
 export class PrpgTeleportableComponent extends PrpgBaseComponent<PrpgComponentType.TELEPORTABLE, TeleportableComponentState, TeleportableComponentArgs> implements MultiplayerSyncable<TeleportableComponentState, TeleportableComponentUpdates> {
   public readonly type = PrpgComponentType.TELEPORTABLE;
 
+  dependencies = [PrpgMultiplayerSyncComponent];
+
   protected _state: TeleportableComponentState = {
     isTeleporting: false,
     teleportTo: undefined,

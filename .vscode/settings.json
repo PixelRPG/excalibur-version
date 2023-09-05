@@ -20,6 +20,8 @@
     "Teleportable",
     "Teleportables",
     "Teleporting",
+    "Tilebox",
+    "Tilemap",
     "Tileset"
   ]
 }

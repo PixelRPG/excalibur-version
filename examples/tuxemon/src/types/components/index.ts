@@ -15,3 +15,4 @@ export { SpawnPointComponentArgs, SpawnPointComponentState } from './spawn-point
 export { TeleportComponentArgs, TeleportComponentState } from './teleport-component';
 export { TeleportableComponentArgs, TeleportableComponentState, TeleportableComponentUpdates } from './teleportable-component';
 export { TextComponentArgs, TextComponentState } from './text-component';
+export { TileboxComponentArgs, TileboxComponentState } from './tilebox-component';

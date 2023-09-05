@@ -17,6 +17,7 @@ import {
     PrpgTeleportComponent,
     PrpgTeleportableComponent,
     PrpgTextComponent,
+    PrpgTileboxComponent,
 } from "../components";
 import { PrpgComponentType } from "../types";
 import type { Blueprint } from "../types";
@@ -72,8 +73,10 @@ export class BlueprintService {
                     return new PrpgTextComponent(componentData);
             case PrpgComponentType.MULTIPLAYER_SYNC:
                 return new PrpgMultiplayerSyncComponent(componentData);
+            case PrpgComponentType.TILEBOX:
+                return new PrpgTileboxComponent(componentData);
             default:
-                throw new Error(`Component ${componentName} not found.`);
+                throw new Error(`[BlueprintService] Component ${componentName} not found.`);
         }
     }
 

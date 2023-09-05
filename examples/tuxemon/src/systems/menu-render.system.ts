@@ -7,43 +7,54 @@ import {
   ScreenElement,
   Polygon,
   vec,
-  Color
+  Color,
+  Scene,
+  TransformComponent,
+  CoordPlane,
+  CollisionType,
+  PointerComponent,
+  GraphicsComponent,
+  Tile,
 } from 'excalibur';
-import { PrpgMenuComponent, PrpgMenuVisibleComponent, PrpgScreenPositionComponent } from '../components';
+import { PrpgMenuComponent, PrpgMenuVisibleComponent, PrpgScreenPositionComponent, PrpgTileboxComponent } from '../components';
+import { MapScene } from '../scenes/index';
 import { PrpgComponentType } from '../types';
+import { resources } from '../managers/index';
+import { TiledTilesetResource } from '../resources/tiled-tileset.resource';
 
-// TODO draw menu instead of this triangle
-const triangle = new Polygon({
-  points: [vec(10 * 5, 0), vec(0, 20 * 5), vec(20 * 5, 20 * 5)],
-  color: Color.Yellow,
-})
 
 export class PrpgMenuRenderSystem extends System<PrpgMenuComponent | PrpgScreenPositionComponent> {
   public readonly types = [PrpgComponentType.MENU, PrpgComponentType.SCREEN_POSITION ] as const;
   public priority = 500;
   public systemType = SystemType.Update;
-  private logger = Logger.getInstance();
+  protected logger = Logger.getInstance();
+  protected scene?: Scene;
+  
 
+  public initialize(scene: Scene) {
+    super.initialize?.(scene);
+    this.scene = scene;
+  }
    
   public update(entities: ScreenElement[], delta: number) {
     for (const entity of entities) {
       const screen = entity.get<PrpgScreenPositionComponent>(PrpgComponentType.SCREEN_POSITION);
       if(!screen) {
         this.logger.error('PrpgScreenPositionComponent not found!');
-        break;
+        continue;
       }
+
+      const tilebox = entity.get<PrpgTileboxComponent>(PrpgComponentType.TILEBOX);
+      const tileboxGraphics = tilebox ? tilebox.tilemap.get(GraphicsComponent) : undefined;
 
       const visible = entity.get<PrpgMenuVisibleComponent>(PrpgComponentType.MENU_VISIBLE);
-      if(visible) {
-        entity.graphics.visible = true;
-      } else {
-        entity.graphics.visible = false;
-        return;
-      }
-      entity.graphics.use(triangle);
-      // screen?.add
+      const menuIsVisible = !!visible;
 
-      console.debug('PrpgMenuRenderSystem', entity, screen, visible);
+      entity.graphics.visible = menuIsVisible;
+      if(tileboxGraphics) {
+        tileboxGraphics.visible = menuIsVisible;
+      }
+
     }
   }
 }

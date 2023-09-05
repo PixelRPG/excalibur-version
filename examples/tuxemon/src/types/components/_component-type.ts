@@ -16,4 +16,5 @@ export enum PrpgComponentType {
   MENU = 'prpg.menu',
   MENU_ITEM = 'prpg.menu-item',
   TEXT = 'prpg.text',
+  TILEBOX = 'prpg.tilebox',
 }

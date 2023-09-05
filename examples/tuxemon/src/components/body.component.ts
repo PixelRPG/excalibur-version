@@ -13,6 +13,8 @@ const POSITION_THRESHOLD = 1;
 export class PrpgBodyComponent extends PrpgBaseComponent<PrpgComponentType.BODY, BodyComponentState, BodyComponentArgs> implements MultiplayerSyncable<BodyComponentState, BodyComponentUpdates> {
   public readonly type = PrpgComponentType.BODY;
 
+  dependencies = [BodyComponent, PrpgMultiplayerSyncComponent];
+
   protected _state: BodyComponentState = {
     pos: {
       x: 0,
