@@ -72,9 +72,16 @@ PrpgMapComponent, MapScene> {
             this.logger.error(`Player number ${playerNumber} is higher than the number of players ${this.gameOptions.players}`);
             continue;
           }
+
+          // TODO: Store player sprite in PrpgCharacterComponent
+          const spriteSheet = resources.sprites.scientist;
+
+          if(!spriteSheet) {
+            throw new Error('Sprite sheet not found');
+          }
           
           const player = PrpgPlayerActor.newPlayer(this.gameOptions, {}, {
-            character: { spriteSheet: resources.sprites.scientist, direction: Direction.DOWN },
+            character: { spriteSheet, direction: Direction.DOWN },
             player: { playerNumber }
           });
           

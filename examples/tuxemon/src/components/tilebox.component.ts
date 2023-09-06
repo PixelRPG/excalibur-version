@@ -1,6 +1,6 @@
 import { Entity, TileMap } from 'excalibur';
 import { PrpgBaseComponent } from '.'
-import { BlueprintService, TilemapService } from '../services/index';
+import { TilemapService } from '../services/index';
 import { PrpgComponentType, TileboxComponentState, TileboxComponentArgs } from '../types';
 
 /**

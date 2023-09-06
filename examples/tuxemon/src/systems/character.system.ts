@@ -35,6 +35,13 @@ PrpgCharacterComponent | BodyComponent | TransformComponent | MotionComponent | 
     const graphics = entity.get(GraphicsComponent);
     const character = entity.get(PrpgCharacterComponent);
 
+    // TODO: Store player sprite in PrpgCharacterComponent
+    const spriteSheet = resources.sprites.scientist;
+
+    if(!spriteSheet) {
+      throw new Error('Sprite sheet not found!');
+    }
+
     if (!motion) {
       this.logger.warn('MotionComponent to handle character motion not found!');
       return;
@@ -53,7 +60,7 @@ PrpgCharacterComponent | BodyComponent | TransformComponent | MotionComponent | 
     // Walks Right
     if (motion.vel.x > 0) {
       character.direction = Direction.RIGHT;
-      const animation = resources.sprites.scientist.getAnimation(CharacterAnimation.RIGHT_WALK);
+      const animation = spriteSheet.getAnimation(CharacterAnimation.RIGHT_WALK);
       if (!animation) {
         this.logger.warn(`${CharacterAnimation.RIGHT_WALK} animation not found!`);
         return;
@@ -63,7 +70,7 @@ PrpgCharacterComponent | BodyComponent | TransformComponent | MotionComponent | 
     // Walks Left
     if (motion.vel.x < 0) {
       character.direction = Direction.LEFT;
-      const animation = resources.sprites.scientist.getAnimation(CharacterAnimation.LEFT_WALK);
+      const animation = spriteSheet.getAnimation(CharacterAnimation.LEFT_WALK);
       if (!animation) {
         this.logger.warn(`${CharacterAnimation.LEFT_WALK} animation not found!`);
         return;
@@ -73,7 +80,7 @@ PrpgCharacterComponent | BodyComponent | TransformComponent | MotionComponent | 
     // Walks Up
     if (motion.vel.y < 0) {
       character.direction = Direction.UP;
-      const animation = resources.sprites.scientist.getAnimation(CharacterAnimation.BACK_WALK);
+      const animation = spriteSheet.getAnimation(CharacterAnimation.BACK_WALK);
       if (!animation) {
         this.logger.warn(`${CharacterAnimation.BACK_WALK} animation not found!`);
         return;
@@ -83,7 +90,7 @@ PrpgCharacterComponent | BodyComponent | TransformComponent | MotionComponent | 
     // Walks Down
     if (motion.vel.y > 0) {
       character.direction = Direction.DOWN;
-      const animation = resources.sprites.scientist.getAnimation(CharacterAnimation.FRONT_WALK);
+      const animation = spriteSheet.getAnimation(CharacterAnimation.FRONT_WALK);
       if (!animation) {
         this.logger.warn(`${CharacterAnimation.FRONT_WALK} animation not found!`);
         return;
@@ -93,23 +100,23 @@ PrpgCharacterComponent | BodyComponent | TransformComponent | MotionComponent | 
 
     // Stands sill
     if (motion.vel.y === 0 && motion.vel.x === 0) {
-      let animation = resources.sprites.scientist.getAnimation(CharacterAnimation.FRONT);
+      let animation = spriteSheet.getAnimation(CharacterAnimation.FRONT);
       switch (character.direction) {
         case Direction.RIGHT:
-          animation = resources.sprites.scientist.getAnimation(CharacterAnimation.RIGHT);
+          animation = spriteSheet.getAnimation(CharacterAnimation.RIGHT);
           break;
         case Direction.LEFT:
-          animation = resources.sprites.scientist.getAnimation(CharacterAnimation.LEFT);
+          animation = spriteSheet.getAnimation(CharacterAnimation.LEFT);
           break;
         case Direction.UP:
-          animation = resources.sprites.scientist.getAnimation(CharacterAnimation.BACK);
+          animation = spriteSheet.getAnimation(CharacterAnimation.BACK);
           break;
         case Direction.DOWN:
-          animation = resources.sprites.scientist.getAnimation(CharacterAnimation.FRONT);
+          animation = spriteSheet.getAnimation(CharacterAnimation.FRONT);
           break;
         default:
           this.logger.warn(`Use default direction: ${character.direction}`);
-          animation = resources.sprites.scientist.getAnimation(CharacterAnimation.FRONT);
+          animation = spriteSheet.getAnimation(CharacterAnimation.FRONT);
           break;
       }
       if (!animation) {
@@ -129,10 +136,18 @@ PrpgCharacterComponent | BodyComponent | TransformComponent | MotionComponent | 
     }
 
     const entities = this.characterQuery.getEntities() as PrpgCharacterActor[];
-    const front = resources.sprites.scientist.getAnimation('front');
+
+    // TODO: Store player sprite in PrpgCharacterComponent
+    const spriteSheet = resources.sprites.scientist;
+    if(!spriteSheet) {
+      throw new Error('Sprite sheet not found!');
+    }
+
+    const front = spriteSheet.getAnimation('front');
     if (!front) {
       throw new Error('front animation not found!');
     }
+
     for (const entity of entities) {
       entity.graphics.use(front);
       // entity.on('pointerup', () => {

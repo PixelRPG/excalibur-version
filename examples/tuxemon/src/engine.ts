@@ -9,11 +9,10 @@ import { syncable } from './utilities';
 // Scenes
 import { MapScene } from './scenes/map.scene';
 
-import { GameOptions, MultiplayerSyncable, GameState, GameUpdates, MultiplayerSyncableScene, MultiplayerSyncDirection, PrpgEngineEvents, MultiplayerMessageInfo, TeleportMessage } from './types';
+import { GameOptions, MultiplayerSyncable, GameState, GameUpdates, MultiplayerSyncableScene, MultiplayerSyncDirection, PrpgEngineEvents, MultiplayerMessageInfo, TeleportMessage, PrpgComponentType } from './types';
 import { resources } from './managers/index';
-import { BlueprintService } from './services/index'
+import { MenuService } from './services/index'
 import { GameStateFullEvent, GameStateUpdateEvent, GameMessageEvent } from './events/index';
-import { PrpgMenuComponent, PrpgTileboxComponent } from './components'
 
 export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<GameState, GameUpdates> {
 
@@ -143,36 +142,8 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<G
     }
 
     private initMenus(scene: Scene = this.currentScene) {
-        const menus = resources.getMenusArr();
-        for (const menu of menus) {
-            if(menu?.data) {
-                const menuEntities = BlueprintService.getInstance().createEntitiesFromBlueprint(menu.data);
-                for (const entityName in menuEntities) {
-                    const menuEntity = menuEntities[entityName];
-                    if(!menuEntity) {
-                        throw new Error(`Entity ${entityName} not found`);
-                    }
-    
-                    const menuItemEntities = menuEntity.get(PrpgMenuComponent)?.items || {};
-                    for (const key in menuItemEntities) {
-                        if (Object.prototype.hasOwnProperty.call(menuItemEntities, key)) {
-                            const menuItemEntity = menuItemEntities[key];
-                            if(!menuItemEntity) {
-                                throw new Error(`Entity ${key} not found`);
-                            }
-                            scene.add(menuItemEntity);
-                        }
-                    }
-    
-                    const tilebox = menuEntity.get(PrpgTileboxComponent);
-                    if(tilebox) {
-                        scene.add(tilebox.tilemap);
-                    }
-                    scene.add(menuEntity);
-                }
-            }
-        }
-
+        const menu = MenuService.getInstance();
+        menu.createMenus(scene);
     }
 
     private initState(initialState: GameUpdates = {}): GameState {

@@ -20,7 +20,7 @@ import {
     PrpgTileboxComponent,
 } from "../components";
 import { PrpgComponentType } from "../types";
-import type { Blueprint } from "../types";
+import type { Blueprint, BlueprintComponentsData } from "../types";
 
 
 export class BlueprintService {
@@ -80,7 +80,7 @@ export class BlueprintService {
         }
     }
 
-    protected createComponents(components: Blueprint['entityName']) {
+    protected createComponents(components: BlueprintComponentsData) {
         let componentInstances: Component[] = [];
         for (let componentName in components) {
             // @ts-ignore
@@ -90,34 +90,38 @@ export class BlueprintService {
         return componentInstances;
     }
 
+    public createEntityFromBlueprint(data: BlueprintComponentsData, entityName: string): Entity {
+        const components = this.createComponents(data);
+        let entity: Entity;
+        // if SCREEN_POSITION is defined, create a ScreenElement
+        if(data[PrpgComponentType.SCREEN_POSITION]) {
+            entity = new ScreenElement({ name: entityName });
+            for(let component of components) {
+                entity.addComponent(component)
+            }
+        }
+        // if BODY is defined, create an Actor
+        else if(data[PrpgComponentType.BODY]) {
+            entity = new Actor({ name: entityName });
+            for(let component of components) {
+                entity.addComponent(component)
+            }
+        }
+        // otherwise, create a generic Entity
+        else {
+            entity = new Entity(components, entityName);
+        }
+
+        return entity;
+    }
+
 
     public createEntitiesFromBlueprint(blueprint: Blueprint): { [name: string]: Entity | undefined } {
         const entities: { [name: string]: Entity | undefined } = {};
         for (let entityName in blueprint) {
             const data = blueprint[entityName];
-            const components = this.createComponents(data);
-            let entity: Entity;
-            // if SCREEN_POSITION is defined, create a ScreenElement
-            if(data[PrpgComponentType.SCREEN_POSITION]) {
-                entity = new ScreenElement({ name: entityName });
-                for(let component of components) {
-                    entity.addComponent(component)
-                }
-            }
-            // if BODY is defined, create an Actor
-            else if(data[PrpgComponentType.BODY]) {
-                entity = new Actor({ name: entityName });
-                for(let component of components) {
-                    entity.addComponent(component)
-                }
-            }
-            // otherwise, create a generic Entity
-            else {
-                entity = new Entity(components, entityName);
-            }
-
+            const entity = this.createEntityFromBlueprint(data, entityName);
             entities[entityName] = entity;
-
         }
         return entities;
     }

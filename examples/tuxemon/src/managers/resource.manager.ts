@@ -4,7 +4,7 @@ import { TiledMapResource, TiledMap, TiledTileset } from '@excaliburjs/plugin-ti
 import { AsepriteResource } from '@excaliburjs/plugin-aseprite';
 import { TiledTilesetResource } from '../resources/tiled-tileset.resource'
 
-import type { Blueprint } from '../types';
+import type { Blueprint, BlueprintComponentsData } from '../types';
 
 // Sprites
 const scientistPath = './assets/sprites/scientist/scientist.json';
@@ -32,8 +32,8 @@ interface Maps {
   [key: string]: TiledMapResource | undefined;
 }
 
-interface Blueprints {
-  [key: string]: Resource<Blueprint> | undefined;
+interface Menus {
+  [key: string]: Resource<BlueprintComponentsData> | undefined;
 }
 class ResourceManager {
 
@@ -53,8 +53,8 @@ class ResourceManager {
     'menu-001.tsx': new TiledTilesetResource(menu001Path, false),
   }
 
-  public menus: Blueprints = {
-    'gameMenu': new Resource<Blueprint>(gameMenuPath, 'json')
+  public menus: Menus = {
+    'gameMenu': new Resource<BlueprintComponentsData>(gameMenuPath, 'json')
   }
 
   private constructor() {
@@ -99,7 +99,7 @@ class ResourceManager {
   }
 
   public getMenusArr() {
-    return this._toArray(this.menus);
+    return this._toArray(this.menus) as Resource<Blueprint>[];
   }
 
   public getMenuByName(name: string) {

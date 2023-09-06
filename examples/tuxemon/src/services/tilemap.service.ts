@@ -151,7 +151,19 @@ export class TilemapService {
     }
   }
 
-  public createBox(tilesetName: string, rows: number, columns: number, coordPlane: CoordPlane = CoordPlane.Screen) {
+  /**
+   * Sets the coordinate plane of a tilemap to the screen.
+   * By default the coordinate plane of a tilemap is set to `CoordPlane.World`,
+   * but this is not useful for drawing a tilemap on the screen like dialog boxes or menus.
+   * @param tilemap 
+   */
+  public setToScreen(tilemap: TileMap) {
+    this.setCoordPlane(tilemap, CoordPlane.Screen);
+    this.setCollisionType(tilemap, CollisionType.PreventCollision);
+    this.setPointerEvents(tilemap, true);
+  }
+
+  public createBox(tilesetName: string, rows: number, columns: number) {
     const tileset = resources.getTilesetByName(tilesetName);
 
     if (!tileset || !tileset.data) {
@@ -168,13 +180,6 @@ export class TilemapService {
       tileWidth: tileset.data.tileWidth,
       tileHeight: tileset.data.tileHeight,
     });
-
-    // Set similar options to ScreenElement
-    if(coordPlane !== CoordPlane.World) {
-      this.setCoordPlane(tilemap, coordPlane);
-      this.setCollisionType(tilemap, CollisionType.PreventCollision);
-      this.setPointerEvents(tilemap, true);
-    }
 
     // loop through tilemap cells
     for (let cell of tilemap.tiles) {

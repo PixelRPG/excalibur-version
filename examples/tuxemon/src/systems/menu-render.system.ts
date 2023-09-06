@@ -2,25 +2,12 @@ import {
   System,
   SystemType,
   Logger,
-  BodyComponent,
-  Entity,
   ScreenElement,
-  Polygon,
-  vec,
-  Color,
   Scene,
-  TransformComponent,
-  CoordPlane,
-  CollisionType,
-  PointerComponent,
   GraphicsComponent,
-  Tile,
 } from 'excalibur';
 import { PrpgMenuComponent, PrpgMenuVisibleComponent, PrpgScreenPositionComponent, PrpgTileboxComponent } from '../components';
-import { MapScene } from '../scenes/index';
 import { PrpgComponentType } from '../types';
-import { resources } from '../managers/index';
-import { TiledTilesetResource } from '../resources/tiled-tileset.resource';
 
 
 export class PrpgMenuRenderSystem extends System<PrpgMenuComponent | PrpgScreenPositionComponent> {
@@ -38,14 +25,11 @@ export class PrpgMenuRenderSystem extends System<PrpgMenuComponent | PrpgScreenP
    
   public update(entities: ScreenElement[], delta: number) {
     for (const entity of entities) {
-      const screen = entity.get<PrpgScreenPositionComponent>(PrpgComponentType.SCREEN_POSITION);
-      if(!screen) {
-        this.logger.error('PrpgScreenPositionComponent not found!');
-        continue;
-      }
+      
 
       const tilebox = entity.get<PrpgTileboxComponent>(PrpgComponentType.TILEBOX);
       const tileboxGraphics = tilebox ? tilebox.tilemap.get(GraphicsComponent) : undefined;
+      // const screen = entity.get<PrpgScreenPositionComponent>(PrpgComponentType.SCREEN_POSITION);
 
       const visible = entity.get<PrpgMenuVisibleComponent>(PrpgComponentType.MENU_VISIBLE);
       const menuIsVisible = !!visible;
