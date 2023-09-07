@@ -16,5 +16,10 @@
         "columns": 5
     },
     "prpg.controllable": {},
-    "prpg.screen-position": {}
+    "prpg.screen-position": {
+        "auto": {
+            "x": "center",
+            "y": "center"
+        }
+    }
 }

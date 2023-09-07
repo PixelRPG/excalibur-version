@@ -6,4 +6,5 @@ export { PrpgMapSystem } from './map.system';
 export { PrpgMenuRenderSystem } from './menu-render.system';
 export { PrpgMultiplayerSystem } from './multiplayer.system';
 export { PrpgPlayerSystem } from './player.system';
+export { PrpgScreenSystem } from './screen.system';
 export { PrpgTeleportSystem } from './teleport.system';

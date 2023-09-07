@@ -114,18 +114,11 @@ export class TilemapService {
    * @returns 
    */
   public setCoordPlane(tilemap: TileMap, coordPlane: CoordPlane) {
-    // Make the tilemap to a screen element
+    // Set the tilemap coordinate plane to the screen like a screen element
     let trans = tilemap.get(TransformComponent);
     if (trans) {
       trans.coordPlane = coordPlane;
     }
-
-    const pointer = tilemap.get(PointerComponent);
-    if (pointer) {
-      pointer.useGraphicsBounds = true;
-      pointer.useColliderShape = false;
-    }
-
     return tilemap;
   }
 

@@ -1,6 +1,6 @@
 import { Scene, Logger, Query, Engine } from 'excalibur';
 import { TiledMapResource } from '@excaliburjs/plugin-tiled';
-import { PrpgCharacterSystem, PrpgBodySystem, PrpgInputSystem, PrpgPlayerSystem, PrpgTeleportSystem, PrpgMapSystem, PrpgFadeSystem, PrpgMultiplayerSystem, PrpgMenuRenderSystem } from '../systems';
+import { PrpgCharacterSystem, PrpgBodySystem, PrpgInputSystem, PrpgPlayerSystem, PrpgTeleportSystem, PrpgMapSystem, PrpgFadeSystem, PrpgMultiplayerSystem, PrpgMenuRenderSystem, PrpgScreenSystem } from '../systems';
 import { newMapEntity } from '../entities';
 import { PrpgPlayerActor } from '../actors';
 import { PrpgMapComponent, PrpgPlayerComponent } from '../components';
@@ -79,6 +79,7 @@ export class MapScene extends Scene implements MultiplayerSyncableScene {
   }
 
   public onInitialize() {
+    this.world.add(new PrpgScreenSystem());
     this.world.add(new PrpgFadeSystem());
     this.world.add(new PrpgMapSystem(this.gameOptions));
     this.world.add(new PrpgBodySystem());

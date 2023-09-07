@@ -9,7 +9,7 @@ export { MenuItemComponentArgs, MenuItemComponentState } from './menu-item-compo
 export { MenuVisibleComponentArgs, MenuVisibleComponentState } from './menu-visible-component';
 export { MultiplayerSyncComponentArgs, PrpgMultiplayerSyncComponentState } from './multiplayer-sync-component';
 export { PlayerComponentArgs, PlayerComponentState, PlayerComponentUpdates } from './player-component';
-export { ScreenPositionComponentArgs, ScreenPositionComponentState } from './screen-position-component';
+export { ScreenAutoPosition, ScreenAutoPositions, ScreenPositionComponentArgs, ScreenPositionComponentState } from './screen-position-component';
 export { SelectableComponentArgs, SelectableComponentState } from './selectable-component';
 export { SpawnPointComponentArgs, SpawnPointComponentState } from './spawn-point-component';
 export { TeleportComponentArgs, TeleportComponentState } from './teleport-component';

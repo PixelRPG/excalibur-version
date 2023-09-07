@@ -72,8 +72,8 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<G
             displayMode: DisplayMode.FillContainer, // TODO: Contribute a new option to ignore aspect ratio / resolution
             canvasElementId,
             pointerScope: PointerScope.Canvas,
-            width: document.getElementById(canvasElementId)?.clientWidth || 800,
-            height: document.getElementById(canvasElementId)?.clientHeight || 600,
+            width: 800, // document.getElementById(canvasElementId)?.clientWidth || 800,
+            height: 600, // document.getElementById(canvasElementId)?.clientHeight || 600,
             antialiasing: false,
             snapToPixel: false,
             suppressPlayButton: true, // Disable play button, enable to fix audio issue, currently only used for dev
