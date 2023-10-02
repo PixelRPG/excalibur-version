@@ -69,11 +69,11 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<G
     constructor(engineOptions: EngineOptions, readonly gameOptions: GameOptions, initialState?: GameUpdates) {
         const canvasElementId = 'p' + gameOptions.playerNumber;
         const defaults = {
-            displayMode: DisplayMode.FillContainer, // TODO: Contribute a new option to ignore aspect ratio / resolution
+            displayMode: DisplayMode.FillContainer,
             canvasElementId,
             pointerScope: PointerScope.Canvas,
-            width: 800, // document.getElementById(canvasElementId)?.clientWidth || 800,
-            height: 600, // document.getElementById(canvasElementId)?.clientHeight || 600,
+            width: document.getElementById(canvasElementId)?.clientWidth || 800,
+            height: document.getElementById(canvasElementId)?.clientHeight || 600,
             antialiasing: false,
             snapToPixel: false,
             suppressPlayButton: true, // Disable play button, enable to fix audio issue, currently only used for dev

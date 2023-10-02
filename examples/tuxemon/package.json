@@ -31,8 +31,8 @@
   "devDependencies": {
     "@pixelrpg/esbuild": "workspace:^",
     "barreler": "^0.0.5",
-    "esbuild": "^0.19.2",
-    "rimraf": "^5.0.1",
+    "esbuild": "^0.19.4",
+    "rimraf": "^5.0.5",
     "ts-json-schema-generator": "^1.3.0",
     "typescript": "^5.2.2"
   }

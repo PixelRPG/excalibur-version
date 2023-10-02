@@ -7,12 +7,13 @@ import {
   BodyComponent,
   ScreenElement,
   Actor,
+  Query,
 } from 'excalibur';
 import { PrpgScreenPositionComponent, PrpgTileboxComponent } from '../components';
-import { PrpgComponentType, ScreenAutoPositions, ScreenAutoPosition } from '../types';
+import { PrpgComponentType, ScreenAutoPosition } from '../types';
 
 /**
- * A system to position elements on the screen coordinate plane using the ScreenComponent.
+ * A system to position elements on the screen coordinate plane using the PrpgScreenPositionComponent.
  */
 export class PrpgScreenSystem extends System<PrpgScreenPositionComponent> {
   public readonly types = [PrpgComponentType.SCREEN_POSITION] as const;
@@ -20,6 +21,8 @@ export class PrpgScreenSystem extends System<PrpgScreenPositionComponent> {
   public systemType = SystemType.Update;
   private logger = Logger.getInstance();
   private scene?: Scene;
+
+  private _firstRun = true;
 
   public initialize(scene: Scene) {
     this.scene = scene;
@@ -51,8 +54,7 @@ export class PrpgScreenSystem extends System<PrpgScreenPositionComponent> {
     }
   }
 
-  public update(entities: Entity[], delta: number) {
-
+  public updatePosition(entities: Entity[]) {
     if(!this.scene) {
       throw new Error('PrpgBodySystem: Scene not found');
     }
@@ -84,12 +86,7 @@ export class PrpgScreenSystem extends System<PrpgScreenPositionComponent> {
         body.pos.y = screenPosition.y;
       }
 
-      if(entity instanceof ScreenElement) {
-        entity.pos.x = screenPosition.x;
-        entity.pos.y = screenPosition.y;
-      }
-
-      if(entity instanceof Actor) {
+      if(entity instanceof Actor || entity instanceof ScreenElement) {
         entity.pos.x = screenPosition.x;
         entity.pos.y = screenPosition.y;
       }
@@ -100,8 +97,14 @@ export class PrpgScreenSystem extends System<PrpgScreenPositionComponent> {
         tilebox.tilemap.pos.x = screenPosition.x
         tilebox.tilemap.pos.y = screenPosition.y;
       }
-
-      this.logger.debug('screenPosition', screenPosition);
     }
+  }
+
+  public update(entities: Entity[], delta: number) {
+    // TODO: Update if screen size changed
+    if(this._firstRun) {
+      this.updatePosition(entities);
+    }
+    this._firstRun = false;
   }
 }

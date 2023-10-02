@@ -1,5 +1,3 @@
-// export type ScreenAutoPosition = 'top' | 'bottom' | 'left' | 'right' | 'center';
-
 export enum ScreenAutoPosition {
     TOP = 'top',
     BOTTOM = 'bottom',
