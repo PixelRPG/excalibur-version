@@ -44,7 +44,6 @@ export class MenuService {
 
         const tilebox = menuEntity.get(PrpgTileboxComponent);
         if(tilebox) {
-
             // if the tilebox is a screen, set it to the screen
             if(screen) {
                 const tilemap = TilemapService.getInstance();
