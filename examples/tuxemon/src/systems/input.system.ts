@@ -6,6 +6,8 @@ import {
     Keys,
     Buttons,
     Axes,
+    Query,
+    World,
   } from 'excalibur';
   import {
     PrpgControllableComponent,
@@ -17,14 +19,13 @@ import {
   import { MapScene } from '../scenes/map.scene';
   import { GameOptions, PrpgComponentType } from '../types';
   
-  export class PrpgInputSystem extends System<
-  | PrpgControllableComponent
-  > {
+  export class PrpgInputSystem extends System {
     public readonly types = [PrpgComponentType.CONTROLLABLE] as const;
     public priority = 99;
     public systemType = SystemType.Update;
     private scene?: MapScene;
     private logger = Logger.getInstance();
+    private query?: Query<typeof PrpgControllableComponent>;
   
     constructor(readonly gameOptions: GameOptions) {
       super();
@@ -198,7 +199,7 @@ import {
       const visible = entity.get(PrpgMenuVisibleComponent);
       console.debug('toggle menu visibility', visible);
       if(visible) {
-        entity.removeComponent(PrpgComponentType.MENU_VISIBLE);
+        entity.removeComponent(PrpgMenuVisibleComponent);
       } else {
         entity.addComponent(new PrpgMenuVisibleComponent());
       }
@@ -226,11 +227,12 @@ import {
 
     }
   
-    public initialize(scene: MapScene) {
+    public initialize(world: World, scene: MapScene) {
       this.scene = scene;
     }
   
-    public update(entities: Entity[], delta: number) {
+    public update(delta: number) {
+      const entities = this.query?.getEntities() || [];
       for (const entity of entities) {
         const body = entity.get(PrpgBodyComponent);
         const menu = entity.get(PrpgMenuComponent);

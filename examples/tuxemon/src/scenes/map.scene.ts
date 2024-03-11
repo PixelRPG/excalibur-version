@@ -1,5 +1,5 @@
 import { Scene, Logger, Query, Engine } from 'excalibur';
-import { TiledMapResource } from '@excaliburjs/plugin-tiled';
+import { TiledMapResource } from '@excaliburjs/plugin-tiled/src/deprecated';
 import { PrpgCharacterSystem, PrpgBodySystem, PrpgInputSystem, PrpgPlayerSystem, PrpgTeleportSystem, PrpgMapSystem, PrpgFadeSystem, PrpgMultiplayerSystem, PrpgMenuRenderSystem, PrpgScreenSystem } from '../systems';
 import { newMapEntity } from '../entities';
 import { PrpgPlayerActor } from '../actors';
@@ -15,8 +15,8 @@ export class MapScene extends Scene implements MultiplayerSyncableScene {
 
   public logger = Logger.getInstance();
   public multiplayerSystem?: PrpgMultiplayerSystem;
-  private mapQuery: Query<PrpgMapComponent>;
-  private playerQuery: Query<PrpgPlayerComponent>;
+  private mapQuery: Query<typeof PrpgMapComponent>;
+  private playerQuery: Query<typeof PrpgPlayerComponent>;
 
   private static _instances: {
     [playerNumber: number]: {
@@ -66,8 +66,8 @@ export class MapScene extends Scene implements MultiplayerSyncableScene {
   constructor(private readonly gameOptions: GameOptions, public readonly name: string, private readonly map: TiledMapResource) {
     super();
     this.add(newMapEntity(map, name));
-    this.mapQuery = this.world.queryManager.createQuery([PrpgComponentType.MAP]);
-    this.playerQuery = this.world.queryManager.createQuery<PrpgPlayerComponent>([PrpgComponentType.PLAYER]);
+    this.mapQuery = this.world.queryManager.createQuery([PrpgMapComponent]);
+    this.playerQuery = this.world.queryManager.createQuery([PrpgPlayerComponent]);
     this.name = name;
 
     MapScene._instances[gameOptions.playerNumber] ||= {};

@@ -8,6 +8,7 @@ import {
   ScreenElement,
   Actor,
   Query,
+  World,
 } from 'excalibur';
 import { PrpgScreenPositionComponent, PrpgTileboxComponent } from '../components';
 import { PrpgComponentType, ScreenAutoPosition } from '../types';
@@ -15,17 +16,22 @@ import { PrpgComponentType, ScreenAutoPosition } from '../types';
 /**
  * A system to position elements on the screen coordinate plane using the PrpgScreenPositionComponent.
  */
-export class PrpgScreenSystem extends System<PrpgScreenPositionComponent> {
+export class PrpgScreenSystem extends System {
   public readonly types = [PrpgComponentType.SCREEN_POSITION] as const;
   public priority = 1000;
   public systemType = SystemType.Update;
   private logger = Logger.getInstance();
   private scene?: Scene;
+  private query?: Query<typeof PrpgScreenPositionComponent>
 
   private _firstRun = true;
 
-  public initialize(scene: Scene) {
+  public initialize(world: World, scene: Scene) {
+    super.initialize?.(world, scene);
     this.scene = scene;
+    this.query = this.scene.world.queryManager.createQuery([
+      PrpgScreenPositionComponent
+    ]);
   }
 
   public setX(auto: ScreenAutoPosition, vw: number, width: number) {
@@ -67,7 +73,7 @@ export class PrpgScreenSystem extends System<PrpgScreenPositionComponent> {
 
     // TODO: Only update if screen size changed
     for (const entity of entities) {
-      const screenPosition = entity.get<PrpgScreenPositionComponent>(PrpgComponentType.SCREEN_POSITION);
+      const screenPosition = entity.get(PrpgScreenPositionComponent);
       if(!screenPosition) {
         throw new Error('PrpgBodySystem: ScreenPositionComponent not found');
       }
@@ -80,7 +86,7 @@ export class PrpgScreenSystem extends System<PrpgScreenPositionComponent> {
         screenPosition.y = this.setY(screenPosition.auto.y, vh, 16 * 5); // TODO get height from tilemap
       }
 
-      const body = entity.get<BodyComponent>(PrpgComponentType.BODY);
+      const body = entity.get(BodyComponent);
       if(body) {
         body.pos.x = screenPosition.x;
         body.pos.y = screenPosition.y;
@@ -91,7 +97,7 @@ export class PrpgScreenSystem extends System<PrpgScreenPositionComponent> {
         entity.pos.y = screenPosition.y;
       }
 
-      const tilebox = entity.get<PrpgTileboxComponent>(PrpgComponentType.TILEBOX);
+      const tilebox = entity.get(PrpgTileboxComponent);
 
       if(tilebox) {
         tilebox.tilemap.pos.x = screenPosition.x
@@ -100,7 +106,8 @@ export class PrpgScreenSystem extends System<PrpgScreenPositionComponent> {
     }
   }
 
-  public update(entities: Entity[], delta: number) {
+  public update( delta: number) {
+    const entities = this.query?.getEntities() ?? [];
     // TODO: Update if screen size changed
     if(this._firstRun) {
       this.updatePosition(entities);

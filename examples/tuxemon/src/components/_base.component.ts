@@ -1,7 +1,7 @@
 import { Component } from 'excalibur';
 import { PrpgComponentType } from "../types";
 
-export abstract class PrpgBaseComponent<TYPE extends PrpgComponentType, STATE, ARGS extends Partial<STATE> = STATE> extends Component<TYPE> {
+export abstract class PrpgBaseComponent<TYPE extends PrpgComponentType, STATE, ARGS extends Partial<STATE> = STATE> extends Component {
     readonly abstract type: TYPE;
     protected abstract _state: STATE;
 

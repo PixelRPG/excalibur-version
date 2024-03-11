@@ -9,6 +9,8 @@ import {
   GraphicsComponent,
   ColliderComponent,
   ActionsComponent,
+  Query,
+  World,
 } from 'excalibur';
 import {
   PrpgCharacterComponent,
@@ -19,22 +21,21 @@ import { PrpgPlayerActor } from '../actors';
 import { MapScene } from '../scenes/map.scene';
 import { GameOptions, PrpgComponentType } from '../types';
 
-export class PrpgPlayerSystem extends System<
-| PrpgPlayerComponent
-| PrpgCharacterComponent
-| BodyComponent
-| PrpgBodyComponent
-| TransformComponent
-| MotionComponent
-| GraphicsComponent
-| ColliderComponent
-| ActionsComponent
-> {
+export class PrpgPlayerSystem extends System {
   public readonly types = [PrpgComponentType.PLAYER] as const;
   public priority = 99;
   public systemType = SystemType.Update;
   private scene?: MapScene;
   private logger = Logger.getInstance();
+  private query?: Query<typeof PrpgPlayerComponent
+  | typeof PrpgCharacterComponent
+  | typeof BodyComponent
+  | typeof PrpgBodyComponent
+  | typeof TransformComponent
+  | typeof MotionComponent
+  | typeof GraphicsComponent
+  | typeof ColliderComponent
+  | typeof ActionsComponent>
 
   constructor(readonly gameOptions: GameOptions) {
     super();
@@ -91,8 +92,8 @@ export class PrpgPlayerSystem extends System<
     }
 
     const playerQuery =
-      this.scene.world.queryManager.createQuery<PrpgPlayerComponent>([
-        PrpgComponentType.PLAYER
+      this.scene.world.queryManager.createQuery([
+        PrpgPlayerComponent
       ]);
 
     const players = playerQuery.getEntities() as PrpgPlayerActor[];
@@ -103,11 +104,22 @@ export class PrpgPlayerSystem extends System<
     this._limitCameraBoundsToMap();
   }
 
-  public initialize(scene: MapScene) {
+  public initialize(world: World, scene: MapScene) {
+    super.initialize?.(world, scene);
     this.scene = scene;
+    this.query = this.scene.world.queryManager.createQuery([
+      PrpgCharacterComponent
+      ,BodyComponent
+      ,PrpgBodyComponent
+      ,TransformComponent
+      ,MotionComponent
+      ,GraphicsComponent
+      ,ColliderComponent
+      ,ActionsComponent
+    ]);
   }
 
-  public update(entities: PrpgPlayerActor[], delta: number) {
+  public update( delta: number) {
     //
   }
 }

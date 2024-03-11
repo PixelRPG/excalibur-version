@@ -5,10 +5,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "yarn workspaces foreach -v run test",
+    "test": "yarn workspaces foreach -v --all run test",
     "build": "yarn workspaces foreach -pRv --topological-dev --from '@pixelrpg/tuxemon' run build",
-    "clear": "yarn workspaces foreach -v run clear",
+    "clear": "yarn workspaces foreach -v --all run clear",
     "start": "yarn workspace @pixelrpg/tuxemon run start",
+    "lint": "yarn workspace @pixelrpg/tuxemon run lint",
     "build:excalibur": "yarn workspace excalibur run build",
     "build:example": "yarn workspace @pixelrpg/tuxemon run build"
   },
@@ -30,5 +31,5 @@
     "karma": "^6.4.2",
     "typescript": "^5.3.3"
   },
-  "packageManager": "yarn@4.0.2"
+  "packageManager": "yarn@4.1.1"
 }

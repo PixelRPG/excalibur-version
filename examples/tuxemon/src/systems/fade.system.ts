@@ -2,6 +2,8 @@ import {
   System,
   SystemType,
   Logger,
+  Query,
+  World,
 } from 'excalibur';
 import { PrpgFadeScreenComponent } from '../components';
 import { PrpgFadeScreenElement } from '../screen-elements';
@@ -9,19 +11,21 @@ import { MapScene } from '../scenes/map.scene';
 import { FadeScreenComponentState, PrpgComponentType } from '../types';
 import { FadeScreenEvent } from '../events';
 
-export class PrpgFadeSystem extends System<PrpgFadeScreenComponent> {
+export class PrpgFadeSystem extends System {
   public readonly types = [PrpgComponentType.FADE_SCREEN] as const;
   public priority = 500;
   public systemType = SystemType.Update;
   private logger = Logger.getInstance();
   private scene?: MapScene;
+  private query?: Query<typeof PrpgFadeScreenComponent>
 
   constructor() {
     super();
   }
 
-  public initialize(scene: MapScene) {
-    super.initialize?.(scene);
+  public initialize(world: World, scene: MapScene) {
+    super.initialize?.(world, scene);
+    this.query = world.queryManager.createQuery([PrpgFadeScreenComponent]);
     this.scene = scene;
   }
 
@@ -37,7 +41,8 @@ export class PrpgFadeSystem extends System<PrpgFadeScreenComponent> {
     fadeScreenElement.emit('complete', new FadeScreenEvent(fadeScreenElement, fadeScreen.state));
   }
    
-  public update(fadeScreenElements: PrpgFadeScreenElement[], delta: number) {
+  public update(delta: number) {
+    const fadeScreenElements: PrpgFadeScreenElement[] = this.query?.getEntities() as PrpgFadeScreenElement[];
     for (const fadeScreenElement of fadeScreenElements) {
       const fadeScreen = fadeScreenElement.get(PrpgFadeScreenComponent);
       if (!fadeScreen) {

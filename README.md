@@ -8,14 +8,14 @@ This is an experimental 2D engine designed for SNES style RPG games. Currently I
 ## Build
 
 Required engine:  
-node: >=16  
-npm: >=7  
+node: >=16 
+yarn: >=1
 
 ```bash
 git clone --recurse-submodules https://github.com/PixelRPG/excalibur-version.git
 cd excalibur-version
-npm install
-npm run build
+yarn install
+yarn build
 # Start the example game
-npm run start
+yarn start
 ```
