@@ -1,8 +1,8 @@
 import { Entity } from 'excalibur';
-import { TiledMapResource } from '@excaliburjs/plugin-tiled/src/deprecated';
+import { TiledResource } from '@excaliburjs/plugin-tiled';
 import { PrpgMapComponent } from '../components';
 
-export const newMapEntity = (map: TiledMapResource, name: string) => {
+export const newMapEntity = (map: TiledResource, name: string) => {
   const entry = new Entity([new PrpgMapComponent({
     map, name
   })]);

@@ -1,7 +1,7 @@
-import type { TiledMapResource } from '@excaliburjs/plugin-tiled/src/deprecated';
+import type { TiledResource } from '@excaliburjs/plugin-tiled';
 
 export interface MapComponentState {
-    map: TiledMapResource;
+    map: TiledResource;
     name: string;
     hasStartPoint: boolean;
 }

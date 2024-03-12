@@ -48,8 +48,8 @@ export class PrpgPlayerSystem extends System {
     const vw = this.scene?.camera.viewport.width
     const vh = this.scene?.camera.viewport.height;
 
-    const mapWidth = tiledMap.state.map.data.width * tiledMap.state.map.data.tileWidth;
-    const mapHeight = tiledMap.state.map.data.height * tiledMap.state.map.data.tileHeight;
+    const mapWidth = tiledMap.state.map.map.width * tiledMap.state.map.map.tilewidth;
+    const mapHeight = tiledMap.state.map.map.height * tiledMap.state.map.map.tileheight;
 
     if (vw > (mapWidth * this.scene.camera.zoom) || vh > mapHeight * this.scene.camera.zoom) {
       return; // Do nothing
