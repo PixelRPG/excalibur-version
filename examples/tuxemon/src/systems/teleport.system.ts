@@ -29,20 +29,20 @@ export class PrpgTeleportSystem extends System {
       this.scene = scene;
 
       if (!this.teleportableQuery) {
-        this.teleportableQuery = this.scene.world.queryManager.createQuery([PrpgTeleportableComponent]);
+        this.teleportableQuery = world.queryManager.createQuery([PrpgTeleportableComponent]);
       }
 
       if (!this.teleportQuery) {
-        this.teleportQuery = this.scene.world.queryManager.createQuery([PrpgTeleportComponent]);
+        this.teleportQuery = world.queryManager.createQuery([PrpgTeleportComponent]);
       }
 
       if (!this.fadeScreenQuery) {
-        this.fadeScreenQuery = this.scene.world.queryManager.createQuery([PrpgFadeScreenComponent]);
+        this.fadeScreenQuery = world.queryManager.createQuery([PrpgFadeScreenComponent]);
       }
 
       if (!this.spawnPointQuery) {
         this.spawnPointQuery =
-        this.scene.world.queryManager.createQuery([PrpgSpawnPointComponent]);
+        world.queryManager.createQuery([PrpgSpawnPointComponent]);
       }
 
       const teleportEntities = this.teleportQuery.getEntities();

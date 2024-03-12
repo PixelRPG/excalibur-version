@@ -17,6 +17,7 @@ export class PrpgFadeSystem extends System {
   public systemType = SystemType.Update;
   private logger = Logger.getInstance();
   private scene?: MapScene;
+  private world?: World;
   private query?: Query<typeof PrpgFadeScreenComponent>
 
   constructor() {
@@ -25,8 +26,9 @@ export class PrpgFadeSystem extends System {
 
   public initialize(world: World, scene: MapScene) {
     super.initialize?.(world, scene);
-    this.query = world.queryManager.createQuery([PrpgFadeScreenComponent]);
     this.scene = scene;
+    this.world = world;
+    this.query = world.queryManager.createQuery([PrpgFadeScreenComponent]);
   }
 
   setFadeScreenComplete(fadeScreen: PrpgFadeScreenComponent, fadeScreenElement: PrpgFadeScreenElement) {
@@ -51,7 +53,7 @@ export class PrpgFadeSystem extends System {
 
       if(fadeScreen.state.isComplete) {
         if(fadeScreen.state.isComplete) {
-          this.scene?.world.remove(fadeScreenElement, false);
+          this.world?.remove(fadeScreenElement, false);
         }
         continue;
       }

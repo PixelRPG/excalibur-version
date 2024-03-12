@@ -171,7 +171,7 @@ export class PrpgEngine extends ExcaliburEngine implements MultiplayerSyncable<G
      * @param scene The scene to add to the engine
      */
     addScene(key: string, scene: Scene) {
-        super.addScene(key, scene);
+        return super.addScene(key, scene);
     }
 
     /**

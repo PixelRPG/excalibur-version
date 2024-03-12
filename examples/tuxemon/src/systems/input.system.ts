@@ -229,6 +229,7 @@ import {
   
     public initialize(world: World, scene: MapScene) {
       this.scene = scene;
+      this.query = world.query([PrpgControllableComponent]);
     }
   
     public update(delta: number) {

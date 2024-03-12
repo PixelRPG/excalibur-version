@@ -22,7 +22,7 @@ export class PrpgMenuRenderSystem extends System {
 
   public initialize(world: World, scene: Scene) {
     super.initialize?.(world, scene);
-    this.query = this.scene?.world.queryManager.createQuery([PrpgMenuComponent, PrpgScreenPositionComponent]);
+    this.query = world.queryManager.createQuery([PrpgMenuComponent, PrpgScreenPositionComponent]);
     this.scene = scene;
   }
    

@@ -29,7 +29,7 @@ export class PrpgScreenSystem extends System {
   public initialize(world: World, scene: Scene) {
     super.initialize?.(world, scene);
     this.scene = scene;
-    this.query = this.scene.world.queryManager.createQuery([
+    this.query = world.queryManager.createQuery([
       PrpgScreenPositionComponent
     ]);
   }

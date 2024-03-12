@@ -22,7 +22,6 @@ export class PrpgCharacterSystem extends System {
   public readonly types = [PrpgComponentType.CHARACTER] as const;
   public priority = 300;
   public systemType = SystemType.Update;
-  private scene?: MapScene;
   private logger = Logger.getInstance();
   private query?: Query<typeof PrpgCharacterComponent | typeof BodyComponent | typeof TransformComponent | typeof MotionComponent | typeof GraphicsComponent | typeof ColliderComponent | typeof ActionsComponent>;
   private characterQuery?: Query<typeof PrpgCharacterComponent>;
@@ -130,14 +129,13 @@ export class PrpgCharacterSystem extends System {
 
   public initialize?(world: World, scene: MapScene) {
     super.initialize?.(world, scene);
-    this.scene = scene;
 
     if (!this.query) {
-      this.query = this.scene.world.queryManager.createQuery([PrpgCharacterComponent, BodyComponent, TransformComponent, MotionComponent, GraphicsComponent, ColliderComponent, ActionsComponent]);
+      this.query = world.queryManager.createQuery([PrpgCharacterComponent, BodyComponent, TransformComponent, MotionComponent, GraphicsComponent, ColliderComponent, ActionsComponent]);
     }
 
     if (!this.characterQuery) {
-      this.characterQuery = this.scene.world.queryManager.createQuery([PrpgCharacterComponent]);
+      this.characterQuery = world.queryManager.createQuery([PrpgCharacterComponent]);
     }
 
     const entities = this.characterQuery.getEntities() as PrpgCharacterActor[];

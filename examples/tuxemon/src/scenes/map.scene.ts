@@ -6,7 +6,7 @@ import { PrpgPlayerActor } from '../actors';
 import { PrpgMapComponent, PrpgPlayerComponent } from '../components';
 import { findEntityByNameFromScene } from '../utilities';
 
-import { PrpgComponentType, MultiplayerSyncableScene } from '../types';
+import { MultiplayerSyncableScene } from '../types';
 import type { GameOptions } from '../types';
 
 

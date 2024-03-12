@@ -27,15 +27,7 @@ export class PrpgPlayerSystem extends System {
   public systemType = SystemType.Update;
   private scene?: MapScene;
   private logger = Logger.getInstance();
-  private query?: Query<typeof PrpgPlayerComponent
-  | typeof PrpgCharacterComponent
-  | typeof BodyComponent
-  | typeof PrpgBodyComponent
-  | typeof TransformComponent
-  | typeof MotionComponent
-  | typeof GraphicsComponent
-  | typeof ColliderComponent
-  | typeof ActionsComponent>
+  private playerQuery?: Query<typeof PrpgPlayerComponent>;
 
   constructor(readonly gameOptions: GameOptions) {
     super();
@@ -91,12 +83,7 @@ export class PrpgPlayerSystem extends System {
       return;
     }
 
-    const playerQuery =
-      this.scene.world.queryManager.createQuery([
-        PrpgPlayerComponent
-      ]);
-
-    const players = playerQuery.getEntities() as PrpgPlayerActor[];
+    const players = this.playerQuery?.getEntities() as PrpgPlayerActor[];
     for (const player of players) {
       this._initCameraForPlayer(player);
     }
@@ -107,16 +94,11 @@ export class PrpgPlayerSystem extends System {
   public initialize(world: World, scene: MapScene) {
     super.initialize?.(world, scene);
     this.scene = scene;
-    this.query = this.scene.world.queryManager.createQuery([
-      PrpgCharacterComponent
-      ,BodyComponent
-      ,PrpgBodyComponent
-      ,TransformComponent
-      ,MotionComponent
-      ,GraphicsComponent
-      ,ColliderComponent
-      ,ActionsComponent
-    ]);
+
+    this.playerQuery =
+      world.queryManager.createQuery([
+        PrpgPlayerComponent
+      ]);
   }
 
   public update( delta: number) {
