@@ -9,7 +9,8 @@ import {
   MotionComponent,
   GraphicsComponent,
   ColliderComponent,
-  ActionsComponent
+  ActionsComponent,
+  World
 } from 'excalibur';
 import { PrpgCharacterComponent } from '../components';
 import { PrpgCharacterActor } from '../actors';
@@ -17,14 +18,13 @@ import { resources } from '../managers/resource.manager';
 import { MapScene } from '../scenes/map.scene';
 import { CharacterAnimation, PrpgComponentType, Direction } from '../types';
 
-export class PrpgCharacterSystem extends System<
-PrpgCharacterComponent | BodyComponent | TransformComponent | MotionComponent | GraphicsComponent | ColliderComponent | ActionsComponent> {
+export class PrpgCharacterSystem extends System {
   public readonly types = [PrpgComponentType.CHARACTER] as const;
   public priority = 300;
   public systemType = SystemType.Update;
-  private scene?: MapScene;
   private logger = Logger.getInstance();
-  private characterQuery?: Query<PrpgCharacterComponent>;
+  private query?: Query<typeof PrpgCharacterComponent | typeof BodyComponent | typeof TransformComponent | typeof MotionComponent | typeof GraphicsComponent | typeof ColliderComponent | typeof ActionsComponent>;
+  private characterQuery?: Query<typeof PrpgCharacterComponent>;
 
   constructor() {
     super();
@@ -98,7 +98,7 @@ PrpgCharacterComponent | BodyComponent | TransformComponent | MotionComponent | 
       graphics.use(animation);
     }
 
-    // Stands sill
+    // Stands sillWorld
     if (motion.vel.y === 0 && motion.vel.x === 0) {
       let animation = spriteSheet.getAnimation(CharacterAnimation.FRONT);
       switch (character.direction) {
@@ -127,12 +127,15 @@ PrpgCharacterComponent | BodyComponent | TransformComponent | MotionComponent | 
     }
   }
 
-  public initialize?(scene: MapScene) {
-    super.initialize?.(scene);
-    this.scene = scene;
+  public initialize?(world: World, scene: MapScene) {
+    super.initialize?.(world, scene);
+
+    if (!this.query) {
+      this.query = world.queryManager.createQuery([PrpgCharacterComponent, BodyComponent, TransformComponent, MotionComponent, GraphicsComponent, ColliderComponent, ActionsComponent]);
+    }
 
     if (!this.characterQuery) {
-      this.characterQuery = this.scene.world.queryManager.createQuery<PrpgCharacterComponent>([PrpgComponentType.CHARACTER]);
+      this.characterQuery = world.queryManager.createQuery([PrpgCharacterComponent]);
     }
 
     const entities = this.characterQuery.getEntities() as PrpgCharacterActor[];
@@ -156,7 +159,12 @@ PrpgCharacterComponent | BodyComponent | TransformComponent | MotionComponent | 
     }
   }
 
-  public update(entities: PrpgCharacterActor[], delta: number) {
+  public update(delta: number) {
+    const entities = this.query?.getEntities() as PrpgCharacterActor[];
+    if (!entities) {
+      return;
+    }
+
     for (const entity of entities) {
       this._handleMotion(entity);
     }

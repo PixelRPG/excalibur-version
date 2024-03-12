@@ -29,7 +29,7 @@ export class MenuService {
 
         const menuEntity = BlueprintService.getInstance().createEntityFromBlueprint(menu.data, entityName);
 
-        const screen = menuEntity.get<PrpgScreenPositionComponent>(PrpgComponentType.SCREEN_POSITION);
+        const screen = menuEntity.get(PrpgScreenPositionComponent);
 
         const menuItemEntities = menuEntity.get(PrpgMenuComponent)?.items || {};
         for (const key in menuItemEntities) {

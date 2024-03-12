@@ -1,6 +1,6 @@
 import '../typings';
 import { Loadable, Resource } from 'excalibur';
-import { TiledMapResource, TiledMap, TiledTileset } from '@excaliburjs/plugin-tiled';
+import { TiledMap, TiledMapResource } from '@excaliburjs/plugin-tiled/src/deprecated';
 import { AsepriteResource } from '@excaliburjs/plugin-aseprite';
 import { TiledTilesetResource } from '../resources/tiled-tileset.resource'
 

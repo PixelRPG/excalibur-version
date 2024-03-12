@@ -1,4 +1,4 @@
-import type { TiledMapResource } from '@excaliburjs/plugin-tiled';
+import type { TiledMapResource } from '@excaliburjs/plugin-tiled/src/deprecated';
 
 export interface MapComponentState {
     map: TiledMapResource;

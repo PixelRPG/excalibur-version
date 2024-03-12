@@ -4,8 +4,11 @@ import {
   Logger,
   Component,
   Entity,
-  Scene
+  Scene,
+  World,
+  Query,
 } from 'excalibur';
+import { PrpgBaseComponent } from '../components/index';
 import { MapScene } from '../scenes/map.scene';
 import { syncable, findEntityByNameInMapScenes } from '../utilities';
 import { PrpgPlayerActor } from '../actors/player.actor';
@@ -54,8 +57,8 @@ export class PrpgMultiplayerSystem extends System implements MultiplayerSyncable
     super();
   }
 
-  public initialize(scene: MapScene) {
-    super.initialize?.(scene);
+  public initialize(world: World, scene: MapScene) {
+    super.initialize?.(world, scene);
     this.scene = scene;
     this.initState({ entities: {}});
     if( this.scene.multiplayerSystem !== this) {
@@ -68,7 +71,7 @@ export class PrpgMultiplayerSystem extends System implements MultiplayerSyncable
     // console.debug(`PrpgMultiplayerSystem entities:`, entities);
 
     for (const entity of entities) {
-      const components = entity.getComponents() as (Component & Partial<MultiplayerSyncable>)[]
+      const components = entity.getComponents() as (PrpgBaseComponent<any, any> & Partial<MultiplayerSyncable>)[]
       for (const component of components) {
         const sync = syncable(component.syncDirection, MultiplayerSyncDirection.OUT)
         if(sync && component.dirty) {
@@ -84,7 +87,7 @@ export class PrpgMultiplayerSystem extends System implements MultiplayerSyncable
     const entities = this.scene?.entities || [];
     // console.debug(`PrpgMultiplayerSystem entities:`, entities);
     for (const entity of entities) {
-      const components = entity.getComponents() as (Component & Partial<MultiplayerSyncable>)[]
+      const components = entity.getComponents() as (PrpgBaseComponent<any, any> & Partial<MultiplayerSyncable>)[]
       for (const component of components) {
         const sync = syncable(component.syncDirection, MultiplayerSyncDirection.OUT)
         if(sync) {
@@ -101,7 +104,7 @@ export class PrpgMultiplayerSystem extends System implements MultiplayerSyncable
     this.collectUpdates();
   }
    
-  public update(_: Entity[], delta: number) {
+  public update(delta: number) {
     // this.sync();
   }
 
@@ -112,7 +115,7 @@ export class PrpgMultiplayerSystem extends System implements MultiplayerSyncable
   public resetUpdates(): void {
     const entities = this.scene?.entities || [];
     for (const entity of entities) {
-      for (const component of entity.getComponents() as (Component & MultiplayerSyncable)[]) {
+      for (const component of entity.getComponents() as (PrpgBaseComponent<any, any> & MultiplayerSyncable)[]) {
         if(typeof component.resetUpdates === 'function') {
           component.resetUpdates();
         }
@@ -176,7 +179,12 @@ export class PrpgMultiplayerSystem extends System implements MultiplayerSyncable
         if(componentUpdateData === undefined) {
           continue;
         }
-        const componentToUpdate = entityToUpdate.get(componentType) as Component<string> & MultiplayerSyncable | null;
+        const componentsToUpdate = (entityToUpdate.getComponents() as PrpgBaseComponent<any, any>[]).filter(c => c.type === componentType);
+        if(componentsToUpdate.length !== 1) {
+          this.logger.error(`[applyUpdates][${this.gameOptions.playerNumber}] Found ${componentsToUpdate.length} components of type ${componentType} in entity ${entityName} in map ${this.scene?.name}, expected 1`);
+          continue;
+        }
+        const componentToUpdate = componentsToUpdate[0] as  PrpgBaseComponent<any, any> & MultiplayerSyncable | null;
         if(!componentToUpdate) {
           this.logger.error(`[applyUpdates][${this.gameOptions.playerNumber}] Component ${componentType} not found in entity ${entityName} in map ${this.scene?.name}`);
           continue;

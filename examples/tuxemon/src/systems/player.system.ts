@@ -9,6 +9,8 @@ import {
   GraphicsComponent,
   ColliderComponent,
   ActionsComponent,
+  Query,
+  World,
 } from 'excalibur';
 import {
   PrpgCharacterComponent,
@@ -19,22 +21,13 @@ import { PrpgPlayerActor } from '../actors';
 import { MapScene } from '../scenes/map.scene';
 import { GameOptions, PrpgComponentType } from '../types';
 
-export class PrpgPlayerSystem extends System<
-| PrpgPlayerComponent
-| PrpgCharacterComponent
-| BodyComponent
-| PrpgBodyComponent
-| TransformComponent
-| MotionComponent
-| GraphicsComponent
-| ColliderComponent
-| ActionsComponent
-> {
+export class PrpgPlayerSystem extends System {
   public readonly types = [PrpgComponentType.PLAYER] as const;
   public priority = 99;
   public systemType = SystemType.Update;
   private scene?: MapScene;
   private logger = Logger.getInstance();
+  private playerQuery?: Query<typeof PrpgPlayerComponent>;
 
   constructor(readonly gameOptions: GameOptions) {
     super();
@@ -90,12 +83,7 @@ export class PrpgPlayerSystem extends System<
       return;
     }
 
-    const playerQuery =
-      this.scene.world.queryManager.createQuery<PrpgPlayerComponent>([
-        PrpgComponentType.PLAYER
-      ]);
-
-    const players = playerQuery.getEntities() as PrpgPlayerActor[];
+    const players = this.playerQuery?.getEntities() as PrpgPlayerActor[];
     for (const player of players) {
       this._initCameraForPlayer(player);
     }
@@ -103,11 +91,17 @@ export class PrpgPlayerSystem extends System<
     this._limitCameraBoundsToMap();
   }
 
-  public initialize(scene: MapScene) {
+  public initialize(world: World, scene: MapScene) {
+    super.initialize?.(world, scene);
     this.scene = scene;
+
+    this.playerQuery =
+      world.queryManager.createQuery([
+        PrpgPlayerComponent
+      ]);
   }
 
-  public update(entities: PrpgPlayerActor[], delta: number) {
+  public update( delta: number) {
     //
   }
 }

@@ -120,8 +120,8 @@ export class PrpgGame {
         return;
       }
 
-      const player = entry.get<PrpgPlayerComponent>(PrpgComponentType.PLAYER);
-      const body = entry.get<PrpgBodyComponent>(PrpgComponentType.BODY);
+      const player = entry.get(PrpgPlayerComponent);
+      const body = entry.get(PrpgBodyComponent);
 
       if(player) {
         toScene.transferPlayer(entry as PrpgPlayerActor);

@@ -1,5 +1,6 @@
 import { Resource, ImageSource, SpriteSheet } from 'excalibur';
-import { TiledTileset, RawTiledTileset, parseExternalTsx, parseExternalJson } from '@excaliburjs/plugin-tiled';
+import { } from '@excaliburjs/plugin-tiled';
+import { TiledTileset, RawTiledTileset, parseExternalTsx, parseExternalJson } from '@excaliburjs/plugin-tiled/src/deprecated';
 import type { Loadable } from 'excalibur';
 
 export class TiledTilesetResource implements Loadable<TiledTileset | null> {

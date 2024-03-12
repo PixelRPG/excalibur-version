@@ -1,5 +1,5 @@
-import { System, SystemType, Logger, Entity, Query, Direction, ScreenElement } from 'excalibur';
-import { TiledObject } from '@excaliburjs/plugin-tiled/src';
+import { System, World, SystemType, Logger, Entity, Query, Direction, ScreenElement } from 'excalibur';
+import { TiledObject } from '@excaliburjs/plugin-tiled/src/deprecated';
 import { PrpgTeleportableComponent, PrpgTeleportComponent, PrpgFadeScreenComponent, PrpgSpawnPointComponent, PrpgCharacterComponent, PrpgPlayerComponent, PrpgBodyComponent } from '../components';
 import { newSpawnPointEntity } from '../entities';
 import { PrpgPlayerActor } from '../actors';
@@ -8,39 +8,41 @@ import { MapScene } from '../scenes/map.scene';
 import { PrpgComponentType, SpawnPointType, GameOptions, SpawnPointComponentState, TeleportAnimation, MultiplayerMessageType } from '../types';
 import { stringToDirection } from '../utilities/direction';
 import { PrpgEngine } from '../engine'
-export class PrpgTeleportSystem extends System<
-PrpgTeleportableComponent> {
+export class PrpgTeleportSystem extends System {
     public readonly types = [PrpgComponentType.TELEPORTABLE] as const;
     public priority = 600;
     public systemType = SystemType.Update;
     private scene?: MapScene;
     private logger = Logger.getInstance();
-    private teleportQuery?: Query<PrpgTeleportComponent>;
-    private fadeScreenQuery?: Query<PrpgFadeScreenComponent>;
-    private spawnPointQuery?: Query<PrpgSpawnPointComponent>;
+    private teleportableQuery?: Query<typeof PrpgTeleportableComponent>;
+    private teleportQuery?: Query<typeof PrpgTeleportComponent>;
+    private fadeScreenQuery?: Query<typeof PrpgFadeScreenComponent>;
+    private spawnPointQuery?: Query<typeof PrpgSpawnPointComponent>;
 
     constructor(readonly gameOptions: GameOptions) {
       super();
     }
 
-    public initialize(scene: MapScene) {
-      super.initialize?.(scene);
+    public initialize(world: World, scene: MapScene) {
+      super.initialize?.(world, scene);
       this.logger.debug(`[${this.gameOptions.playerNumber}] initialize`);
       this.scene = scene;
 
+      if (!this.teleportableQuery) {
+        this.teleportableQuery = world.queryManager.createQuery([PrpgTeleportableComponent]);
+      }
+
       if (!this.teleportQuery) {
-        this.teleportQuery = this.scene.world.queryManager.createQuery<PrpgTeleportComponent>([PrpgComponentType.TELEPORT]);
+        this.teleportQuery = world.queryManager.createQuery([PrpgTeleportComponent]);
       }
 
       if (!this.fadeScreenQuery) {
-        this.fadeScreenQuery = this.scene.world.queryManager.createQuery<PrpgFadeScreenComponent>([PrpgComponentType.FADE_SCREEN]);
+        this.fadeScreenQuery = world.queryManager.createQuery([PrpgFadeScreenComponent]);
       }
 
       if (!this.spawnPointQuery) {
         this.spawnPointQuery =
-        this.scene.world.queryManager.createQuery<PrpgSpawnPointComponent>([
-          PrpgComponentType.SPAWN_POINT
-        ]);
+        world.queryManager.createQuery([PrpgSpawnPointComponent]);
       }
 
       const teleportEntities = this.teleportQuery.getEntities();
@@ -376,7 +378,7 @@ PrpgTeleportableComponent> {
     }
 
 
-    public updateTeleportables(teleportableEntities: Entity[]) {
+    public updateTeleportables(teleportableEntities: Entity<PrpgTeleportableComponent>[]) {
       // const teleportEntities = this.teleportQuery?.getEntities()
       const fadeScreenEntities = (this.fadeScreenQuery?.getEntities() || []) as PrpgFadeScreenElement[];
 
@@ -419,7 +421,8 @@ PrpgTeleportableComponent> {
       }
     }
 
-    public update(teleportableEntities: Entity[], delta: number) {
+    public update(delta: number) {
+      const teleportableEntities = this.teleportableQuery?.getEntities() || [];
 
       this.updateTeleportables(teleportableEntities);
 
