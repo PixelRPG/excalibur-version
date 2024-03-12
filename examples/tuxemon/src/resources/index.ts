@@ -1,1 +1,1 @@
-export { TiledTilesetResource } from './tiled-tileset.resource'
+export {}

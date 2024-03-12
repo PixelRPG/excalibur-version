@@ -1,6 +1,7 @@
 import { System, SystemType, Logger, Entity, Actor, vec, Color, Query, World } from 'excalibur';
 import { MapScene } from '../scenes/map.scene';
-import { TiledObjectGroup } from '@excaliburjs/plugin-tiled/dist/src/deprecated';
+import { TiledResource } from '@excaliburjs/plugin-tiled';
+
 import { PrpgMapComponent } from '../components';
 import { PrpgTeleportActor, PrpgPlayerActor } from '../actors';
 import { newSpawnPointEntity } from '../entities';
@@ -29,7 +30,7 @@ export class PrpgMapSystem extends System {
         this.logger.warn('No tiled map found!');
         return;
       }
-      tiledMap.state.map.addTiledMapToScene(this.scene);
+      tiledMap.state.map.addToScene(this.scene);
       this._initProperties(tiledMap);
     }
 
@@ -37,36 +38,33 @@ export class PrpgMapSystem extends System {
      * Init properties defined in tiled map
      */
     private _initProperties(tiledMap: PrpgMapComponent) {
-      const tiledObjectGroups = tiledMap.state.map.data.getObjects();
-      if (tiledObjectGroups.length > 0) {
-        
-        for (const tiledObjectGroup of tiledObjectGroups) {
-          console.debug(tiledMap.state.name, tiledObjectGroup);
-          this._initPolyLines(tiledObjectGroup);
-          this._initPolygons(tiledObjectGroup);
-          this._initTeleports(tiledObjectGroup);
-          this._initSpawnPoints(tiledObjectGroup);
-        }
-      }
+      const tiledResource = tiledMap.state.map;
+      // console.debug("_initProperties", tiledObjectGroups)
+      // TODO
+      // this._initPolyLines(tiledMap.state.map);
+      // this._initPolygons(tiledMap.state.map);
+      this._initTeleports(tiledMap.state.map);
+      this._initSpawnPoints(tiledMap.state.map);
     }
 
     /**
      * Init spawn points defined on the map, e.g. players first spawn point.
      * Creates a new spawn point entity and adds it to the scene.
      */
-    private _initSpawnPoints(tiledObjectGroup: TiledObjectGroup) {
+    private _initSpawnPoints(tiledResource: TiledResource) {
+      console.debug("init spawn point")
       if (!this.scene) {
         this.logger.error('No scene found!');
         return;
       }
       let hasStartPoint = false;
-      const starts = tiledObjectGroup.getObjectsByClass('player-start');
+      const starts = tiledResource.getObjectsByClassName('player-start');
       if (starts.length > 0) {
         for (let i = 0; i < starts.length; i++) {
           const start = starts[i];
-          const z = start.getProperty<number>('zindex')?.value || 0;
-          const playerNumber = start.getProperty<number>('player')?.value || (i + 1);
-          const direction = start.getProperty<string>('direction')?.value;
+          const z = start.properties.get('zindex') as number || 0;
+          const playerNumber = start.properties.get('player') as number || (i + 1);
+          const direction = start.properties.get('direction') as string;
           if(playerNumber > this.gameOptions.players) {
             this.logger.error(`Player number ${playerNumber} is higher than the number of players ${this.gameOptions.players}`);
             continue;
@@ -100,13 +98,13 @@ export class PrpgMapSystem extends System {
     }
 
     /** Currently just an example */
-    private _initPolyLines(tiledObjectGroup: TiledObjectGroup) {
+    private _initPolyLines(tiledResource: TiledResource) {
       if (!this.scene) {
         this.logger.error('No scene found!');
         return;
       }
       // Use polyline for patrols
-      const lines = tiledObjectGroup.getPolyLines();
+      const lines = tiledResource.getPolyLines();
       for (const line of lines) {
         if (line && line.polyline) {
           const start = vec(line.x, line.y);
@@ -134,7 +132,7 @@ export class PrpgMapSystem extends System {
     }
 
     /** Currently just an example */
-    private _initPolygons(tiledObjectGroup: TiledObjectGroup) {
+    private _initPolygons(tiledObjectGroup: TiledResource) {
       if (!this.scene) {
         this.logger.error('No scene found!');
         return;
@@ -167,18 +165,18 @@ export class PrpgMapSystem extends System {
       }
     }
 
-    private _initTeleports(tiledObjectGroup: TiledObjectGroup) {
+    private _initTeleports(tiledObjectGroup: TiledResource) {
       if (!this.scene) {
         this.logger.error('No scene found!');
         return;
       }
-      const teleports = tiledObjectGroup.getObjectsByType('teleport');
+      const teleports = tiledObjectGroup.getObjectsByName('teleport');
       for (const teleObj of teleports) {
-        const mapName = teleObj.getProperty<string>('map-name')?.value;
-        const spawnName = teleObj.getProperty<string>('teleport-spawn-name')?.value;
-        const z = teleObj.getProperty<number>('zindex')?.value || 0;
-        const x = teleObj.x + Math.round((teleObj.width ?? 0) / 2);
-        const y = teleObj.y + Math.round((teleObj.height ?? 0) / 2);
+        const mapName = teleObj.properties.get('map-name') as string;
+        const spawnName = teleObj.properties.get('teleport-spawn-name') as string;
+        const z = teleObj.properties.get('zindex') as number || 0;
+        const x = teleObj.x + Math.round((teleObj.tiledObject?.width ?? 0) / 2);
+        const y = teleObj.y + Math.round((teleObj.tiledObject?.height ?? 0) / 2);
 
         if (!mapName) {
           this.logger.warn('"mapName" property for teleport not found!', teleObj);
@@ -194,8 +192,8 @@ export class PrpgMapSystem extends System {
           mapName,
           spawnName,
           pos: vec(x, y),
-          width: teleObj.width,
-          height: teleObj.height,
+          width: teleObj.tiledObject?.width,
+          height: teleObj.tiledObject?.height,
           z
         });
         this.scene.add(teleport);

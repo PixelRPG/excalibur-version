@@ -1,8 +1,7 @@
 import '../typings';
 import { Loadable, Resource } from 'excalibur';
-import { TiledMap, TiledMapResource } from '@excaliburjs/plugin-tiled/src/deprecated';
+import { TiledMap, TiledResource, TilesetResource } from '@excaliburjs/plugin-tiled';
 import { AsepriteResource } from '@excaliburjs/plugin-aseprite';
-import { TiledTilesetResource } from '../resources/tiled-tileset.resource'
 
 import type { Blueprint, BlueprintComponentsData } from '../types';
 
@@ -25,11 +24,11 @@ interface Sprites {
 }
 
 interface Tilesets {
-  [key: string]: TiledTilesetResource | undefined;
+  [key: string]: TilesetResource | undefined;
 }
 
 interface Maps {
-  [key: string]: TiledMapResource | undefined;
+  [key: string]: TiledResource | undefined;
 }
 
 interface Menus {
@@ -44,13 +43,13 @@ class ResourceManager {
   };
 
   public maps: Maps = {
-    'player_house_bedroom.tmx': new TiledMapResource(playerHouseBedroomPath),
-    'player_house_downstairs.tmx': new TiledMapResource(playerHouseDownstairsPath),
-    'taba_town.tmx': new TiledMapResource(tabaTownPath)
+    'player_house_bedroom.tmx': new TiledResource(playerHouseBedroomPath),
+    'player_house_downstairs.tmx': new TiledResource(playerHouseDownstairsPath),
+    'taba_town.tmx': new TiledResource(tabaTownPath)
   }
 
   public tilesets: Tilesets = {
-    'menu-001.tsx': new TiledTilesetResource(menu001Path, false),
+    'menu-001.tsx': new TilesetResource(menu001Path, 1),
   }
 
   public menus: Menus = {
